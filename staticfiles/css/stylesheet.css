@@ -1,0 +1,603 @@
+:root{
+    --maincolor:#5B61EB;
+    --secondarycolor:#ffffff;
+    --tercharycolor:#F3F6FE;
+    --fourthcolor:#000;
+}
+
+body{
+    background-color:var(--tercharycolor);
+    padding: 0;
+    margin: 0;
+    
+
+}
+
+.clear-fix{
+    clear: both;
+}
+/* ----------------------------Navbar--------------------------------------- */
+.navbar{
+background-color: var(--maincolor);
+}
+
+
+
+.nav-item .nav-link .active-link{
+    font-family:'Inter', sans-serif;
+    font-size: 14px;
+    color:var(--secondarycolor);
+}
+
+
+.nav-item .nav-link{
+    font-family:'Inter', sans-serif;
+    font-size: 14px;
+    color:var(--secondarycolor);
+   
+}
+
+.nav-item{
+    padding:0px 7px;
+   
+}
+
+.register-btn{
+    background-color: var(--secondarycolor);
+    color:var(--maincolor);
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    padding:7px 35px;
+}
+
+.register-btn:hover{
+    background-color: var(--secondarycolor);
+    color:var(--maincolor);
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    padding:7px 35px;
+    text-shadow: rgba(91, 97, 235, 0.7) 1px 3px 7px;
+}
+
+.signin{
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    border: none;
+    color:var(--secondarycolor);
+}
+
+.signin:hover{
+    color:var(--secondarycolor);
+}
+
+
+
+/* ---------------------------------------Header--------------------------------------- */
+.header-headline{
+    font-family: 'Nunito', sans-serif;
+    font-size: 45px;
+    font-weight: 700;
+    line-height: 1.5;
+    color:var(--fourthcolor);
+}
+
+.header-paragraph{
+    font-family: 'Nunito', sans-serif;
+    font-size: 18px;
+    line-height: 2;
+    color: #3A3A3A;
+}
+
+
+#searchInput::placeholder{
+    font-family: 'Nunito', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    color:#565656;
+}
+
+.search-btn{
+    background-color: #4CC9BA;
+    border:none;
+    width:40px;
+    height: 40px;
+    border-radius: 10px;
+    position: relative;
+    transform: translate(-120%,80%);
+    box-shadow:0px 2px 7px rgb(86, 86, 86,0.6);
+
+}
+
+.header-down-button{
+    border: none;
+    background-color: #F48C06;
+    border-radius: 50%;
+    box-shadow: 5px 7px 15px rgba(244, 140, 6, 0.6) ;
+
+}
+
+.header-down-icon{
+    color:var(--secondarycolor);
+
+}
+
+
+/*------------------------------Tutorial section----------------------------*/
+.tutorial-headline{
+    font-family: 'Poppins', sans-serif;
+    font-size: 36px;
+    font-weight: 500;
+    color:#2F327D;
+    position: relative;
+}
+
+.tutorial-headline::before{
+    content: '';
+    position: absolute;
+    width:70px;
+    height:70px;
+    top:-25px;
+    right:0;
+    left:-20px;
+    bottom: 10px;
+    border-radius: 50%;
+    background-color: rgba(244, 140, 6,0.4);
+}
+
+.tutorial-headline span{
+    color:#F48C06;
+}
+
+.tutorial-paragraph{
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    color:#696984;
+}
+
+.tutorial-button{
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    color:#696984;
+}
+
+.tutorial-button:hover{
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    color:#696984;
+}
+
+
+/*------------------------------courses section----------------------------*/
+#star-icon-unfill-1,#star-icon-unfill-2,#star-icon-unfill-3,#star-icon-unfill-4,#star-icon-unfill-5,#star-icon-unfill-6{
+    color: #D9D9D9;
+}
+.course-section-headline{
+    font-family: 'DM Sans', sans-serif;
+    font-size: 40px;
+    font-weight: 700;
+    color: #000;
+
+}
+
+.course-section-paragraph{
+    font-family: 'DM Sans', sans-serif;
+    font-size: 18px;
+    color:#545454;
+}
+
+
+.course-links-container{
+    width:48%;
+    height: 1px;
+    margin: auto;
+    background-color: rgba(169, 170, 173,0.5);
+}
+.courses-links{
+    text-decoration: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    color:#A9AAAD;
+}
+
+.active-course-link{
+    color:#000;
+    position: relative;
+} 
+
+ .active-course-link::after{
+position: absolute;
+content: '';
+width:110px;
+height: 3px;
+top:120%;
+bottom: 0;
+right: 0;
+left: -18px;
+background-color:#2B54E7 ;
+} 
+
+
+.card{
+    background-color: var(--secondarycolor);
+    border-radius: 18px;
+}
+
+.course-card-headline{
+    font-family: 'DM Sans', sans-serif;
+    font-size: 28px;
+    font-weight: 500;
+    color:var(--secondarycolor);
+}
+
+.course-card-paragraph{
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    color:var(--secondarycolor);
+}
+
+
+
+
+.card{
+    position: relative;
+    overflow: hidden;
+
+}
+.overlay {
+background-color: rgba(0, 0, 0,0.7);
+position: absolute;
+top:0;
+bottom: 0;
+left:0;
+right: 0;
+width:100%;
+height: 220px;
+}
+  
+
+.course-card-button{
+    background-color: var(--secondarycolor);
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color:#31A8FF;
+    border-radius: 8px;
+}
+
+
+.old-course-price{
+    font-family: 'DM Sans', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    text-decoration: line-through;
+    color:#B6B5B6;
+}
+
+.sale-course-price{
+    font-family: 'DM Sans', sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    color:#313131;
+}
+
+
+
+
+/* ----------------------------------Feature Section----------------------------------------------- */
+.blog-title{
+    font-family: 'Manrope', sans-serif;
+    font-size:18px;
+    font-weight: 800;
+    color:#3734A9;
+}
+.blog-headline{
+    font-family: 'Manrope', sans-serif;
+    font-size:50px;
+    font-weight: 700;
+    color:#000;
+}
+
+.blog-subtitle{
+    font-family: 'Manrope', sans-serif;
+    font-size:18px;
+   color: #64607D;
+}
+
+.browse-teacher-button{
+    font-family: 'Manrope', sans-serif;
+    font-size:16px;
+    font-weight: 500;
+    background-color:#3734A9;
+    color:var(--secondarycolor);
+    border:2px solid #3734A9;
+}
+
+.browse-teacher-button:hover{
+    font-family: 'Manrope', sans-serif;
+    font-size:16px;
+    font-weight: 500;
+    background-color:var(--secondarycolor);
+    color:#3734A9;
+    border:2px solid #3734A9;
+    animation: all 1s;
+}
+
+.become-teacher-button{
+    font-family: 'Manrope', sans-serif;
+    font-size:16px;
+    font-weight: 500;
+    background-color:var(--secondarycolor);
+    color:#3734A9;
+    border:2px solid #3734A9;
+
+}
+.become-teacher-button:hover{
+    font-family: 'Manrope', sans-serif;
+    font-size:16px;
+    font-weight: 500;
+    background-color:#3734A9;
+    color:var(--secondarycolor);
+    border:2px solid #3734A9;
+    animation: all 1s;
+}
+
+
+
+
+/* ----------------------------------Start Learning Section----------------------------------------------- */
+.start-learning-section-headline{
+    font-family: 'Montserrat', sans-serif;
+    font-size: 50px;
+    font-weight:700;
+    color:#292929;
+
+}
+
+.start-learning-section-paragraph{
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    font-weight:500;
+    color:#084CFF;
+}
+
+.card-container{
+    background-color: var(--secondarycolor);
+    border-radius: 16px;
+    border:1px solid rgba(111, 111, 117,0.1);
+}
+
+.card-headline{
+    font-family: 'Inter', sans-serif;
+    font-size: 22px;
+    font-weight:600;
+    color:#292929;
+}
+
+.card-paragraph{
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+}
+
+/* --------------------------------Team section------------------------------------- */
+.team-headline{
+    font-family: 'Montserrat', sans-serif;
+    font-size: 50px;
+    font-weight: 700;
+}
+
+.teacher-name{
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color:#6A6A6A;
+}
+
+.teacher-caption{
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    color:#000;
+}
+
+
+/* --------------------------------Testmonial section------------------------------------- */
+.testmonial-section-headline{
+    font-family: 'Poppins', sans-serif;
+    font-size: 35px;
+    font-weight:600;
+    color:var(--maincolor);
+}
+.testmonial-section-subheadline{
+    font-family: 'Poppins', sans-serif;
+    font-size: 42px;
+    font-weight:600;
+    color:#111029;
+}
+
+.testmonial-card-container{
+    background-color: var(--secondarycolor);
+    border-radius: 20px;
+}
+
+
+.testmonial-card-title{
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    font-weight:600;
+    color:#111029;
+}
+
+.testmonial-card-subtitle{
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    font-weight:500;
+    color:#ABAFC7;
+}
+
+.testmonial-card-paragraph{
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    color:#70798B;
+    position: relative;
+    top:-30px;
+}
+
+.star-icon{
+    color:#FFCF26;
+}
+
+.testmonial-card-container .card-img-container{
+ position: relative;
+transform: translateY(-30%);
+}
+
+.testmonial-card-container:hover{
+box-shadow: 2px 5px 25px rgba(43, 84, 231,.4);
+transition: all ease-in-out .5s;
+}
+
+
+
+/* --------------------------------Blog  section------------------------------------- */
+.blog-section,.feature-section,.tutorial-section,.team-section{
+    background-color: var(--secondarycolor);
+}
+.blog-section-headline{
+    font-family: 'Poppins', sans-serif;
+    font-size: 42px;
+    font-weight:600;
+    color:#111029;
+}
+
+.blog-cad-title{
+    font-family: 'Nunito', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+    color:var(--secondarycolor);
+}
+
+.blog-card-title-container{
+    background-color: var(--maincolor);
+    border-radius: 80px;
+
+}
+
+.blog-card-paragraph{
+    font-family: 'Nunito', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    color:#202020;
+}
+
+
+.blog-card-button{
+    font-family: 'Nunito', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color:#04206A;
+    text-decoration: none;
+    border-bottom: 1px solid #04206A;
+}
+
+.blog-card-button:hover{
+    font-family: 'Nunito', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color:#04206A;
+    text-decoration: none;
+    border-bottom: 1px solid #04206A;
+}
+
+
+.view-button{
+    background-color: var(--maincolor);
+    color: var(--secondarycolor);
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin: auto;
+    padding-top:10px;
+    padding-bottom:10px;
+    border-radius: 10px;
+}
+
+.view-button:hover{
+    background-color: var(--maincolor);
+    color: var(--secondarycolor);
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin: auto;
+    padding-top:10px;
+    padding-bottom:10px;
+    border-radius: 10px;
+}
+
+
+
+.footer-section{
+    background-color: var(--maincolor);
+}
+
+.copyrights-paragraph{
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    color: var(--secondarycolor);
+}
+
+.footer-headlines{
+    font-family: 'Poppins', sans-serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--secondarycolor);
+}
+
+
+.contact-background{
+    background-color: var(--secondarycolor);
+    border-radius: 5px;
+}
+
+.contact-icon{
+    color:var(--maincolor);
+}
+
+.footer-links{
+    color:var(--secondarycolor);
+    text-decoration:none;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 15x;
+    font-weight: 200;
+}
+
+.copyrights-paragrah{
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    color: var(--secondarycolor);
+}
+
+
+.links-background{
+    background-color: var(--secondarycolor);
+   border-radius: 50%;
+}
+
+.social-icon{
+    color:#000;
+    font-size:12px;
+}
+
+
+/* ---------------------------loading screen--------------------------------------- */
+#loading{
+    position: fixed;
+    inset: 0;
+    background-color: var(--maincolor);
+    z-index: 999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
