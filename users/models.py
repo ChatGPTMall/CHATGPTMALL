@@ -102,12 +102,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(_('staff status'), default=False)
     is_superuser = models.BooleanField(_('superuser'), default=False)
     is_active = models.BooleanField(_('active'), default=True)
-    phone_no = PhoneNumberField()
     reset_token = models.CharField(_('Reset Token'), max_length=5, default=0)
     user_id = models.UUIDField(default=uuid.uuid4, unique=True)
     joined_on = models.DateTimeField(auto_now_add=True)
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'phone_no']
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
     objects = UserManager()
 

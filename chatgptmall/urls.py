@@ -18,11 +18,14 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
-from users.views import HomepageView
+from users.views import HomepageView, LoginView, RegisterView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', HomepageView, name="HomepageView"),
+    path('api/login/', LoginView, name="LoginView"),
+    path('api/register/', RegisterView, name="RegisterView"),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
