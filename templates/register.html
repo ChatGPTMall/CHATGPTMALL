@@ -40,13 +40,13 @@
 <form action="{% url 'RegisterView' %}" method="POST">
 	{% csrf_token %}
 <div class="form-group">
-	<label class="form-label" for="fname">Full Name</label>
+	<label class="form-label" for="fname">First Name</label>
 
 <div class="form-control-wrap">
 	<input name="fname" class="form-control form-control-lg" id="fname" placeholder="Enter your first name" type="text" /></div>
 </div>
 	<div class="form-group">
-	<label class="form-label" for="lname">Full Name</label>
+	<label class="form-label" for="lname">Last Name</label>
 
 <div class="form-control-wrap">
 	<input name="lname" class="form-control form-control-lg" id="lname" placeholder="Enter your Last Name" type="text" /></div>
