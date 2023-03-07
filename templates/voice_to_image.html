@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Convert Voice To Image</title>
+</head>
+
+    <script src="https://cdn.WebRTC-Experiment.com/MediaStreamRecorder.js"></script>
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.webrtc-experiment.com/style.css">
+
+<body>
+{% include "chat_script.html" %}
+<div class="container">
+            <section class="experiment" >
+
+                <br>
+                <h3>Generate Images: Speech to Images</h3>
+                <button id="start-recording">Start</button>
+                <button id="stop-recording" disabled>Stop</button>
+
+                <button id="pause-recording" disabled>Pause</button>
+                <button id="resume-recording" disabled>Resume</button>
+
+            </section>
+
+            <section class="experiment">
+                <div id="audios-container"></div>
+            </section>
+
+        </article>
+    </div>
+</body>
+</html>

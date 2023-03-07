@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+        <div class="container">
+            <section class="experiment" >
+
+                <br>
+                <h3>Generate your perfect product’s image <br>based on your voice chat</h3><br>
+                <button id="start-recording">
+                    <img class="mic_icon" src="{% static 'images/mic.jpeg' %}">
+                </button>
+                <button id="stop-recording" disabled>
+                    <img class="mic_icon" src="{% static 'images/stop_mic.png' %}">
+                </button>
+
+                <button id="pause-recording" disabled></button>
+                <button id="resume-recording" disabled></button>
+
+            </section>
+
+            <section class="experiment">
+                <div id="audios-container"></div>
+            </section>
+
+    </div>
+    <div class="container" style="margin-top: 67px;">
+        <div class="row" id="openai">
+            <img id="loading" src="{% static 'images/loading.svg' %}">
+        </div>
+    </div>
+{% endblock content %}

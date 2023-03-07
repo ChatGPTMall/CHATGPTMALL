@@ -18,13 +18,15 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
-from users.views import HomepageView, LoginView, RegisterView
+from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', HomepageView, name="HomepageView"),
     path('api/login/', LoginView, name="LoginView"),
     path('api/register/', RegisterView, name="RegisterView"),
+    path('api/convert/voice_to_image/', VoiceToImage, name="VoiceToImage"),
+    path('upload_voice/', UploadVoice, name="UploadVoice")
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
