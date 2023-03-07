@@ -59,10 +59,6 @@ $(document).ready(function() {
             $('#send').attr('disabled','disabled');
         }
     });
-
-});
-
-$(document).ready(function(){
             function captureUserMedia(mediaConstraints, successCallback, errorCallback) {
                 navigator.mediaDevices.getUserMedia(mediaConstraints).then(successCallback).catch(errorCallback);
             }
