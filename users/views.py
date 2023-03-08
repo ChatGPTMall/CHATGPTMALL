@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from users.models import User
 
-openai.api_key = os.getenv("OPEN_AI_KEY", "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")
+openai.api_key = os.getenv("OPEN_AI_KEY", "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")
 
 
 def HomepageView(request):
