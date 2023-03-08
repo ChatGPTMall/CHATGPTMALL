@@ -184,9 +184,6 @@ $(document).ready(function() {
                             return cookieValue;
                         }
 
-
-
-//                        console.log(no_of_images)
                         var csrftoken = getCookie('csrftoken');
                         var xhr = new XMLHttpRequest();
                         xhr.open('POST', `/api/show_voice_out_put/`, true);

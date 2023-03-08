@@ -6,6 +6,8 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 import speech_recognition as sr
 import openai
+from django.views.decorators.csrf import csrf_exempt
+
 from users.models import User
 
 openai.api_key = os.getenv("OPEN_AI_KEY", "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")
@@ -60,7 +62,7 @@ def RegisterView(request):
 def VoiceToImage(request):
     return render(request, "chat.html")
 
-
+@csrf_exempt
 def VoiceOutPut(request):
     filename = "test" + "name" + ".wav"
     uploadedFile = open(filename, "wb")
