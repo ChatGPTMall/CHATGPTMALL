@@ -7,6 +7,16 @@
     <meta charset="UTF-8">
     <title>Chat</title>
     <style>
+    #text_div{
+    flex-direction: column !important;
+    align-items: baseline !important;
+    }
+    #text_div .form-control{
+        width: 74% !important;
+    }
+    h1, h2{
+        border-bottom: none !important;
+    }
      .mic_icon{
        height: 43px;
        width: 38px;
@@ -26,13 +36,11 @@
 }
 
 #voice_text_btn{
-background-color: hsl(242deg 88% 66%) !important;
-    margin-left: 62px;
+    background-color: hsl(242deg 88% 66%) !important;
     height: 40px;
-    font-size: 12px;
-    width: 176px;
     color: white;
     cursor: pointer;
+    margin-top: 20px;
 }
 
     </style>
@@ -55,7 +63,7 @@ background-color: hsl(242deg 88% 66%) !important;
 {% block navbar %}
 <!-- Image and text -->
 <nav class="navbar navbar-light bg-light">
-  <a class="navbar-brand" href="#">
+  <a class="navbar-brand" href="{% url 'HomepageView' %}">
     <img src="{% static 'images/logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
   </a>
 </nav>

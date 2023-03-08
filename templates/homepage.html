@@ -41,16 +41,10 @@
                 href="{% url 'HomepageView' %}">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Store</a>
+              <a class="nav-link" href="{% url 'VoiceToVoice' %}">Voice To Voice</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">About</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Cart</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Contact</a>
+              <a class="nav-link" href="{% url 'VoiceToImage' %}">Voice To Image</a>
             </li>
           </ul>
 
@@ -92,7 +86,7 @@
                           </div>
                           <div style="position: relative;">
                             <br>
-                            <a href="{% url 'VoiceToImage' %}" class="btn become-teacher-button">Try CHATGPTMALL
+                            <a href="{% url 'VoiceToImage' %}" class="btn become-teacher-button">Voice To Image
                               <i class="fa fa-microphone p-3 "></i></a>
                           </div>
                         </div>

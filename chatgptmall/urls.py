@@ -18,7 +18,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
-from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut
+from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,7 +27,9 @@ urlpatterns = [
     path('api/register/', RegisterView, name="RegisterView"),
     path('api/convert/voice_to_image/', VoiceToImage, name="VoiceToImage"),
     path('api/show_voice_out_put/', VoiceOutPut, name="VoiceOutPut"),
-    path('upload_voice/', UploadVoice, name="UploadVoice")
+    path('upload_voice/', UploadVoice, name="UploadVoice"),
+
+    path('api/voice_to_voice/', VoiceToVoice, name="VoiceToVoice")
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

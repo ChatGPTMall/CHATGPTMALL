@@ -10,7 +10,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from users.models import User
 
-openai.api_key = os.getenv("OPEN_AI_KEY", "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")
+openai.api_key = os.getenv("OPEN_AI_KEY", "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")
+openai.organization = "org-QfRF2uVGToQjzFqybgG8bqoY"
 
 
 def HomepageView(request):
@@ -62,6 +63,10 @@ def RegisterView(request):
 def VoiceToImage(request):
     return render(request, "chat.html")
 
+
+def VoiceToVoice(request):
+    return render(request, "voice_to_voice.html")
+
 @csrf_exempt
 def VoiceOutPut(request):
     filename = "test" + "name" + ".wav"
@@ -81,7 +86,7 @@ def VoiceOutPut(request):
 
 def UploadVoice(request):
     text = request.GET.get('text', '')
-    no_of_images = request.GET.get('no_of_images', '')
+    no_of_images = request.GET.get('no_of_images', 2)
     response = openai.Image.create(prompt="{}".format(text), n=int(no_of_images), size="1024x1024")
     images = list()
     for image in response['data']:

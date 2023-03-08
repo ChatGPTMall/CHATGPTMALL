@@ -2,19 +2,20 @@
 {% load static %}
 {% block content %}
         <div class="container">
-            <section class="experiment" >
+            <div class="experiment row" >
 
                 <br>
-                <h3>Generate your perfect product’s image <br>based on your voice chat</h3><br>
-                <form style="display:flex;">
-                  <div class="form-group col-md-5">
-                    <label for="no_of_images">No of Images</label>
-                    <input type="number" class="form-control" name="no_of_images"
+                <h1>Generate your perfect product’s image <br>based on your voice chat</h1><br><br>
+                <form style="display:flex;" class="col-md-8">
+                  <div class="form-group ">
+                    <h2 for="no_of_images">No of Images</h2><br><br>
+                    <input type="number" class="form-control my-2" name="no_of_images"
                            id="no_of_images" aria-describedby="emailHelp" placeholder="No of Images">
                   </div>
                 </form>
                 <br>
-                <button id="start-recording">
+                <div>
+                    <button id="start-recording">
                     <img class="mic_icon" src="{% static 'images/mic.jpeg' %}">
                 </button>
                 <button id="stop-recording" disabled>
@@ -22,7 +23,9 @@
                 </button>
                 <button id="pause-recording" disabled></button>
                 <button id="resume-recording" disabled></button>
-            </section>
+                </div>
+
+            </div>
 
             <section class="experiment">
                 <div id="audios-container"></div>
