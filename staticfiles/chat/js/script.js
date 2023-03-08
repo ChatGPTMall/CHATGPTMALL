@@ -49,6 +49,31 @@ $.ajaxSetup({
 });
 
 $(document).ready(function() {
+    $("#text_div").hide();
+    document.querySelector('#voice_text_btn').onclick = function() {
+        $("#loading").show();
+        var text_voice = $("#voice_text").val();
+        var no_of_images = $("#no_of_images").val();
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', `/upload_voice/?text=${text_voice}&no_of_images=${no_of_images}`, true);
+        xhr.onreadystatechange = function() {
+              if (this.readyState == 4 && this.status == 200) {
+                               $("#loading").hide();
+                               var images = JSON.parse(this.responseText);
+                               for(let i=0; i < images.length; i++){
+                                $("#openai").append(`
+                                    <div class="col-md-4">
+                                        <div class="card" style="width: 18rem;">
+                                             <img id="card-images" class="card-img-top" src="${images[i]}" >
+                                        </div>
+                                    </div>
+                                `)
+                               }
+                           }
+                        };
+        xhr.send();
+    }
+
     $("#loading").hide();
     $('#send').attr('disabled','disabled');
     $('#chat-msg').keyup(function() {
@@ -158,25 +183,20 @@ $(document).ready(function() {
                             }
                             return cookieValue;
                         }
-                        $("#loading").show();
+
+
+
+//                        console.log(no_of_images)
                         var csrftoken = getCookie('csrftoken');
                         var xhr = new XMLHttpRequest();
-                        xhr.open('POST', '/upload_voice/', true);
+                        xhr.open('POST', `/api/show_voice_out_put/`, true);
                         xhr.setRequestHeader("X-CSRFToken", csrftoken);
                         xhr.setRequestHeader("MyCustomHeader", "Put anything you need in here, like an ID");
                         xhr.onreadystatechange = function() {
                            if (this.readyState == 4 && this.status == 200) {
-                               $("#loading").hide();
-                               var images = JSON.parse(this.responseText);
-                               for(let i=0; i < images.length; i++){
-                                $("#openai").append(`
-                                    <div class="col-md-4">
-                                        <div class="card" style="width: 18rem;">
-                                             <img id="card-images" class="card-img-top" src="${images[i]}" >
-                                        </div>
-                                    </div>
-                                `)
-                               }
+                              $("#text_div").show();
+                              var TEXT = this.responseText;
+                              $("#voice_text").val(TEXT)
                            }
                         };
                         xhr.send(blob);

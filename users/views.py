@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth import authenticate, login
 from django.db import IntegrityError
 from django.http import HttpResponse, JsonResponse
@@ -6,7 +8,7 @@ import speech_recognition as sr
 import openai
 from users.models import User
 
-openai.api_key = "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"
+openai.api_key = os.getenv("OPEN_AI_KEY", "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")
 
 
 def HomepageView(request):
@@ -59,7 +61,7 @@ def VoiceToImage(request):
     return render(request, "chat.html")
 
 
-def UploadVoice(request):
+def VoiceOutPut(request):
     filename = "test" + "name" + ".wav"
     uploadedFile = open(filename, "wb")
     # the actual file is in request.body
@@ -72,11 +74,13 @@ def UploadVoice(request):
         audio = r.record(source)
     msg = r.recognize_google(audio)
 
-    response = openai.Image.create(
-        prompt="{}".format(msg),
-        n=6,
-        size="1024x1024"
-    )
+    return HttpResponse("{}".format(msg))
+
+
+def UploadVoice(request):
+    text = request.GET.get('text', '')
+    no_of_images = request.GET.get('no_of_images', '')
+    response = openai.Image.create(prompt="{}".format(text), n=int(no_of_images), size="1024x1024")
     images = list()
     for image in response['data']:
         images.append(image.url)

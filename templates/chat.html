@@ -6,21 +6,32 @@
 
                 <br>
                 <h3>Generate your perfect product’s image <br>based on your voice chat</h3><br>
+                <form style="display:flex;">
+                  <div class="form-group col-md-5">
+                    <label for="no_of_images">No of Images</label>
+                    <input type="number" class="form-control" name="no_of_images"
+                           id="no_of_images" aria-describedby="emailHelp" placeholder="No of Images">
+                  </div>
+                </form>
+                <br>
                 <button id="start-recording">
                     <img class="mic_icon" src="{% static 'images/mic.jpeg' %}">
                 </button>
                 <button id="stop-recording" disabled>
                     <img class="mic_icon" src="{% static 'images/stop_mic.png' %}">
                 </button>
-
                 <button id="pause-recording" disabled></button>
                 <button id="resume-recording" disabled></button>
-
             </section>
 
             <section class="experiment">
                 <div id="audios-container"></div>
             </section>
+
+            <div id="text_div" style="display:flex;">
+                <input type="text" class="form-control" name="voice_text" id="voice_text">
+                <button id="voice_text_btn">Generate Images</button>
+            </div>
 
     </div>
     <div class="container" style="margin-top: 67px;">
