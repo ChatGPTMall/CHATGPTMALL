@@ -1,9 +1,97 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
 {% load static %}
-{% block content %}
+{% load i18n %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Voice To Voice</title>
+    <title>WebRTC Audio Recording using MediaStreamRecorder</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css">
+    <link rel="stylesheet" href="https://cdn.webrtc-experiment.com/style.css">
+    <style>
+            #text_div{
+    flex-direction: column !important;
+    align-items: baseline !important;
+    }
+    #text_div .form-control{
+        width: 74% !important;
+    }
+    h1, h2{
+        border-bottom: none !important;
+    }
+     .mic_icon{
+       height: 43px;
+       width: 38px;
+    }
+    button{
+     background: transparent !important;
+    border: none !important;
+    }
+    #card-images{
+    height: 360px;
+    width: 360px;
+    }
+    html {
+    font-size: 10px;
+    -webkit-tap-highlight-color: #fff !important;
+    background: #fff !important;
+}
+
+#voice_text_btn{
+    background-color: hsl(242deg 88% 66%) !important;
+    height: 40px;
+    color: white;
+    cursor: pointer;
+    margin-top: 20px;
+}
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-light bg-light">
+  <a class="navbar-brand" href="{% url 'HomepageView' %}">
+    <img src="{% static 'images/logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
+  </a>
+</nav>
     <main role="main" class="container">
-      <div class="jumbotron">
-        <h2>Navbar example</h2>
+      <div class="">
+        <h2>Voice To Voice Chat</h2>
+          <br><br>
+        <div>
+            <button id="start-recording">
+                <img class="mic_icon" src="{% static 'images/mic.jpeg' %}">
+            </button>
+            <button id="stop-recording" disabled>
+                <img class="mic_icon" src="{% static 'images/stop_mic.png' %}">
+            </button>
+            <button id="pause-recording" disabled></button>
+            <button id="resume-recording" disabled></button>
+        </div>
+          <section class="experiment">
+                <div id="audios-container"></div>
+            </section>
+          <div id="text_div" style="display:flex;">
+                <input type="text" class="form-control" name="voice_text" id="voice_text">
+                <div>
+                    <button id="voice_text_btn">Generate Response</button>
+                    <button id="speak">Speak</button>
+                    <button id="stop">Stop</button>
+                    <button id="resume">Resume</button>
+                </div>
+            </div>
+          <br>
+          <p id="response"></p>
       </div>
     </main>
-{% endblock content %}
+
+    <main>
+
+    </main>
+<script src="{% static 'chat/js/jquery-1.12.3.js' %}"></script>
+<script src="https://cdn.WebRTC-Experiment.com/MediaStreamRecorder.js"></script>
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<script src="{% static 'chat/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'chat/js/voice_to_voice.js' %}"></script>
+</body>
+</html>

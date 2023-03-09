@@ -35,31 +35,47 @@ $.ajaxSetup({
 
 $(document).ready(function() {
     $("#text_div").hide();
-    document.querySelector('#voice_text_btn').onclick = function() {
-        $("#loading").show();
-        var text_voice = $("#voice_text").val();
-        var no_of_images = $("#no_of_images").val();
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', `/upload_voice/?text=${text_voice}&no_of_images=${no_of_images}`, true);
-        xhr.onreadystatechange = function() {
-              if (this.readyState == 4 && this.status == 200) {
-                               $("#loading").hide();
-                               var images = JSON.parse(this.responseText);
-                               for(let i=0; i < images.length; i++){
-                                $("#openai").append(`
-                                    <div class="col-md-4">
-                                        <div class="card" style="width: 18rem;">
-                                             <img id="card-images" class="card-img-top" src="${images[i]}" >
-                                        </div>
-                                    </div>
-                                `)
-                               }
-                           }
-                        };
-        xhr.send();
+    $('#speak').hide();
+    $('#stop').hide();
+    $('#resume').hide();
+    document.querySelector('#resume').onclick = function() {
+        speechSynthesis.resume();
+    }
+    document.querySelector('#stop').onclick = function() {
+        $('#resume').show();
+        speechSynthesis.pause();
+    }
+    document.querySelector('#speak').onclick = function() {
+                       $('#stop').show();
+                     var content = $("#response").text()
+                     var msg = new SpeechSynthesisUtterance(content);
+                     var voices = window.speechSynthesis.getVoices();
+                     msg.voice = voices[9];
+                     msg.volume = 1; // From 0 to 1
+                     msg.rate = 1; // From 0.1 to 10
+                     msg.pitch = 1; // From 0 to 2
+                     msg.lang = "en-US";
+                     speechSynthesis.speak(msg);
     }
 
-    $("#loading").hide();
+    document.querySelector('#voice_text_btn').onclick = function() {
+         $("#loading").show();
+         var text_voice = $("#voice_text").val();
+         var xhr = new XMLHttpRequest();
+         xhr.open('GET', `/api/get_voice/?text=${text_voice}`, true);
+         xhr.onreadystatechange = function() {
+              if (this.readyState == 4 && this.status == 200) {
+                    $("#loading").hide();
+                    $('#speak').show()
+                    var resp = this.responseText;
+                    $("#response").html(resp)
+              }
+         };
+         xhr.send();
+
+    }
+
+
     $('#send').attr('disabled','disabled');
     $('#chat-msg').keyup(function() {
         if($(this).val() != '') {

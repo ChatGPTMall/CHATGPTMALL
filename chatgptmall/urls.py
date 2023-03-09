@@ -18,7 +18,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
-from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice
+from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
+    get_chatgpt_response
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,7 +30,8 @@ urlpatterns = [
     path('api/show_voice_out_put/', VoiceOutPut, name="VoiceOutPut"),
     path('upload_voice/', UploadVoice, name="UploadVoice"),
 
-    path('api/voice_to_voice/', VoiceToVoice, name="VoiceToVoice")
+    path('api/voice_to_voice/', VoiceToVoice, name="VoiceToVoice"),
+    path('api/get_voice/', get_chatgpt_response, name="get_chatgpt_response")
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

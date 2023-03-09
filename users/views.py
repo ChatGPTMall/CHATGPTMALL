@@ -1,5 +1,3 @@
-import os
-
 from django.contrib.auth import authenticate, login
 from django.db import IntegrityError
 from django.http import HttpResponse, JsonResponse
@@ -7,11 +5,10 @@ from django.shortcuts import render, redirect
 import speech_recognition as sr
 import openai
 from django.views.decorators.csrf import csrf_exempt
-
 from users.models import User
 
-openai.api_key = os.getenv("OPEN_AI_KEY", "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")
-openai.organization = "org-QfRF2uVGToQjzFqybgG8bqoY"
+
+openai.api_key = "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"
 
 
 def HomepageView(request):
@@ -92,3 +89,19 @@ def UploadVoice(request):
     for image in response['data']:
         images.append(image.url)
     return JsonResponse(images, safe=False)
+
+
+def get_chatgpt_response(request):
+    prompt = request.GET.get('text', '')
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a chatbot"},
+            {"role": "user", "content": "{}?".format(prompt)},
+        ]
+    )
+
+    result = ''
+    for choice in response.choices:
+        result += choice.message.content
+    return HttpResponse(str(result))
