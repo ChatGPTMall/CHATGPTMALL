@@ -36,7 +36,7 @@ def create_alphanum():
 
 class UserManager(BaseUserManager):
 
-    def _create_user(self, email, password, is_staff, is_superuser, phone_no, **extra_fields):
+    def _create_user(self, email, password, is_staff, is_superuser, **extra_fields):
         if not email:
             raise ValueError('Users must have an email address')
 
@@ -46,18 +46,17 @@ class UserManager(BaseUserManager):
             is_staff=is_staff,
             is_active=True,
             is_superuser=is_superuser,
-            phone_no=phone_no,
             **extra_fields
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_user(self, email, password, phone_no, **extra_fields):
-        return self._create_user(email, password, False, False, phone_no, **extra_fields)
+    def create_user(self, email, password, **extra_fields):
+        return self._create_user(email, password, False, False, **extra_fields)
 
-    def create_superuser(self, email, password, phone_no, **extra_fields):
-        return self._create_user(email, password, True, True, phone_no, **extra_fields)
+    def create_superuser(self, email, password, **extra_fields):
+        return self._create_user(email, password, True, True, **extra_fields)
 
 
 class LowercaseEmailField(models.EmailField):
@@ -83,6 +82,11 @@ def set_name(instance, filename):
         # do something if pk is not there yet
 
 
+class PremiumFlags(models.IntegerChoices):
+    FREE_USER = (0, _('Free User'))
+    PREMIUM_USER = (1, _('Premium User'))
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     """
     User Table, which will provide login functionality
@@ -104,6 +108,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(_('active'), default=True)
     reset_token = models.CharField(_('Reset Token'), max_length=5, default=0)
     user_id = models.UUIDField(default=uuid.uuid4, unique=True)
+    premium = models.IntegerField(choices=PremiumFlags.choices, default=0)
     joined_on = models.DateTimeField(auto_now_add=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
@@ -115,28 +120,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = _('users')
 
     def __str__(self):
-        return str(self.phone_no) if self.is_temp_email() else self.email
-
-    def clean(self):
-        super().clean()
-        self.email = self.__class__.objects.normalize_email(self.email)
-
-        if self.pk is None:
-            # when new object is to be created
-            if self.phone_no is not None and User.objects.filter(phone_no=self.phone_no).exists():
-                raise ValidationError(dict({"phone_no": "Phone no already linked with some other account!"}))
-        else:
-            # when its update
-            if self.phone_no is not None and User.objects.filter(phone_no=self.phone_no).exclude(pk=self.pk).exists():
-                raise ValidationError(dict({"phone_no": "Phone no already linked with some other account!"}))
-
-
-    def get_full_name(self):
-        """
-        Return the first_name plus the last_name, with a space in between.
-        """
-        full_name = '%s %s' % (self.first_name, self.last_name)
-        return full_name.strip()
+        return self.email
 
     def get_short_name(self):
         """Return the short name for the user."""
@@ -152,11 +136,3 @@ class User(AbstractBaseUser, PermissionsMixin):
         as signed up using phone_no
         """
         return self.email.endswith("@chatgptmall.com")
-
-    @staticmethod
-    def get_user_by_phone(phone_no):
-        try:
-            # return user if exists
-            return User.objects.get(phone_no=phone_no)
-        except User.DoesNotExist:
-            return None

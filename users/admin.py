@@ -6,7 +6,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 class UserAdmin(BaseUserAdmin):
     fieldsets = (
-        ('User Info', {'fields': ('email', 'password', 'first_name', 'last_name', 'phone_no')}),
+        ('User Info', {'fields': ('email', 'password', 'first_name', 'last_name', 'premium')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
         ('Important dates', {'fields': ('joined_on',)})
     )
@@ -22,7 +22,7 @@ class UserAdmin(BaseUserAdmin):
 
     list_display = ('email', 'first_name', 'last_name', 'joined_on')
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups', 'joined_on')
-    search_fields = ('email', 'phone_no')
+    search_fields = ('email',)
     ordering = ('email',)
     filter_horizontal = ('groups', 'user_permissions',)
     readonly_fields = ('joined_on',)

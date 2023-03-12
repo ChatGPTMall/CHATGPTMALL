@@ -54,40 +54,49 @@
     <img src="{% static 'images/logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
   </a>
 </nav>
-    <main role="main" class="container">
-      <div class="">
-        <h2>Voice To Voice Chat</h2>
-          <br><br>
-        <div>
-            <button id="start-recording">
-                <img class="mic_icon" src="{% static 'images/mic.jpeg' %}">
-            </button>
-            <button id="stop-recording" disabled>
-                <img class="mic_icon" src="{% static 'images/stop_mic.png' %}">
-            </button>
-            <button id="pause-recording" disabled></button>
-            <button id="resume-recording" disabled></button>
-        </div>
-          <section class="experiment">
-                <div id="audios-container"></div>
-            </section>
-          <div id="text_div" style="display:flex;">
-                <input type="text" class="form-control" name="voice_text" id="voice_text">
-                <div>
-                    <button id="voice_text_btn">Generate Response</button>
-                    <button id="speak">Speak</button>
-                    <button id="stop">Stop</button>
-                    <button id="resume">Resume</button>
-                </div>
+    {% if user.is_authenticated %}
+        {% if is_active %}
+        <main role="main" class="container">
+          <div class="">
+            <h2>Voice To Voice Chat</h2>
+              <br><br>
+            <div>
+                <button id="start-recording">
+                    <img class="mic_icon" src="{% static 'images/mic.jpeg' %}">
+                </button>
+                <button id="stop-recording" disabled>
+                    <img class="mic_icon" src="{% static 'images/stop_mic.png' %}">
+                </button>
+                <button id="pause-recording" disabled></button>
+                <button id="resume-recording" disabled></button>
             </div>
-          <br>
-          <p id="response"></p>
-      </div>
-    </main>
+              <section class="experiment">
+                    <div id="audios-container"></div>
+                </section>
+              <div id="text_div" style="display:flex;">
+                    <input type="text" class="form-control" name="voice_text" id="voice_text">
+                    <div>
+                        <button id="voice_text_btn">Generate Response</button>
+                        <button id="speak">Speak</button>
+                        <button id="stop">Stop</button>
+                        <button id="resume">Resume</button>
+                    </div>
+                </div>
+              <br>
+              <p id="response"></p>
+          </div>
+        </main>
 
-    <main>
-
-    </main>
+        {% else %}
+            <div class="text-center">
+                <h2 >Your have exceeded your quota please Buy requests again </h2>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="text-center">
+            <h2 >Please Login To Access Our Voice To Voice Service </h2>
+        </div>
+    {% endif %}
 <script src="{% static 'chat/js/jquery-1.12.3.js' %}"></script>
 <script src="https://cdn.WebRTC-Experiment.com/MediaStreamRecorder.js"></script>
 <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
