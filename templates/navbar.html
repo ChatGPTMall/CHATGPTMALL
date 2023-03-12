@@ -1,0 +1,50 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'HomepageView' %}">
+          <img style="height: 43px;" src="{% static 'images/logo.png' %}"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav m-auto mb-2 mb-lg-0">
+            <li class="nav-item nav-item-active">
+              <a class="nav-link active-link fw-bold" aria-current="page"
+                href="{% url 'HomepageView' %}">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'VoiceToVoice' %}">Voice To Voice</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'VoiceToImage' %}">Voice To Image</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'TextToText' %}">Text To Text</a>
+            </li>
+          </ul>
+
+          {% if request.user.is_authenticated %}
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+             {{request.user.get_full_name}}
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Update Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'Logout' %}">Logout</a></li>
+            </ul>
+           </li>
+          </ul>
+          {% else %}
+          <div class="d-flex">
+            <a href="{% url 'LoginView' %}" class="btn signin">Sign In</a>
+            <a href="{% url 'RegisterView' %}" class="btn register-btn">Register now </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </nav>

@@ -1,23 +1,49 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
 {% load static %}
-{% block content %}
-<div class="container">
-    <div class="row">
-        <form>
-          <div class="mb-3">
-            <label for="text_to_text_input" class="form-label">Enter Your Text</label>
-              <textarea class="form-control" id="text_to_text_input" aria-describedby="Your Text"></textarea>
-          </div>
-            <br>
-          <a type="submit" id="text_to_text_btn" class="btn btn-primary">Get Response</a>
-        </form>
+{% load i18n %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CHATGPTMALL | TextToText</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css">
+</head>
+<body>
+<nav class="navbar navbar-light bg-light">
+  <a class="navbar-brand" href="{% url 'HomepageView' %}">
+    <img src="{% static 'images/logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
+  </a>
+</nav>
+{% if request.user.is_authenticated %}
+    <div class="container">
+        <div class="row">
+            <form>
+              <div class="mb-3">
+                <label for="text_to_text_input" class="form-label">Enter Your Text</label>
+                  <textarea class="form-control" id="text_to_text_input" aria-describedby="Your Text"></textarea>
+              </div>
+                <br>
+              <a type="submit" id="text_to_text_btn" class="btn btn-primary">Get Response</a>
+            </form>
+        </div>
     </div>
-</div>
-<br><br>
-<div class="container">
-    <div class="row">
-        <p id="text_to_text_show"></p>
+    <br><br>
+    <div class="container">
+        <div class="row">
+            <p id="text_to_text_show"></p>
+        </div>
     </div>
-</div>
-{% endblock content %}
+{% else %}
+        <div class="text-center">
+            <h2 >Please Login To Access Our Voice To Voice Service </h2>
+        </div>
+    {% endif %}
+<script src="{% static 'chat/js/jquery-1.12.3.js' %}"></script>
+<script src="https://cdn.WebRTC-Experiment.com/MediaStreamRecorder.js"></script>
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<script src="{% static 'chat/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'chat/js/text_to_text.js' %}"></script>
+</body>
+</html>
 

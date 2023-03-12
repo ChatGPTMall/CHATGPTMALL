@@ -54,7 +54,7 @@
     <img src="{% static 'images/logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
   </a>
 </nav>
-    {% if user.is_authenticated %}
+    {% if request.user.is_authenticated %}
         {% if is_active %}
         <main role="main" class="container">
           <div class="">

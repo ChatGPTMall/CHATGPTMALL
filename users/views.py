@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
@@ -15,6 +15,11 @@ openai.api_key = ""
 
 def HomepageView(request):
     return render(request, "homepage.html")
+
+
+def Logout(request):
+    logout(request)
+    return redirect('HomepageView')
 
 
 def LoginView(request):

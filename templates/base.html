@@ -5,7 +5,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Chat</title>
     <style>
     #text_div{
     flex-direction: column !important;
@@ -45,7 +44,7 @@
 
     </style>
 
-    <title>WebRTC Audio Recording using MediaStreamRecorder</title>
+    <title>{% block title %}{% endblock %}</title>
 
 
 
@@ -70,13 +69,14 @@
 {% endblock navbar %}
 
 
-
+{% if request.user.is_authenticated %}
 {% block content %}
-
-
-
-
 {% endblock %}
+{% else %}
+        <div class="text-center">
+            <h2 >Please Login To Access Our Voice To Voice Service </h2>
+        </div>
+    {% endif %}
 
 
 

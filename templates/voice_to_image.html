@@ -12,6 +12,7 @@
 
 <body>
 {% include "chat_script.html" %}
+{% if request.user.is_authenticated %}
 <div class="container">
             <section class="experiment" >
 
@@ -22,6 +23,7 @@
 
                 <button id="pause-recording" disabled>Pause</button>
                 <button id="resume-recording" disabled>Resume</button>
+                <button id="text_to_text_btn"></button>
 
             </section>
 
@@ -31,5 +33,10 @@
 
         </article>
     </div>
+{% else %}
+        <div class="text-center">
+            <h2 >Please Login To Access Our Voice To Voice Service </h2>
+        </div>
+    {% endif %}
 </body>
 </html>
