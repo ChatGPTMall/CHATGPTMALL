@@ -2,11 +2,10 @@
 {% block title %}CHATGPTMALL | VoiceToImage{% endblock title %}
 {% load static %}
 {% block content %}
-{% if request.user.is_authenticated %}
         <div class="container">
-            <div class="experiment row" >
+            <div class="experiment jumbotron" style="background-color: white;padding-top:0px">
                 <br>
-                <h1>Generate your perfect product’s image <br>based on your voice chat</h1><br><br>
+                <h3>Generate your perfect product’s image <br>based on your voice chat</h3><br>
                 <br>
                 <div>
                     <button id="start-recording">
@@ -36,9 +35,4 @@
             <img id="loading" src="{% static 'images/loading.svg' %}">
         </div>
     </div>
-{% else %}
-        <div class="text-center">
-            <h2 >Please Login To Access Our Voice To Voice Service </h2>
-        </div>
-    {% endif %}
 {% endblock content %}

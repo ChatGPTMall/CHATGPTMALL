@@ -69,14 +69,10 @@
 {% endblock navbar %}
 
 
-{% if request.user.is_authenticated %}
+
 {% block content %}
 {% endblock %}
-{% else %}
-        <div class="text-center">
-            <h2 >Please Login To Access Our Voice To Voice Service </h2>
-        </div>
-    {% endif %}
+
 
 
 

@@ -59,3 +59,30 @@ class VoiceToVoiceRequests(models.Model):
     class Meta:
         verbose_name = _("Voice Request")
         verbose_name_plural = _("Voice Requests")
+
+
+class ImagesDB(models.Model):
+    question = models.TextField(_("Users Query"))
+    images = models.JSONField(default=list, null=True, blank=True)
+    added_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.question
+
+    class Meta:
+        verbose_name = _("Image")
+        verbose_name_plural = _("Openai Images")
+
+
+class ShopAccess(models.Model):
+    switch = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.switch)
+
+    class Meta:
+        verbose_name = _("ShopAccess")
+        verbose_name_plural = _("ShopAccess")
+
+

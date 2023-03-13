@@ -6,7 +6,7 @@ import speech_recognition as sr
 import openai
 from django.views.decorators.csrf import csrf_exempt
 
-from engine.models import ResponsesDB, VoiceToVoiceRequests
+from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess
 from users.models import User
 
 
@@ -68,6 +68,14 @@ def VoiceToImage(request):
     return render(request, "chat.html")
 
 
+def ShopVoiceToVoice(request):
+    shop = ShopAccess.objects.all().first()
+    if shop.switch:
+        return render(request, "ShopVoiceToVoice.html")
+    else:
+        return render(request, "404.html")
+
+
 def VoiceToVoice(request):
     is_active = True
     try:
@@ -108,12 +116,16 @@ def VoiceOutPut(request):
 
 def UploadVoice(request):
     text = request.GET.get('text', '')
-    no_of_images = request.GET.get('no_of_images', 2)
-    response = openai.Image.create(prompt="{}".format(text), n=int(no_of_images), size="1024x1024")
-    images = list()
-    for image in response['data']:
-        images.append(image.url)
-    return JsonResponse(images, safe=False)
+    response = ImagesDB.objects.filter(question__icontains=text)
+    if not response:
+        response = openai.Image.create(prompt="{}".format(text), n=3, size="1024x1024")
+        images = list()
+        for image in response['data']:
+            images.append(image.url)
+        ImagesDB.objects.create(question=text, images=images)
+        return JsonResponse(images, safe=False)
+    else:
+        return JsonResponse(response.last().images, safe=False)
 
 
 def get_chatgpt_response(request):

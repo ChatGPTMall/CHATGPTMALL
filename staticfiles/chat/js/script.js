@@ -38,9 +38,8 @@ $(document).ready(function() {
     document.querySelector('#voice_text_btn').onclick = function() {
         $("#loading").show();
         var text_voice = $("#voice_text").val();
-        var no_of_images = $("#no_of_images").val();
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', `/upload_voice/?text=${text_voice}&no_of_images=${no_of_images}`, true);
+        xhr.open('GET', `/upload_voice/?text=${text_voice}`, true);
         xhr.onreadystatechange = function() {
               if (this.readyState == 4 && this.status == 200) {
                                $("#loading").hide();

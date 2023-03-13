@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.urls import path
 
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
-    get_chatgpt_response, TextToText, Logout
+    get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -32,6 +32,8 @@ urlpatterns = [
     path('api/logout', Logout, name="Logout"),
     path('api/register/', RegisterView, name="RegisterView"),
     path('api/convert/voice_to_image/', VoiceToImage, name="VoiceToImage"),
+    path('shop/', ShopVoiceToVoice, name="ShopVoiceToVoice"),
+
     path('api/show_voice_out_put/', VoiceOutPut, name="VoiceOutPut"),
     path('upload_voice/', UploadVoice, name="UploadVoice"),
 
