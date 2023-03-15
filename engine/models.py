@@ -62,6 +62,7 @@ class VoiceToVoiceRequests(models.Model):
 
 
 class ImagesDB(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="images", null=True, blank=True)
     question = models.TextField(_("Users Query"))
     images = models.JSONField(default=list, null=True, blank=True)
     added_on = models.DateTimeField(auto_now_add=True)

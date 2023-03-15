@@ -3,6 +3,7 @@
 {% load static %}
 {% block content %}
 {% if request.user.is_authenticated %}
+    {% if is_active %}
         <div class="container">
             <div class="experiment row" >
                 <br>
@@ -36,6 +37,11 @@
             <img id="loading" src="{% static 'images/loading.svg' %}">
         </div>
     </div>
+    {% else %}
+        <div class="text-center">
+            <h2 >Limit Exceeded please buy more requests</h2>
+        </div>
+    {% endif %}
 {% else %}
         <div class="text-center">
             <h2 >Please Login To Access Our Voice To Voice Service </h2>

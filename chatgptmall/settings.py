@@ -9,8 +9,10 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+import json
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,6 +29,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+env_path = Path(BASE_DIR) / '.env'
+load_dotenv(dotenv_path=env_path)
+
 
 # Application definition
 
@@ -39,16 +44,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'drf_spectacular',
+    'drf_yasg',
     'users',
     'engine',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
-CSRF_TRUSTED_ORIGINS = ["https://madeinthai.org",
-                        "http://pannex.chatgptmall.tech", "https://pannex.chatgptmall.tech",
-                        "http://scien20.chatgptmall.tech", "https://scien20.chatgptmall.tech",
-                        "http://elsuniot.chatgptmall.tech", "https://elsuniot.chatgptmall.tech/"
-                        ]
+try:
+    CSRF_TRUSTED_ORIGINS = json.loads(os.getenv("CSRF_TRUSTED_ORIGINS", []))
+except Exception as e:
+    CSRF_TRUSTED_ORIGINS = list()
 
 
 MIDDLEWARE = [
@@ -89,14 +95,13 @@ WSGI_APPLICATION = 'chatgptmall.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': "chatgptmalldb",
-        'USER': "postgres",
-        'PASSWORD': "Z7LQ48&r[FG2/$wG",
-        'HOST': "localhost",
-        'PORT': 5432,
+        'NAME': os.getenv("MADEINTHAI_DB_NAME"),
+        'USER': os.getenv("MADEINTHAI_DB_USER"),
+        'PASSWORD': os.getenv("MADEINTHAI_DB_PASSWORD"),
+        'HOST': os.getenv("MADEINTHAI_DB_HOST"),
+        'PORT': os.getenv("MADEINTHAI_DB_PORT"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -289,4 +294,22 @@ JAZZMIN_SETTINGS = {
     "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
     # Add a language dropdown into the admin
     # "language_chooser": True,
+}
+
+REDOC_SETTINGS = {
+    'LAZY_RENDERING': False,
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'CHATGPTMALL APIs Documentation',
+    'DESCRIPTION': 'Document to try out all APIs for CHATGPTMALL',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'CONTACT': {'email': 'faisalbashir252@gmail.com', 'name': 'Faisal Ahmad'},
+    'LICENSE': {'name': 'BSD License'},
+    # OTHER SETTINGS
 }

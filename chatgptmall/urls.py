@@ -16,8 +16,11 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
-
+from django.urls import path, re_path
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
+from engine.views import TextToTexTView
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice
 
@@ -25,8 +28,25 @@ admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
 admin.site.site_title = 'CHATGPTMALL Admin'  # default: "Django site admin"
 
+schema_view = get_schema_view(
+    openapi.Info(
+        title="CHATGPTMALL APIs Documentation",
+        default_version='v1',
+        description="Document to try out all APIs for CHATGPTMALL",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="faisalbashir353@gmail.com"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
+)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # path('docs/', schema_view),
+    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    re_path(r'^docs/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('', HomepageView, name="HomepageView"),
     path('api/login/', LoginView, name="LoginView"),
     path('api/logout', Logout, name="Logout"),
@@ -41,6 +61,9 @@ urlpatterns = [
     path('api/get_voice/', get_chatgpt_response, name="get_chatgpt_response"),
 
     path('api/text_to_text/', TextToText, name="TextToText"),
+
+    # API's
+    path('api/v1/text_to_text/', TextToTexTView.as_view(), name="TextToTexTView" )
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

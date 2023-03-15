@@ -1,3 +1,4 @@
+import os
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, JsonResponse
@@ -10,7 +11,7 @@ from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAcces
 from users.models import User
 
 
-openai.api_key = ""
+openai.api_key = os.getenv("OPEN_AI_KEY")
 
 
 def HomepageView(request):
@@ -65,7 +66,15 @@ def RegisterView(request):
 
 
 def VoiceToImage(request):
-    return render(request, "chat.html")
+    images_generated = 0
+    is_active = True
+    for image in request.user.images.all():
+        images_generated += len(image.images)
+    if request.user.premium == 0 and images_generated >= 10:
+        is_active = False
+    if request.user.premium == 1 and images_generated >= 30:
+        is_active = False
+    return render(request, "chat.html", context={"is_active": is_active})
 
 
 def ShopVoiceToVoice(request):
@@ -122,7 +131,10 @@ def UploadVoice(request):
         images = list()
         for image in response['data']:
             images.append(image.url)
-        ImagesDB.objects.create(question=text, images=images)
+        if request.user.is_authenticated:
+            ImagesDB.objects.create(question=text, images=images, user=request.user)
+        else:
+            ImagesDB.objects.create(question=text, images=images, user=request.user)
         return JsonResponse(images, safe=False)
     else:
         return JsonResponse(response.last().images, safe=False)
