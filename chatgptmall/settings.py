@@ -44,8 +44,11 @@ INSTALLED_APPS = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
-# CORS_ALLOWED_ORIGINS = ["https://madeinthai.org", "https://www.madeinthai.org"]
-CSRF_TRUSTED_ORIGINS = ["https://madeinthai.org"]
+CSRF_TRUSTED_ORIGINS = ["https://madeinthai.org",
+                        "http://pannex.chatgptmall.tech", "https://pannex.chatgptmall.tech",
+                        "http://scien20.chatgptmall.tech", "https://scien20.chatgptmall.tech",
+                        "http://elsuniot.chatgptmall.tech", "https://elsuniot.chatgptmall.tech/"
+                        ]
 
 
 MIDDLEWARE = [
@@ -88,7 +91,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': "chatgptmalldb",
         'USER': "postgres",
-        'PASSWORD': "Lasiaf123",
+        'PASSWORD': "Z7LQ48&r[FG2/$wG",
         'HOST': "localhost",
         'PORT': 5432,
     }
