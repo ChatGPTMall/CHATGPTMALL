@@ -24,11 +24,12 @@
   </head>
   <body>
     <!------------------------------Header section---------------------------->
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg" style="height: 79px;">
       <div class="container">
         <a class="navbar-brand" href="{% url 'HomepageView' %}">
-          <img style="height: 68px;position: relative;top: 21px;"
-               src="https://www.zkteco.com/cn/uploads/image/20230228/5142aefc758659aafe58c2832e6d13f5.png"></a>
+<!--          <img style="height: 68px;position: relative;top: 21px;"-->
+<!--               src="https://www.zkteco.com/cn/uploads/image/20230228/5142aefc758659aafe58c2832e6d13f5.png">-->
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
           data-bs-target="#navbarSupportedContent"
           aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -122,41 +123,41 @@
 
 
 
-    <div>
-      <div class="tutorial-section">
-        <div class="main-container">
-          <div class="container py-5">
-            <div class="row">
-              <div class="d-flex flex-wrap py-4">
+<!--    <div>-->
+<!--      <div class="tutorial-section">-->
+<!--        <div class="main-container">-->
+<!--          <div class="container py-5">-->
+<!--            <div class="row">-->
+<!--              <div class="d-flex flex-wrap py-4">-->
 
-                <div class="col-md-6">
-                  <div class="tutorial-content-container my-2 mx-2">
-                    <div class=" mt-5">
-                      <h2 class="tutorial-headline">Our R&D 's location</h2>
-                      <p class="tutorial-paragraph py-3">One9Five Asoke – Rama 9, Bangkok, Thailand</p>
-                    </div>
-                  </div>
-                </div>
+<!--                <div class="col-md-6">-->
+<!--                  <div class="tutorial-content-container my-2 mx-2">-->
+<!--                    <div class=" mt-5">-->
+<!--                      <h2 class="tutorial-headline">Our R&D 's location</h2>-->
+<!--                      <p class="tutorial-paragraph py-3">One9Five Asoke – Rama 9, Bangkok, Thailand</p>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </div>-->
 
-                <div class="col-md-6">
-                  <div class="blog-card-container mt-5">
-                    <div class="feature-section-img-container">
-                      <img style="border-radius: 69px;" class="w-100" src="{% static 'images/location.jpeg' %}"
-                        alt="images/video.png">
-                    </div>
-                  </div>
-                </div>
+<!--                <div class="col-md-6">-->
+<!--                  <div class="blog-card-container mt-5">-->
+<!--                    <div class="feature-section-img-container">-->
+<!--                      <img style="border-radius: 69px;" class="w-100" src="{% static 'images/location.jpeg' %}"-->
+<!--                        alt="images/video.png">-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </div>-->
 
 
 
-              </div>
-            </div>
+<!--              </div>-->
+<!--            </div>-->
 
-          </div>
+<!--          </div>-->
 
-        </div>
-      </div>
-    </div>
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
 
 
     <!------------------------------Start learning section---------------------------->
@@ -268,93 +269,93 @@
 
 
       <!--------------------------------Testmonial section------------------------------------->
-      <div>
-        <div class="testmonial-section">
-          <div class="main-container">
-            <div class="container py-5">
-              <div class="row p-3">
-                <div class="container-content text-center mt-3">
-                  <h2 class="testmonial-section-headline">Testimonials</h2>
-                  <h2 class="testmonial-section-subheadline py-2">Some
-                    testimonials
-                    from our customers</h2>
-                </div>
-                <div class="d-flex flex-wrap my-5">
-                  {% for testmonial in testmonials %}
-                  <div class="col-md-4 mt-5 pt-4">
-                    <div class="testmonial-card-container py-3 mx-3">
-                      <div class="text-center card-img-container">
-                        <img src="media/{{testmonial.profile}}"
-                          alt="testmonial-1.png" style="width: 100px;border-radius: 50px;height: 100px;">
-                        <div class="mt-4">
-                          <h4 class="testmonial-card-title">{{testmonial.name}}</h4>
-                          <h5 class="testmonial-card-subtitle">{{testmonial.company}}</h5>
-                        </div>
+<!--      <div>-->
+<!--        <div class="testmonial-section">-->
+<!--          <div class="main-container">-->
+<!--            <div class="container py-5">-->
+<!--              <div class="row p-3">-->
+<!--                <div class="container-content text-center mt-3">-->
+<!--                  <h2 class="testmonial-section-headline">Testimonials</h2>-->
+<!--                  <h2 class="testmonial-section-subheadline py-2">Some-->
+<!--                    testimonials-->
+<!--                    from our customers</h2>-->
+<!--                </div>-->
+<!--                <div class="d-flex flex-wrap my-5">-->
+<!--                  {% for testmonial in testmonials %}-->
+<!--                  <div class="col-md-4 mt-5 pt-4">-->
+<!--                    <div class="testmonial-card-container py-3 mx-3">-->
+<!--                      <div class="text-center card-img-container">-->
+<!--                        <img src="media/{{testmonial.profile}}"-->
+<!--                          alt="testmonial-1.png" style="width: 100px;border-radius: 50px;height: 100px;">-->
+<!--                        <div class="mt-4">-->
+<!--                          <h4 class="testmonial-card-title">{{testmonial.name}}</h4>-->
+<!--                          <h5 class="testmonial-card-subtitle">{{testmonial.company}}</h5>-->
+<!--                        </div>-->
 
-                      </div>
-                      <div class="testmonial-card text-center mx-4">
-                        <div>
-                          <p class="testmonial-card-paragraph" style="color:black !important;">{{testmonial.feedback}}</p>
-                          <div class="d-flex justify-content-center pb-5">
-                            {% with ''|center:testmonial.stars as range %}
-                            {% for _ in range %}
-                                <i class="fa-solid fa-star star-icon mx-1"></i>
-                            {% endfor %}
-                            {% endwith %}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {% endfor%}
-                </div>
-              </div>
+<!--                      </div>-->
+<!--                      <div class="testmonial-card text-center mx-4">-->
+<!--                        <div>-->
+<!--                          <p class="testmonial-card-paragraph" style="color:black !important;">{{testmonial.feedback}}</p>-->
+<!--                          <div class="d-flex justify-content-center pb-5">-->
+<!--                            {% with ''|center:testmonial.stars as range %}-->
+<!--                            {% for _ in range %}-->
+<!--                                <i class="fa-solid fa-star star-icon mx-1"></i>-->
+<!--                            {% endfor %}-->
+<!--                            {% endwith %}-->
+<!--                          </div>-->
+<!--                        </div>-->
+<!--                      </div>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                  {% endfor%}-->
+<!--                </div>-->
+<!--              </div>-->
 
-            </div>
+<!--            </div>-->
 
-          </div>
-        </div>
-      </div>
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
 
 
 
 
       <!--------------------------------Blog section------------------------------------->
-      <div>
-        <div class="blog-section">
-          <div class="main-container">
-            <div class="container py-5">
-              <div class="row p-3">
-                <div class="container-content text-center mt-3">
-                  <h2 class="blog-section-headline">Our Blog</h2>
-                </div>
-                <div class="d-flex flex-wrap py-4">
-                  {% for blog in blogs %}
-                  <div class="col-md-4">
-                    <div class="blog-card-container my-2 mx-2">
-                      <div class="blog-card-img-container">
-                        <img class="w-100" src="media/{{blog.thumbnail}}"
-                          alt="blog.png">
-                      </div>
-                      <div class="blog-card">
-                        <div class="blog-card-title-container mx-3 mt-4">
-                          <p class="blog-cad-title py-2">{{blog.title}}</p>
-                        </div>
-                        <p class="blog-card-paragraph">{{blog.description|safe|truncatechars:60}}</p>
-                        <a class="blog-card-button" href="#">Read more</a>
-                      </div>
-                    </div>
-                  </div>
-                  {% endfor %}
-                  <button class="btn view-button mt-5 px-5">View All </button>
-                </div>
-              </div>
+<!--      <div>-->
+<!--        <div class="blog-section">-->
+<!--          <div class="main-container">-->
+<!--            <div class="container py-5">-->
+<!--              <div class="row p-3">-->
+<!--                <div class="container-content text-center mt-3">-->
+<!--                  <h2 class="blog-section-headline">Our Blog</h2>-->
+<!--                </div>-->
+<!--                <div class="d-flex flex-wrap py-4">-->
+<!--                  {% for blog in blogs %}-->
+<!--                  <div class="col-md-4">-->
+<!--                    <div class="blog-card-container my-2 mx-2">-->
+<!--                      <div class="blog-card-img-container">-->
+<!--                        <img class="w-100" src="media/{{blog.thumbnail}}"-->
+<!--                          alt="blog.png">-->
+<!--                      </div>-->
+<!--                      <div class="blog-card">-->
+<!--                        <div class="blog-card-title-container mx-3 mt-4">-->
+<!--                          <p class="blog-cad-title py-2">{{blog.title}}</p>-->
+<!--                        </div>-->
+<!--                        <p class="blog-card-paragraph">{{blog.description|safe|truncatechars:60}}</p>-->
+<!--                        <a class="blog-card-button" href="#">Read more</a>-->
+<!--                      </div>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                  {% endfor %}-->
+<!--                  <button class="btn view-button mt-5 px-5">View All </button>-->
+<!--                </div>-->
+<!--              </div>-->
 
-            </div>
+<!--            </div>-->
 
-          </div>
-        </div>
-      </div>
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
 
 
 
