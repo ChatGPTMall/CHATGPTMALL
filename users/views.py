@@ -68,12 +68,13 @@ def RegisterView(request):
 def VoiceToImage(request):
     images_generated = 0
     is_active = True
-    for image in request.user.images.all():
-        images_generated += len(image.images)
-    if request.user.premium == 0 and images_generated >= 10:
-        is_active = False
-    if request.user.premium == 1 and images_generated >= 30:
-        is_active = False
+    if request.user.is_authenticated:
+        for image in request.user.images.all():
+            images_generated += len(image.images)
+        if request.user.premium == 0 and images_generated >= 10:
+            is_active = False
+        if request.user.premium == 1 and images_generated >= 30:
+            is_active = False
     return render(request, "chat.html", context={"is_active": is_active})
 
 
