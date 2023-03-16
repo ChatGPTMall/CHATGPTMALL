@@ -135,6 +135,7 @@ def VoiceOutPut(request):
 def UploadVoice(request):
     text = request.GET.get('text', '')
     response = ImagesDB.objects.filter(question__icontains=text)
+    URL = os.getenv("DEPLOYED_HOST", "https://my.chatgptmall.tech")
     if not response:
         response = openai.Image.create(prompt="{}".format(text), n=3, size="1024x1024")
         images = list()
@@ -158,16 +159,17 @@ def UploadVoice(request):
         imagedb.image3.save("image_three.jpg", File(io3))
 
         show_images = list()
-        show_images.append(request.build_absolute_uri(imagedb.image1.url))
-        show_images.append(request.build_absolute_uri(imagedb.image2.url))
-        show_images.append(request.build_absolute_uri(imagedb.image3.url))
+
+        show_images.append(URL+imagedb.image1.url)
+        show_images.append(URL+imagedb.image2.url)
+        show_images.append(URL+imagedb.image3.url)
 
         return JsonResponse(show_images, safe=False)
     else:
         show_images = list()
-        show_images.append(request.build_absolute_uri(response.last().image1.url))
-        show_images.append(request.build_absolute_uri(response.last().image2.url))
-        show_images.append(request.build_absolute_uri(response.last().image3.url))
+        show_images.append(URL+response.last().image1.url)
+        show_images.append(URL+response.last().image2.url)
+        show_images.append(URL+response.last().image3.url)
         return JsonResponse(show_images, safe=False)
 
 
