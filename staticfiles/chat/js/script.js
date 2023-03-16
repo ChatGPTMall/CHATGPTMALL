@@ -34,6 +34,14 @@ $.ajaxSetup({
 });
 
 $(document).ready(function() {
+
+//    btn.addEventListener('click', (event) => {
+//      event.preventDefault();
+//      downloadImage(url);
+//    })
+
+
+    $("#download_btn").hide();
     $("#text_div").hide();
     document.querySelector('#voice_text_btn').onclick = function() {
         $("#loading").show();
@@ -43,11 +51,13 @@ $(document).ready(function() {
         xhr.onreadystatechange = function() {
               if (this.readyState == 4 && this.status == 200) {
                                $("#loading").hide();
+                               $("#download_btn").show();
                                var images = JSON.parse(this.responseText);
                                for(let i=0; i < images.length; i++){
                                 $("#openai").append(`
                                     <div class="col-md-4">
                                         <div class="card" style="width: 18rem;">
+                                            <a href="${images[i]}" class="download_images" download>Download</a>
                                              <img id="card-images" class="card-img-top" src="${images[i]}" >
                                         </div>
                                     </div>

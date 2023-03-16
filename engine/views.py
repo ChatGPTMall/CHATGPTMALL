@@ -5,12 +5,14 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 # Create your views here.
 from engine.serializers import TextToTexTViewSerializer
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 openai.api_key = os.getenv("OPEN_AI_KEY")
 
 
 class TextToTexTView(generics.CreateAPIView):
     serializer_class = TextToTexTViewSerializer
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

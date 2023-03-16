@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CHATGPTMALL | API KEY</title>
+      <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@200;400&family=DM+Sans:wght@400;500;700&family=Inconsolata:wght@400;700&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;700;800&family=Montserrat:wght@200;500;600;700;800;900&family=Nunito:wght@400;500;600;700&family=Open+Sans&family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet">
+    <link href="{% static 'css/all.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/owl.carousel.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/stylesheet.css' %}" rel="stylesheet">
+    <style>
+        #key_div{
+            display: flex;
+            justify-content: space-between;
+            padding-top: 21px;
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg" style="padding: 20px;">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'HomepageView' %}">
+<!--          <img style="height: 68px;position: relative;top: 21px;"-->
+<!--               src="https://www.zkteco.com/cn/uploads/image/20230228/5142aefc758659aafe58c2832e6d13f5.png">-->
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav m-auto mb-2 mb-lg-0">
+            <li class="nav-item nav-item-active">
+              <a class="nav-link active-link fw-bold" aria-current="page"
+                href="{% url 'HomepageView' %}">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'VoiceToVoice' %}">Voice To Voice</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'VoiceToImage' %}">Voice To Image</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'TextToText' %}">Text To Text</a>
+            </li>
+          </ul>
+
+          {% if request.user.is_authenticated %}
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+             {{request.user.get_full_name}}
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Update Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'Logout' %}">Logout</a></li>
+            </ul>
+           </li>
+          </ul>
+          {% else %}
+          <div class="d-flex">
+            <a href="{% url 'LoginView' %}" class="btn signin">Sign In</a>
+            <a href="{% url 'RegisterView' %}" class="btn register-btn">Register now </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+{% if request.user.is_authenticated %}
+<main class="container">
+  <div class="bg-light p-5 rounded mt-3">
+    <h1>Generate Your API Key</h1>
+          <div id="key_div">
+            <p class="lead" id="api_key">{{token}}</p>
+                <i style="cursor:pointer;" class="fa fa-trash" aria-hidden="true" id="delete_token"></i>
+          </div>
+      <br>
+    <a class="btn btn-lg btn-primary" role="button" id="generate_new_key">Generate New API Key</a>
+  </div>
+</main>
+{% else %}
+<h2>Please Login to generate API keys</h2>
+{% endif %}
+        <div id="loading">
+          <i class="fa fa-spinner fa-spin fa-3x text-white"></i>
+        </div>
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/jquery-3.6.1.min.js' %}"></script>
+<script src="{% static 'js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

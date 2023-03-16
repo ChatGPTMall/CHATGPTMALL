@@ -1,14 +1,21 @@
 import os
-from django.contrib.auth import authenticate, login, logout
-from django.db import IntegrityError
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render, redirect
-import speech_recognition as sr
-import openai
-from django.views.decorators.csrf import csrf_exempt
+import urllib
+from io import BytesIO
+from urllib import request
+from urllib.request import urlopen
 
-from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess
+import openai
+from django.core.files import File
+
 from users.models import User
+import speech_recognition as sr
+from django.db import IntegrityError
+from django.shortcuts import render, redirect
+from rest_framework.authtoken.models import Token
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import authenticate, login, logout
+from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess
 
 
 openai.api_key = os.getenv("OPEN_AI_KEY")
@@ -32,6 +39,7 @@ def LoginView(request):
             user_auth = authenticate(email=email, password=password)
             if user_auth is not None:
                 login(request, user)
+                Token.objects.get_or_create(user=user)
                 return redirect("/")
             else:
                 redirect('/api/login/')
@@ -133,12 +141,34 @@ def UploadVoice(request):
         for image in response['data']:
             images.append(image.url)
         if request.user.is_authenticated:
-            ImagesDB.objects.create(question=text, images=images, user=request.user)
+            imagedb = ImagesDB.objects.create(question=text, user=request.user)
         else:
-            ImagesDB.objects.create(question=text, images=images, user=request.user)
-        return JsonResponse(images, safe=False)
+            ImagesDB.objects.create(question=text, images=images)
+
+        response1 = urlopen(images[0])
+        io1 = BytesIO(response1.read())
+        imagedb.image1.save("image_one.jpg", File(io1))
+
+        response2 = urlopen(images[1])
+        io2 = BytesIO(response2.read())
+        imagedb.image2.save("image_two.jpg", File(io2))
+
+        response3 = urlopen(images[2])
+        io3 = BytesIO(response3.read())
+        imagedb.image3.save("image_three.jpg", File(io3))
+
+        show_images = list()
+        show_images.append(request.build_absolute_uri(imagedb.image1.url))
+        show_images.append(request.build_absolute_uri(imagedb.image2.url))
+        show_images.append(request.build_absolute_uri(imagedb.image3.url))
+
+        return JsonResponse(show_images, safe=False)
     else:
-        return JsonResponse(response.last().images, safe=False)
+        show_images = list()
+        show_images.append(request.build_absolute_uri(response.last().image1.url))
+        show_images.append(request.build_absolute_uri(response.last().image2.url))
+        show_images.append(request.build_absolute_uri(response.last().image3.url))
+        return JsonResponse(show_images, safe=False)
 
 
 def get_chatgpt_response(request):
@@ -170,4 +200,23 @@ def get_chatgpt_response(request):
 
 def TextToText(request):
     return render(request, "TextToText.html")
+
+
+def CreateAPIkey(request):
+    Token.objects.filter(user=request.user).delete()
+    token = Token.objects.create(user=request.user)
+    return HttpResponse(str(token.key))
+
+
+def DeleteAPIkey(request):
+    Token.objects.filter(user=request.user).delete()
+    return HttpResponse("")
+
+
+def ApiKeyView(request):
+    try:
+        token = Token.objects.get(user=request.user).key
+        return render(request, "apikey.html", {"token": token})
+    except Exception as e:
+        return render(request, "apikey.html")
 

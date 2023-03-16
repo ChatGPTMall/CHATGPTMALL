@@ -2,6 +2,36 @@ $(document).ready(function(){
   $('#loading').fadeOut(2000,function(){
     $('body').css('overflow','visible')
   });
+   var api_value = $("#api_key").text();
+   if(api_value == ""){
+        $("#api_key").hide();
+        $("#delete_token").hide();
+   }
+   $("#generate_new_key").on("click", (e)=>{
+      $.ajax({
+        type: "GET",
+        url: `/create/api_key/`,
+        success: function (data) {
+          $("#api_key").show();
+          $("#delete_token").show();
+          $("#api_key").text(data)
+        },
+      });
+   });
+
+   $("#delete_token").on("click", (e)=>{
+      $.ajax({
+        type: "GET",
+        url: `/delete_key/`,
+        success: function (data) {
+          $("#api_key").hide();
+          $("#delete_token").hide();
+          $("#api_key").text("")
+        },
+      });
+   });
+
+
 });
 
 

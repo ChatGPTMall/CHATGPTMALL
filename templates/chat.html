@@ -4,10 +4,11 @@
 {% block content %}
 {% if request.user.is_authenticated %}
     {% if is_active %}
+
         <div class="container">
+            <br>
+            <h1>Generate your perfect product’s image <br>based on your voice chat</h1><br><br>
             <div class="experiment row" >
-                <br>
-                <h1>Generate your perfect product’s image <br>based on your voice chat</h1><br><br>
                 <br>
                 <div>
                     <button id="start-recording">
@@ -25,10 +26,13 @@
             <section class="experiment">
                 <div id="audios-container"></div>
             </section>
-
+            <div>
             <div id="text_div" style="display:flex;">
                 <input type="text" class="form-control" name="voice_text" id="voice_text">
-                <button id="voice_text_btn">Generate Images</button>
+                <div>
+                    <button id="voice_text_btn">Generate Images</button>
+<!--                    <button id="download_btn">Download Images</button>-->
+                </div>
             </div>
 
     </div>
