@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'chat/css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css">
     <link rel="stylesheet" href="https://cdn.webrtc-experiment.com/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
     <style>
             #text_div{
     flex-direction: column !important;
@@ -46,16 +47,24 @@
     cursor: pointer;
     margin-top: 20px;
 }
+#back{
+    background: #2844FA;
+    color: white;
+    font-size: 15px;
+    border-radius: 13px;
+    margin: 10px;
+}
     </style>
 </head>
 <body>
 <nav class="navbar navbar-light bg-light">
-  <a class="navbar-brand" href="{% url 'HomepageView' %}">
-    <img src="{% static 'images/logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
+  <a class="navbar-brand" id="back" href="{% url 'HomepageView' %}">
+    <i class="fa fa-arrow-left" aria-hidden="true"></i> Back
   </a>
 </nav>
     {% if request.user.is_authenticated %}
         {% if is_active %}
+        {% if request.user.access == "VOICE_TO_Voice" %}
         <main role="main" class="container">
           <div class="">
             <h2>Voice To Voice Chat</h2>
@@ -86,7 +95,9 @@
               <p id="response"></p>
           </div>
         </main>
-
+        {% else %}
+        <div class="text-center"><h2 >You Do Not Have Access To This Feature</h2></div>
+    {% endif %}
         {% else %}
             <div class="text-center">
                 <h2 >Your have exceeded your quota please Buy requests again </h2>

@@ -8,14 +8,25 @@
     <link rel="stylesheet" type="text/css" href="{% static 'chat/css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'chat/css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <style>
+        #back{
+            background: #2844FA;
+            color: white;
+            font-size: 15px;
+            border-radius: 13px;
+            margin: 10px;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-light bg-light">
-  <a class="navbar-brand" href="{% url 'HomepageView' %}">
-    <img src="{% static 'images/logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
+    <a class="navbar-brand" id="back" href="{% url 'HomepageView' %}">
+    <i class="fa fa-arrow-left" aria-hidden="true"></i> Back
   </a>
 </nav>
 {% if request.user.is_authenticated %}
+    {% if request.user.access == "TEXT_TO_TEXT" %}
     <div class="container">
         <div class="row">
             <form>
@@ -23,6 +34,11 @@
                 <label for="text_to_text_input" class="form-label">Enter Your Text</label>
                   <textarea class="form-control" id="text_to_text_input" aria-describedby="Your Text"></textarea>
               </div>
+                <br>
+                <div class="mb-3">
+                    <label>No of Words</label>
+                    <input type="number" class="form-control" id="no_of_words" required>
+                </div>
                 <br>
               <a type="submit" id="text_to_text_btn" class="btn btn-primary">Get Response</a>
             </form>
@@ -34,6 +50,9 @@
             <p id="text_to_text_show"></p>
         </div>
     </div>
+{% else %}
+        <div class="text-center"><h2 >You Do Not Have Access To This Feature</h2></div>
+    {% endif %}
 {% else %}
         <div class="text-center">
             <h2 >Please Login To Access Our Voice To Voice Service </h2>

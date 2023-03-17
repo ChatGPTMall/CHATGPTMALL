@@ -53,6 +53,13 @@
     font-weight: 500;
     font-size: 10px;
 }
+#back{
+    background: #2844FA;
+    color: white;
+    font-size: 15px;
+    border-radius: 13px;
+    margin: 10px;
+}
 
     </style>
 
@@ -61,6 +68,7 @@
 
 
 <link rel="stylesheet" href="https://cdn.webrtc-experiment.com/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
 
 
     {% include "head_css.html" %}
@@ -74,8 +82,8 @@
 {% block navbar %}
 <!-- Image and text -->
 <nav class="navbar navbar-light bg-light">
-  <a class="navbar-brand" href="{% url 'HomepageView' %}">
-    <img src="{% static 'images/logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
+    <a class="navbar-brand" id="back" href="{% url 'HomepageView' %}">
+    <i class="fa fa-arrow-left" aria-hidden="true"></i> Back
   </a>
 </nav>
 {% endblock navbar %}

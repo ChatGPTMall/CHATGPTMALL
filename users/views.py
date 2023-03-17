@@ -181,10 +181,12 @@ def get_chatgpt_response(request):
     except Exception as e:
         VoiceToVoiceRequests.objects.create(user=request.user, requests_send=1)
     prompt = request.GET.get('text', '')
+    words = request.GET.get('words')
     response = ResponsesDB.objects.filter(question__icontains=prompt)
     if not response:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
+            max_tokens=int(words),
             messages=[
                 {"role": "system", "content": "You are a chatbot"},
                 {"role": "user", "content": "{}?".format(prompt)},

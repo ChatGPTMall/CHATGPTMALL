@@ -87,6 +87,13 @@ class PremiumFlags(models.IntegerChoices):
     PREMIUM_USER = (1, _('Premium User'))
 
 
+class AccessTypes(models.TextChoices):
+    NO_ACCESS = "NO_ACCESS", _('No Access')
+    TEXT_TO_TEXT = "TEXT_TO_TEXT", _('Text To Text')
+    VOICE_TO_Voice = "VOICE_TO_Voice", _('Voice To Voice')
+    VOICE_TO_IMAGE = "VOICE_TO_IMAGE", _('Voice To Image')
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     """
     User Table, which will provide login functionality
@@ -103,6 +110,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(_('first name'), max_length=30)
     last_name = models.CharField(_('last name'), max_length=150, null=True)
     email = LowercaseEmailField(_('email address'), unique=True)
+    access = models.CharField(choices=AccessTypes.choices, max_length=30, default="NO_ACCESS")
     is_staff = models.BooleanField(_('staff status'), default=False)
     is_superuser = models.BooleanField(_('superuser'), default=False)
     is_active = models.BooleanField(_('active'), default=True)
