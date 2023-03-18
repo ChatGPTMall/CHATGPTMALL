@@ -90,3 +90,29 @@ class ShopAccess(models.Model):
         verbose_name_plural = _("ShopAccess")
 
 
+class PlanType(models.TextChoices):
+    MONTHLY = "MONTHLY", _('Monthly')
+    YEARLY = "YEARLY", _('Yearly')
+    TIMEPERIOD = "TIMEPERIOD", _('Time Period')
+
+
+class Plans(models.Model):
+    title = models.CharField(max_length=200)
+    price = models.FloatField(default=0)
+    plan_type = models.CharField(choices=PlanType.choices, max_length=30, default="MONTHLY")
+    description = models.TextField()
+    requests = models.IntegerField(default=0)
+    added_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = _("Subscription Plan")
+        verbose_name_plural = _("Chatgptmall Plans")
+
+
+
+
+

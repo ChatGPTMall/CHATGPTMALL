@@ -15,8 +15,7 @@ from rest_framework.authtoken.models import Token
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
-from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess
-
+from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans
 
 openai.api_key = os.getenv("OPEN_AI_KEY")
 
@@ -223,4 +222,13 @@ def ApiKeyView(request):
         return render(request, "apikey.html", {"token": token})
     except Exception as e:
         return render(request, "apikey.html")
+
+
+def OurPlans(request):
+    context = {
+        "monthly_plans": Plans.objects.filter(plan_type="MONTHLY"),
+        "yearly_plans":  Plans.objects.filter(plan_type="YEARLY"),
+        "time_period_plans": Plans.objects.filter(plan_type="TIMEPERIOD"),
+    }
+    return render(request, "plans.html", context=context)
 

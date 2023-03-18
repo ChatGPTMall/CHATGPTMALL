@@ -22,7 +22,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from engine.views import TextToTexTView
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
-    get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey
+    get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -65,6 +65,8 @@ urlpatterns = [
     path("create/api_key/", CreateAPIkey, name="CreateAPIkey"),
     path("delete_key/", DeleteAPIkey, name="DeleteAPIkey"),
     path('api/keys/', ApiKeyView, name="ApiKeyView"),
+
+    path('plans/', OurPlans, name="our_plans"),
 
     # API's
     path('api/v1/text_to_text/', TextToTexTView.as_view(), name="TextToTexTView"),

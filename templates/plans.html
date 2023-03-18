@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>CHTAGPTMALL | Plans</title>
+  <link href="https://fonts.googleapis.com/css?family=Karla:400,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'assets/css/pricing-plan.css' %}">
+</head>
+<body>
+
+  <main>
+    <nav class="navbar">
+    <a class="navbar-brand" id="back" href="{% url 'HomepageView' %}">
+    <i class="fa fa-arrow-left" aria-hidden="true"></i> Back
+  </a>
+</nav>
+    <div class="container">
+      <h1 class="text-center pricing-table-title">Pricing Plans</h1>
+
+      <ul class="nav nav-pills justify-content-center pricing-tab" id="pricing-tab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="monthly-tab" data-toggle="pill" href="#monthly" role="tab" aria-controls="monthly"
+            aria-selected="true">Plans</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="yearly-tab" data-toggle="pill" href="#yearly" role="tab" aria-controls="yearly"
+            aria-selected="false">Time Period Plans</a>
+        </li>
+      </ul>
+
+      <div class="tab-content pricing-tab-content" id="pricing-tab-content">
+        <div class="tab-pane active" id="monthly" role="tabpanel" aria-labelledby="monthly-tab">
+          <div class="row">
+            {% for m_plan in monthly_plans %}
+            <div class="col-md-4">
+              <div class="card pricing-card">
+                <div class="card-body">
+                  <h3 class="pricing-plan-title d-flex align-items-center">{{m_plan.title}}</h3>
+                  {% if m_plan.price == 0 %}
+                  <p class="h1 pricing-plan-cost">Free</p>
+                  {% else %}
+                  <p class="h1 pricing-plan-cost">{{m_plan.price}}
+                    <span class="currency" style="margin-left:10px;">USD</span></p>
+                  {% endif %}
+                  <div>{{m_plan.description | safe}}</div>
+                  <a href="#!" class="btn pricing-plan-purchase-btn">Get started</a>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="tab-pane" id="yearly" role="tabpanel" aria-labelledby="yearly-tab">
+          <div class="row row_big" style="flex-wrap:nowrap;overflow-x:auto;">
+            {% for plan in time_period_plans %}
+            <div class="col-md-4">
+              <div class="card pricing-card">
+                <div class="card-body">
+                  <h3 class="pricing-plan-title d-flex align-items-center">{{plan.title}}</h3>
+                  <p class="h1 pricing-plan-cost">{{plan.price}}
+                    <span class="currency" style="margin-left:10px;">USD</span></p>
+                  <div>{{plan.description | safe}}</div>
+                  <a href="#!" class="btn pricing-plan-purchase-btn">Get started</a>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</body>
+</html>
