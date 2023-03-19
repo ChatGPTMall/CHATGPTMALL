@@ -6,6 +6,7 @@ from urllib.request import urlopen
 
 import openai
 from django.core.files import File
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from users.models import User
 import speech_recognition as sr
@@ -15,7 +16,7 @@ from rest_framework.authtoken.models import Token
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
-from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans
+from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans,Industries, Capabilities, Jobs
 
 openai.api_key = os.getenv("OPEN_AI_KEY")
 
@@ -231,4 +232,27 @@ def OurPlans(request):
         "time_period_plans": Plans.objects.filter(plan_type="TIMEPERIOD"),
     }
     return render(request, "plans.html", context=context)
+
+
+def IndustriesView(request):
+    industries = Industries.objects.all().order_by("added_on")
+    p = Paginator(industries, 1)  # creating a paginator object
+    # getting the desired page number from url
+    page_number = request.GET.get('page')
+    try:
+        page_obj = p.get_page(page_number)  # returns the desired page object
+    except PageNotAnInteger:
+        # if page_number is not an integer then assign the first page
+        page_obj = p.page(1)
+    except EmptyPage:
+        # if page is empty then return last page
+        page_obj = p.page(p.num_pages)
+    context = {'page_obj': page_obj}
+    # sending the page object to index.html
+    return render(request, "industries.html", context=context)
+
+
+def GetIndustriesData(request):
+    industries = list(Industries.objects.all().values("title", "slogan"))
+    return JsonResponse(industries, safe=False)
 

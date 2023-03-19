@@ -113,6 +113,52 @@ class Plans(models.Model):
         verbose_name_plural = _("Chatgptmall Plans")
 
 
+class Industries(models.Model):
+    title = models.TextField(_("Title"), unique=True)
+    slogan = models.TextField(_("Industry Slogan"))
+    image = models.ImageField(upload_to="marketing/industries", null=True, blank=True)
+    added_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = _("Industry")
+        verbose_name_plural = _("Industries")
+
+
+class Jobs(models.Model):
+    title = models.TextField(_("Job Title"), unique=True)
+    slogan = models.TextField(_("Job Slogan"))
+    image = models.ImageField(upload_to="marketing/jobs", null=True, blank=True)
+    added_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = _("JOb")
+        verbose_name_plural = _("Jobs")
+
+
+class Capabilities(models.Model):
+    title = models.TextField(_("Capability Title"), unique=True)
+    slogan = models.TextField(_("Capability Slogan"))
+    image = models.ImageField(upload_to="marketing/Capabilities", null=True, blank=True)
+    added_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = _("Capability")
+        verbose_name_plural = _("Capabilities")
+
+
+
 
 
 

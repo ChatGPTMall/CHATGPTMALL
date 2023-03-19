@@ -18,6 +18,34 @@
       .p-3 p{
         color:white !important;
       }
+      .page_no{
+          padding: 9px 13px;
+          background: #686861;
+          border-radius: 18px;
+          color: white;
+      }
+      .typewriter{
+  overflow: hidden; /* Ensures the content is not revealed until the animation */
+  border-right: .15em solid orange; /* The typwriter cursor */
+  white-space: nowrap; /* Keeps the content on a single line */
+  margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+  letter-spacing: .15em; /* Adjust as needed */
+  animation:
+    typing 23.5s steps(40, end),
+    blink-caret .75s step-end infinite;
+}
+
+/* The typing effect */
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+/* The typewriter cursor effect */
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: orange; }
+}
 
     </style>
     <title>CHATGPTMALL | Home</title>
@@ -27,8 +55,6 @@
     <nav class="navbar navbar-expand-lg" style="padding: 20px;">
       <div class="container">
         <a class="navbar-brand" href="{% url 'HomepageView' %}">
-<!--          <img style="height: 68px;position: relative;top: 21px;"-->
-<!--               src="https://www.zkteco.com/cn/uploads/image/20230228/5142aefc758659aafe58c2832e6d13f5.png">-->
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
           data-bs-target="#navbarSupportedContent"
@@ -43,18 +69,18 @@
                 href="{% url 'HomepageView' %}">Home</a>
             </li>
 
-<!--            <ul class="navbar-nav me-auto mb-2 mb-lg-0">-->
-<!--            <li class="nav-item dropdown">-->
-<!--            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">-->
-<!--             Marketing-->
-<!--            </a>-->
-<!--            <ul class="dropdown-menu">-->
-<!--              <li><a class="dropdown-item" href="{% url 'IndustriesView' %}">Industries</a></li>-->
-<!--              <li><a class="dropdown-item" href="">Job Roles</a></li>-->
-<!--              <li><a class="dropdown-item" href="">Capabilities</a></li>-->
-<!--            </ul>-->
-<!--           </li>-->
-<!--          </ul>-->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+             Marketing
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Industries</a></li>
+              <li><a class="dropdown-item" href="">Job Roles</a></li>
+              <li><a class="dropdown-item" href="">Capabilities</a></li>
+            </ul>
+           </li>
+          </ul>
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -99,91 +125,51 @@
 
 
 
-
-    <!------------------------------Header section---------------------------->
-          <div>
-            <div class="feature-section">
-              <div class="main-container">
-                <div class="container-fluid py-5">
-                  <div class="row p-3">
-                    <div class="d-flex flex-wrap py-4">
-                      <div class="col-md-6">
-                        <div class="blog-card-container my-2 mx-2">
-                          <div class="feature-section-img-container">
-                            <img style="border-radius: 64px;" class="w-100" src="{% static 'images/iot.png' %}"
-                              alt="choose teatcher.png">
-                          </div>
-                        </div>
-                      </div>
-
-
-                      <div class="col-md-6">
-                        <div class="feature-content-container my-2 mx-2" style="margin-left: 70px !important;">
-                          <div class="blog-card-img-container mt-5">
-                            <p class="blog-title pt-4 pb-2">OUR FEATURE</p>
-                            <h2 class="blog-headline">Generate your perfect Product’s image based on your voice chat</h2>
-                          </div>
-                          <div style="position: relative;">
-                            <br>
-                            <a href="{% url 'VoiceToImage' %}" class="btn become-teacher-button">Voice To Image
-                              <i class="fa fa-microphone p-3 "></i></a>
-                          </div>
-                        </div>
-                      </div>
+    <div>
+      <div class="">
+        <div class="main-container">
+          <div class="container py-5">
+            <div class="row">
+            {% for industry in page_obj %}
+              <div class="d-flex flex-wrap py-4">
+                <div class="col-md-6">
+                  <div class="tutorial-content-container my-2 mx-2">
+                    <div class=" mt-5">
+                      <h6 class="tutorial-paragraph typewriter">{{industry.title}}</h6>
+                      <p class="tutorial-paragraph py-3">{{industry.slogan}}</p>
                     </div>
                   </div>
+                  <div style="margin-top:16%;">
+                    {%if page_obj.has_previous %}
+                        <a style="margin-right:12px;" class="btn btn-primary" href="?page={{page_obj.previous_page_number}}">
+                          <i class="fa fa-angle-left"></i>Previous</a>
+                    {% endif %}
+                    <span class="page_no">{{page_obj.number}}</span>
 
+                    {%if page_obj.has_next %}
+                        <a style="margin-left:12px;" class="btn btn-primary" href="?page={{page_obj.next_page_number}}">Next
+                          <i class="fa fa-angle-right"></i></a>
+                    {% endif %}
+                  </div>
                 </div>
-
+                <div class="col-md-6">
+                  <div class="blog-card-container mt-5">
+                    <div class="feature-section-img-container">
+                      <img style="border-radius: 69px;height: 66vh;position: relative;"
+                           class="w-100" src="/media/{{industry.image}}"
+                        alt="{{industry.title}} image">
+                    </div>
+                  </div>
+                </div>
               </div>
+              {% endfor %}
             </div>
-         </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-
-
-
-
-
-
-
-
-
-<!--    <div>-->
-<!--      <div class="tutorial-section">-->
-<!--        <div class="main-container">-->
-<!--          <div class="container py-5">-->
-<!--            <div class="row">-->
-<!--              <div class="d-flex flex-wrap py-4">-->
-
-<!--                <div class="col-md-6">-->
-<!--                  <div class="tutorial-content-container my-2 mx-2">-->
-<!--                    <div class=" mt-5">-->
-<!--                      <h2 class="tutorial-headline">Our R&D 's location</h2>-->
-<!--                      <p class="tutorial-paragraph py-3">One9Five Asoke – Rama 9, Bangkok, Thailand</p>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-
-<!--                <div class="col-md-6">-->
-<!--                  <div class="blog-card-container mt-5">-->
-<!--                    <div class="feature-section-img-container">-->
-<!--                      <img style="border-radius: 69px;" class="w-100" src="{% static 'images/location.jpeg' %}"-->
-<!--                        alt="images/video.png">-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-
-
-
-<!--              </div>-->
-<!--            </div>-->
-
-<!--          </div>-->
-
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-
+    
 
     <!------------------------------Start learning section---------------------------->
 <!--    <div>-->
@@ -500,5 +486,7 @@
         <script src="{% static 'js/jquery-3.6.1.min.js' %}"></script>
         <script src="{% static 'js/owl.carousel.min.js' %}"></script>
         <script src="{% static 'js/main.js' %}"></script>
+  <script>
+  </script>
       </body>
     </html>
