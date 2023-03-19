@@ -92,6 +92,7 @@ class AccessTypes(models.TextChoices):
     TEXT_TO_TEXT = "TEXT_TO_TEXT", _('Text To Text')
     VOICE_TO_Voice = "VOICE_TO_Voice", _('Voice To Voice')
     VOICE_TO_IMAGE = "VOICE_TO_IMAGE", _('Voice To Image')
+    TEXT_TO_IMAGE = "TEXT_TO_IMAGE", _('Text To Image')
 
 
 class User(AbstractBaseUser, PermissionsMixin):

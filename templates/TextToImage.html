@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+{% load static %}
+{% load i18n %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CHATGPTMALL | Text To Image</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <style>
+        #back{
+            background: #2844FA;
+            color: white;
+            font-size: 15px;
+            border-radius: 13px;
+            margin: 10px;
+        }
+        #card-images{
+            height: 360px;
+            width: 360px;
+        }
+        .download_images{
+            cursor: pointer;
+            position: absolute;
+            right: 23px;
+            top: 10px;
+            color: black;
+            background-color: white !important;
+            padding: 5px 5px;
+            font-weight: 500;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-light bg-light">
+    <a class="navbar-brand" id="back" href="{% url 'HomepageView' %}">
+    <i class="fa fa-arrow-left" aria-hidden="true"></i> Back
+  </a>
+</nav>
+{% if request.user.is_authenticated %}
+    {% if request.user.access == "TEXT_TO_IMAGE" %}
+    <div class="container">
+        <div class="row">
+            <form>
+              <div class="mb-3">
+                <label for="text_to_text_input" class="form-label">Enter Your Text</label>
+                  <textarea class="form-control" id="text_to_text_input" aria-describedby="Your Text"></textarea>
+              </div>
+                <br>
+              <a type="submit" id="text_to_text_btn" class="btn btn-primary">Generate Images</a>
+            </form>
+        </div>
+    </div>
+    <br><br>
+    <div class="container">
+            <img id="loading" src="{% static 'images/loading.svg' %}">
+        </div>
+    <div class="container">
+        <div class="row" id="images_row">
+        </div>
+    </div>
+{% else %}
+        <div class="text-center"><h2 >You Do Not Have Access To This Feature</h2></div>
+    {% endif %}
+{% else %}
+        <div class="text-center">
+            <h2 >Please Login To Access Our Voice To Voice Service </h2>
+        </div>
+    {% endif %}
+<script src="{% static 'chat/js/jquery-1.12.3.js' %}"></script>
+<script src="https://cdn.WebRTC-Experiment.com/MediaStreamRecorder.js"></script>
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<script src="{% static 'chat/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'chat/js/text_to_image.js' %}"></script>
+</body>
+</html>
+

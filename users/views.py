@@ -173,6 +173,10 @@ def UploadVoice(request):
         return JsonResponse(show_images, safe=False)
 
 
+def GetImages(request):
+    pass
+
+
 def get_chatgpt_response(request):
     try:
         obj = VoiceToVoiceRequests.objects.get(user=request.user)
@@ -204,6 +208,10 @@ def get_chatgpt_response(request):
 
 def TextToText(request):
     return render(request, "TextToText.html")
+
+
+def TextToImage(request):
+    return render(request, "TextToImage.html")
 
 
 def CreateAPIkey(request):
