@@ -260,6 +260,42 @@ def IndustriesView(request):
     return render(request, "industries.html", context=context)
 
 
+def JobsView(request):
+    industries = Jobs.objects.all().order_by("added_on")
+    p = Paginator(industries, 1)  # creating a paginator object
+    # getting the desired page number from url
+    page_number = request.GET.get('page')
+    try:
+        page_obj = p.get_page(page_number)  # returns the desired page object
+    except PageNotAnInteger:
+        # if page_number is not an integer then assign the first page
+        page_obj = p.page(1)
+    except EmptyPage:
+        # if page is empty then return last page
+        page_obj = p.page(p.num_pages)
+    context = {'page_obj': page_obj}
+    # sending the page object to index.html
+    return render(request, "jobs.html", context=context)
+
+
+def CapabilitiesView(request):
+    industries = Capabilities.objects.all().order_by("added_on")
+    p = Paginator(industries, 1)  # creating a paginator object
+    # getting the desired page number from url
+    page_number = request.GET.get('page')
+    try:
+        page_obj = p.get_page(page_number)  # returns the desired page object
+    except PageNotAnInteger:
+        # if page_number is not an integer then assign the first page
+        page_obj = p.page(1)
+    except EmptyPage:
+        # if page is empty then return last page
+        page_obj = p.page(p.num_pages)
+    context = {'page_obj': page_obj}
+    # sending the page object to index.html
+    return render(request, "capabilities.html", context=context)
+
+
 def GetIndustriesData(request):
     industries = list(Industries.objects.all().values("title", "slogan"))
     return JsonResponse(industries, safe=False)

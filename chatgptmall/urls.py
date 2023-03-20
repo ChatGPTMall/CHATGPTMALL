@@ -23,7 +23,7 @@ from rest_framework import permissions
 from engine.views import TextToTexTView
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans, \
-    IndustriesView, GetIndustriesData, TextToImage, GetImages
+    IndustriesView, GetIndustriesData, TextToImage, GetImages, JobsView, CapabilitiesView
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -72,6 +72,8 @@ urlpatterns = [
     path('plans/', OurPlans, name="our_plans"),
     path("ajax/industries/", GetIndustriesData, name="GetIndustriesData"),
     path('marketing/industries/', IndustriesView, name="IndustriesView"),
+    path('marketing/jobs/', JobsView, name="JobsView"),
+    path('marketing/capabilities/', CapabilitiesView, name="CapabilitiesView"),
 
     # API's
     path('api/v1/text_to_text/', TextToTexTView.as_view(), name="TextToTexTView"),
