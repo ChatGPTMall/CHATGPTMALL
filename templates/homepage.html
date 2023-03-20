@@ -27,8 +27,10 @@
     <nav class="navbar navbar-expand-lg" style="padding: 20px;">
       <div class="container">
         <a class="navbar-brand" href="{% url 'HomepageView' %}">
-<!--          <img style="height: 68px;position: relative;top: 21px;"-->
-<!--               src="https://www.zkteco.com/cn/uploads/image/20230228/5142aefc758659aafe58c2832e6d13f5.png">-->
+          {% if show_logo %}
+          <img style="height: 68px;position: relative;top: 21px;"
+               src="https://www.zkteco.com/cn/uploads/image/20230228/5142aefc758659aafe58c2832e6d13f5.png">
+          {% endif %}
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
           data-bs-target="#navbarSupportedContent"

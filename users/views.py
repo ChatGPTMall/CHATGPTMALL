@@ -22,7 +22,11 @@ openai.api_key = os.getenv("OPEN_AI_KEY")
 
 
 def HomepageView(request):
-    return render(request, "homepage.html")
+    show_logo = False
+    DEPLOYED_HOST = os.getenv("DEPLOYED_HOST", None)
+    if DEPLOYED_HOST == "https://madeinthai.org":
+        show_logo = True
+    return render(request, "homepage.html", context={"show_logo": show_logo})
 
 
 def Logout(request):
