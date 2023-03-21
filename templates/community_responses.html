@@ -12,6 +12,7 @@
       rel="stylesheet">
     <link href="{% static 'css/all.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link href="{% static 'css/owl.carousel.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/stylesheet.css' %}" rel="stylesheet">
     <style>
@@ -19,8 +20,51 @@
         color:white !important;
       }
 
+.cont {
+  border: 2px solid #5B61EB;
+  background-color: #efecec42;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 12px;
+}
+
+.darker {
+  border-color: #5B61EB;
+  background-color: #efecec42;
+}
+
+.cont::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.cont img {
+  float: left;
+  max-width: 60px;
+  width: 100%;
+  margin-right: 20px;
+  border-radius: 50%;
+}
+
+.cont img.right {
+  float: right;
+  margin-left: 20px;
+  margin-right:0;
+}
+
+.time-right {
+  float: right;
+  color: #aaa;
+}
+
+.time-left {
+  float: left;
+  color: #999;
+}
+
     </style>
-    <title>CHATGPTMALL | Home</title>
+    <title>CHATGPTMALL | {{community.name}}</title>
   </head>
   <body>
     <!------------------------------Header section---------------------------->
@@ -38,7 +82,7 @@
           aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent" style="display: flex !important;">
           <ul class="navbar-nav m-auto mb-2 mb-lg-0">
             <li class="nav-item nav-item-active">
               <a class="nav-link active-link fw-bold" aria-current="page"
@@ -73,9 +117,6 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url 'our_plans' %}">Our Plans</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'Communities' %}">Communities</a>
-            </li>
           </ul>
 
           {% if request.user.is_authenticated %}
@@ -88,6 +129,7 @@
               <li><a class="dropdown-item" href="#">Update Profile</a></li>
               <li><a class="dropdown-item" href="{% url 'ApiKeyView' %}">API Key</a></li>
               <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="">Leave Team</a></li>
               <li><a class="dropdown-item" href="{% url 'Logout' %}">Logout</a></li>
             </ul>
            </li>
@@ -102,55 +144,35 @@
       </div>
     </nav>
 
+{% if messages %}
+    {% for message in messages %}
+    <div class="container" style="display: flex;justify-content: center;">
+        <div class="alert alert-success alert-dismissible col-md-6" style="padding:27px">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>{{message}}</strong>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
 
 
+    <div class="container">
+        <h2>OpenAI Responses</h2>
+    </div>
+    {% for post in posts %}
+    <div class="container cont">
+      <img src="https://i.pinimg.com/474x/4b/71/f8/4b71f8137985eaa992d17a315997791e.jpg" alt="Avatar" style="width:100%;">
+        <p>{{post.user.get_full_name}}</p>
+        <p>{{post.question}}</p>
+      <span class="time-right">{{post.added_on}}</span>
+    </div>
 
-
-    <!------------------------------Header section---------------------------->
-          <div>
-            <div class="feature-section">
-              <div class="main-container">
-                <div class="container-fluid py-5">
-                  <div class="row p-3">
-                    <div class="d-flex flex-wrap py-4">
-                      <div class="col-md-6">
-                        <div class="blog-card-container my-2 mx-2">
-                          <div class="feature-section-img-container">
-                            <img style="border-radius: 64px;" class="w-100" src="{% static 'images/iot.png' %}"
-                              alt="choose teatcher.png">
-                          </div>
-                        </div>
-                      </div>
-
-
-                      <div class="col-md-6">
-                        <div class="feature-content-container my-2 mx-2" style="margin-left: 70px !important;">
-                          <div class="blog-card-img-container mt-5">
-                            <p class="blog-title pt-4 pb-2">OUR FEATURE</p>
-                            <h2 class="blog-headline">Generate your perfect Product’s image based on your voice chat</h2>
-                          </div>
-                          <div style="position: relative;">
-                            <br>
-                            <a href="{% url 'VoiceToImage' %}" class="btn become-teacher-button">Voice To Image
-                              <i class="fa fa-microphone p-3 "></i></a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-
-              </div>
-            </div>
-         </div>
-
-
-
-
-
-
-
+    <div class="container cont darker">
+      <img src="https://w1.pngwing.com/pngs/278/853/png-transparent-line-art-nose-chatbot-internet-bot-artificial-intelligence-snout-head-smile-black-and-white.png" alt="Avatar" class="right" style="width:100%;">
+      <p>{{post.response}}</p>
+      <span class="time-left">{{post.added_on}}</span>
+    </div>
+    {% endfor %}
 
 
 
@@ -189,87 +211,6 @@
 <!--        </div>-->
 <!--      </div>-->
 <!--    </div>-->
-
-
-    <!------------------------------Start learning section---------------------------->
-<!--    <div>-->
-<!--      <div class="start-learning-section">-->
-<!--        <div class="main-container py-5">-->
-<!--          <div class="container py-5">-->
-<!--            <div class="row py-5">-->
-<!--              <h2 class="start-learning-section-headline text-center">Start your-->
-<!--                Learning<br/>-->
-<!--                  Journey Today!</h2>-->
-<!--                <p class="start-learning-section-paragraph text-center pt-2-->
-<!--                  pb-5">Lorem ipsum dolor-->
-<!--                  sit amet, consectetur.</p>-->
-<!--                <div class="col-md-3 g-3">-->
-<!--                  <div class="card-container p-4">-->
-<!--                    <div class="learning-section-card text-center">-->
-<!--                      <div>-->
-<!--                        <img src="{% static 'homepage/images/icon-1.png' %}" alt="icon-1.png">-->
-<!--                      </div>-->
-<!--                      <div class="pb-3">-->
-<!--                        <h3 class="card-headline mt-5">Learn with Experts</h3>-->
-<!--                        <p class="card-paragraph text-muted my-3">Grursus mal-->
-<!--                          suada faci lisis that ipsum ameti consecte.</p>-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-
-<!--                <div class="col-md-3 g-3">-->
-<!--                  <div class="card-container p-4">-->
-<!--                    <div class="learning-section-card text-center">-->
-<!--                      <div>-->
-<!--                        <img src="{% static 'homepage/images/icon-2.png' %}" alt="icon-2.png">-->
-<!--                      </div>-->
-<!--                      <div class="pb-3">-->
-<!--                        <h3 class="card-headline mt-5">Learn Anything</h3>-->
-<!--                        <p class="card-paragraph text-muted my-3">Grursus mal-->
-<!--                          suada faci lisis that ipsum ameti consecte.</p>-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-
-
-<!--                <div class="col-md-3 g-3">-->
-<!--                  <div class="card-container p-4">-->
-<!--                    <div class="learning-section-card text-center">-->
-<!--                      <div>-->
-<!--                        <img src="{% static 'homepage/images/icon-3.png' %}" alt="icon-3.png">-->
-<!--                      </div>-->
-<!--                      <div class="pb-3">-->
-<!--                        <h3 class="card-headline mt-5">Flexible Learning</h3>-->
-<!--                        <p class="card-paragraph text-muted my-3">Grursus mal-->
-<!--                          suada faci lisis that ipsum ameti consecte.</p>-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-
-<!--                <div class="col-md-3 g-3">-->
-<!--                  <div class="card-container p-4">-->
-<!--                    <div class="learning-section-card text-center">-->
-<!--                      <div>-->
-<!--                        <img src="{% static 'homepage/images/icon-4.png' %}" alt="icon-4.png">-->
-<!--                      </div>-->
-<!--                      <div class="pb-3">-->
-<!--                        <h3 class="card-headline mt-5">Industrial Standard</h3>-->
-<!--                        <p class="card-paragraph text-muted my-3">Grursus mal-->
-<!--                          suada faci lisis that ipsum ameti consecte.</p>-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-
-<!--            </div>-->
-
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
 
 
 
@@ -504,6 +445,7 @@
 
         <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
         <script src="{% static 'js/jquery-3.6.1.min.js' %}"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <script src="{% static 'js/owl.carousel.min.js' %}"></script>
         <script src="{% static 'js/main.js' %}"></script>
       </body>

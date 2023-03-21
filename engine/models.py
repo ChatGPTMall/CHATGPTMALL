@@ -1,7 +1,10 @@
+import random
+import string
 from django.db import models
-from django.utils.translation import gettext_lazy as _
-
 from users.models import User
+from django.core.exceptions import ValidationError
+from django.core.validators import MinLengthValidator
+from django.utils.translation import gettext_lazy as _
 
 
 class Category(models.Model):
@@ -158,7 +161,68 @@ class Capabilities(models.Model):
         verbose_name_plural = _("Capabilities")
 
 
+def is_aphanum(value):
+    """
+    check if given value is alphanumeric or not
+    :param value:
+    :return:
+    """
+    if not str(value).isalnum():
+        raise ValidationError(
+            _('%(value)s is not an alpha numeric value'),
+            params={'value': value},
+        )
 
 
+def create_alphanum():
+    """
+    Create a random alphanum
+    as default
+    """
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
 
+class Community(models.Model):
+    community_id = models.CharField(unique=True, null=True, default=create_alphanum, max_length=6,
+                                    validators=[MinLengthValidator(6), is_aphanum])
+    name = models.CharField(_("Community Name"), max_length=150)
+    logo = models.ImageField(upload_to="Communities/Logo", null=True, blank=True)
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_members(self):
+        return CommunityMembers.objects.filter(community__community_id=self.community_id).count()
+
+    class Meta:
+        verbose_name = _("Community")
+        verbose_name_plural = _("Communities")
+
+
+class CommunityMembers(models.Model):
+    community = models.ForeignKey(Community, related_name="members", on_delete=models.CASCADE)
+    user = models.OneToOneField(User, related_name='team', on_delete=models.CASCADE)
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.email
+
+    class Meta:
+        verbose_name = _("Team Member")
+        verbose_name_plural = _("Community Members")
+
+
+class CommunityPosts(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
+    community = models.ForeignKey(Community, related_name="feed", on_delete=models.CASCADE)
+    question = models.TextField(_("User Question"), unique=True)
+    response = models.TextField(_("AI Response"))
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.email
+
+    class Meta:
+        verbose_name = _("Community Post")
+        verbose_name_plural = _("Community Posts")

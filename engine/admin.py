@@ -1,6 +1,8 @@
 from django.contrib import admin
 from engine.models import Items, Category, ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, \
-    Jobs, Capabilities
+    Jobs, Capabilities, Community, CommunityMembers, CommunityPosts
+
+
 # Register your models here.
 
 
@@ -18,4 +20,7 @@ admin.site.register(Plans)
 admin.site.register(Industries)
 admin.site.register(Jobs)
 admin.site.register(Capabilities)
+admin.site.register(Community)
+admin.site.register(CommunityMembers)
+admin.site.register(CommunityPosts)
 admin.site.register(VoiceToVoiceRequests, VoiceToVoiceRequestsAdmin)

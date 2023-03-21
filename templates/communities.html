@@ -12,6 +12,7 @@
       rel="stylesheet">
     <link href="{% static 'css/all.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link href="{% static 'css/owl.carousel.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/stylesheet.css' %}" rel="stylesheet">
     <style>
@@ -38,7 +39,7 @@
           aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent" style="display: flex !important;">
           <ul class="navbar-nav m-auto mb-2 mb-lg-0">
             <li class="nav-item nav-item-active">
               <a class="nav-link active-link fw-bold" aria-current="page"
@@ -104,56 +105,6 @@
 
 
 
-
-
-    <!------------------------------Header section---------------------------->
-          <div>
-            <div class="feature-section">
-              <div class="main-container">
-                <div class="container-fluid py-5">
-                  <div class="row p-3">
-                    <div class="d-flex flex-wrap py-4">
-                      <div class="col-md-6">
-                        <div class="blog-card-container my-2 mx-2">
-                          <div class="feature-section-img-container">
-                            <img style="border-radius: 64px;" class="w-100" src="{% static 'images/iot.png' %}"
-                              alt="choose teatcher.png">
-                          </div>
-                        </div>
-                      </div>
-
-
-                      <div class="col-md-6">
-                        <div class="feature-content-container my-2 mx-2" style="margin-left: 70px !important;">
-                          <div class="blog-card-img-container mt-5">
-                            <p class="blog-title pt-4 pb-2">OUR FEATURE</p>
-                            <h2 class="blog-headline">Generate your perfect Product’s image based on your voice chat</h2>
-                          </div>
-                          <div style="position: relative;">
-                            <br>
-                            <a href="{% url 'VoiceToImage' %}" class="btn become-teacher-button">Voice To Image
-                              <i class="fa fa-microphone p-3 "></i></a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-
-              </div>
-            </div>
-         </div>
-
-
-
-
-
-
-
-
-
-
 <!--    <div>-->
 <!--      <div class="tutorial-section">-->
 <!--        <div class="main-container">-->
@@ -192,86 +143,82 @@
 
 
     <!------------------------------Start learning section---------------------------->
-<!--    <div>-->
-<!--      <div class="start-learning-section">-->
-<!--        <div class="main-container py-5">-->
-<!--          <div class="container py-5">-->
-<!--            <div class="row py-5">-->
-<!--              <h2 class="start-learning-section-headline text-center">Start your-->
-<!--                Learning<br/>-->
-<!--                  Journey Today!</h2>-->
-<!--                <p class="start-learning-section-paragraph text-center pt-2-->
-<!--                  pb-5">Lorem ipsum dolor-->
-<!--                  sit amet, consectetur.</p>-->
-<!--                <div class="col-md-3 g-3">-->
-<!--                  <div class="card-container p-4">-->
-<!--                    <div class="learning-section-card text-center">-->
-<!--                      <div>-->
-<!--                        <img src="{% static 'homepage/images/icon-1.png' %}" alt="icon-1.png">-->
-<!--                      </div>-->
-<!--                      <div class="pb-3">-->
-<!--                        <h3 class="card-headline mt-5">Learn with Experts</h3>-->
-<!--                        <p class="card-paragraph text-muted my-3">Grursus mal-->
-<!--                          suada faci lisis that ipsum ameti consecte.</p>-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
 
-<!--                <div class="col-md-3 g-3">-->
-<!--                  <div class="card-container p-4">-->
-<!--                    <div class="learning-section-card text-center">-->
-<!--                      <div>-->
-<!--                        <img src="{% static 'homepage/images/icon-2.png' %}" alt="icon-2.png">-->
-<!--                      </div>-->
-<!--                      <div class="pb-3">-->
-<!--                        <h3 class="card-headline mt-5">Learn Anything</h3>-->
-<!--                        <p class="card-paragraph text-muted my-3">Grursus mal-->
-<!--                          suada faci lisis that ipsum ameti consecte.</p>-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-
-
-<!--                <div class="col-md-3 g-3">-->
-<!--                  <div class="card-container p-4">-->
-<!--                    <div class="learning-section-card text-center">-->
-<!--                      <div>-->
-<!--                        <img src="{% static 'homepage/images/icon-3.png' %}" alt="icon-3.png">-->
-<!--                      </div>-->
-<!--                      <div class="pb-3">-->
-<!--                        <h3 class="card-headline mt-5">Flexible Learning</h3>-->
-<!--                        <p class="card-paragraph text-muted my-3">Grursus mal-->
-<!--                          suada faci lisis that ipsum ameti consecte.</p>-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-
-<!--                <div class="col-md-3 g-3">-->
-<!--                  <div class="card-container p-4">-->
-<!--                    <div class="learning-section-card text-center">-->
-<!--                      <div>-->
-<!--                        <img src="{% static 'homepage/images/icon-4.png' %}" alt="icon-4.png">-->
-<!--                      </div>-->
-<!--                      <div class="pb-3">-->
-<!--                        <h3 class="card-headline mt-5">Industrial Standard</h3>-->
-<!--                        <p class="card-paragraph text-muted my-3">Grursus mal-->
-<!--                          suada faci lisis that ipsum ameti consecte.</p>-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-
-<!--            </div>-->
-
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
+    <div>
+      <div class="start-learning-section">
+        <div class="main-container py-5">
+          <div class="container py-5">
+            <div class="row py-5">
+              <h2 class="start-learning-section-headline text-center">Join Your Team</h2>
+                <p class="start-learning-section-paragraph text-center pt-2
+                  pb-5">Join your team with TeamId provided</p>
+              {% for community in communities %}
+              <div class="col-md-3 g-3">
+                  <div class="card-container p-4">
+                    <div class="learning-section-card text-center">
+                      <div>
+                        <img style="border-radius: 37px;width: 73px;height: 73px;position: relative;top: 18px;"
+                             src="/media/{{community.logo}}" alt="icon-1.png">
+                      </div>
+                      <div>
+                        <h3 class="card-headline mt-5" style="font-size:17px;">{{community.name}}</h3>
+                        <p>Total Members: {{community.get_members}}</p>
+                        {% if is_member %}
+                          <form method="post" action="{% url 'JoinCommunity' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="team_id" value="{{community.community_id}}">
+                            <input type="hidden" name="show_welcome_ms">
+                            <button type="submit" class="btn btn-lg my-3 mb-2"
+                                    style="background-color:#5B61EB !important;color:white;">Go</button>
+                          </form>
+                        {% else %}
+                        <button type="button" style="background-color:#5B61EB !important;color:white;"
+                                class="btn btn-lg my-3 mb-2"
+                                data-toggle="modal" data-target="#myModal">Join Now</button>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
 
+<div class="container">
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Join Team</h3>
+        </div>
+        <div class="modal-body">
+          <form method="post" action="{% url 'JoinCommunity' %}">
+            {% csrf_token %}
+          <div class="form-group">
+            <input type="hidden" name="show_welcome_ms" value="yes">
+            <label for="exampleInputEmail1">Enter Team ID</label>
+            <input type="text" class="form-control" id="exampleInputEmail1" name="team_id"
+                   aria-describedby="emailHelp" placeholder="Enter Team ID">
+          </div>
+          <button type="submit" class="btn btn-primary" style="background-color:#5B61EB !important;color:white;">Submit</button>
+        </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn" data-dismiss="modal" style="background-color:#5B61EB !important;color:white;">X</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
 
 
       <!--------------------------------Our Team------------------------------------->
@@ -504,6 +451,7 @@
 
         <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
         <script src="{% static 'js/jquery-3.6.1.min.js' %}"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <script src="{% static 'js/owl.carousel.min.js' %}"></script>
         <script src="{% static 'js/main.js' %}"></script>
       </body>

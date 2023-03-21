@@ -7,7 +7,7 @@ from urllib.request import urlopen
 import openai
 from django.core.files import File
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-
+from django.contrib import messages
 from users.models import User
 import speech_recognition as sr
 from django.db import IntegrityError
@@ -16,7 +16,8 @@ from rest_framework.authtoken.models import Token
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
-from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans,Industries, Capabilities, Jobs
+from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, Capabilities, \
+    Jobs, Community, CommunityMembers, CommunityPosts
 
 openai.api_key = os.getenv("OPEN_AI_KEY")
 
@@ -303,4 +304,59 @@ def CapabilitiesView(request):
 def GetIndustriesData(request):
     industries = list(Industries.objects.all().values("title", "slogan"))
     return JsonResponse(industries, safe=False)
+
+
+def Communities(request):
+    is_member = False
+    if request.user.is_authenticated:
+        if CommunityMembers.objects.filter(user=request.user).exists():
+            is_member = True
+            communities = Community.objects.filter(community_id=request.user.team.community.community_id)
+        else:
+            communities = Community.objects.all()
+    else:
+        communities = Community.objects.all()
+    return render(request, "communities.html", context={
+        "communities": communities,
+        "is_member": is_member,
+    })
+
+
+def JoinCommunity(request):
+    try:
+        if request.user.is_authenticated:
+
+            team_id = request.POST.get("team_id", None)
+            show_welcome_ms = request.POST.get("show_welcome_ms", None)
+            community = Community.objects.get(community_id=team_id)
+            member, created = CommunityMembers.objects.get_or_create(user=request.user, community=community)
+            context = {
+                "community": community,
+                "total_members": community.members.all().count(),
+                "posts": community.feed.all()
+            }
+            if not created:
+                return render(request, "community_responses.html", context=context)
+            if show_welcome_ms:
+                messages.success(request, "Congratulations you have joined team successfully")
+            return render(request, "community_responses.html", context=context)
+        return redirect("/api/login/")
+    except Community.DoesNotExist:
+        return redirect("/communities/")
+
+
+def SendPostCommunity(request):
+    try:
+        question = request.GET.get('question', '')
+        response = request.GET.get('response', '')
+        if not CommunityPosts.objects.filter(question=question).exists():
+            community = CommunityMembers.objects.get(user=request.user)
+            CommunityPosts.objects.create(
+                user=request.user, community=community.community, question=question, response=response)
+            return HttpResponse("Post Uploaded Successfully")
+        return HttpResponse("Post Already Exists")
+    except CommunityMembers.DoesNotExist:
+        return HttpResponse("Community Does Not Exist For You")
+
+
 
