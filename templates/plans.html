@@ -36,7 +36,7 @@
 
       <div class="tab-content pricing-tab-content" id="pricing-tab-content">
         <div class="tab-pane active" id="monthly" role="tabpanel" aria-labelledby="monthly-tab">
-          <div class="row">
+          <div class="row" style="flex-wrap:nowrap;overflow-x:auto;">
             {% for m_plan in monthly_plans %}
             <div class="col-md-4">
               <div class="card pricing-card">
@@ -49,7 +49,7 @@
                     <span class="currency" style="margin-left:10px;">USD</span></p>
                   {% endif %}
                   <div>{{m_plan.description | safe}}</div>
-                  <a href="#!" class="btn pricing-plan-purchase-btn">Get started</a>
+                  <a href="{% url 'Checkout' m_plan.id %}" class="btn pricing-plan-purchase-btn">Get started</a>
                 </div>
               </div>
             </div>
@@ -66,7 +66,7 @@
                   <p class="h1 pricing-plan-cost">{{plan.price}}
                     <span class="currency" style="margin-left:10px;">USD</span></p>
                   <div>{{plan.description | safe}}</div>
-                  <a href="#!" class="btn pricing-plan-purchase-btn">Get started</a>
+                  <a href="{% url 'Checkout' plan.id %}" class="btn pricing-plan-purchase-btn">Get started</a>
                 </div>
               </div>
             </div>

@@ -17,7 +17,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, Capabilities, \
-    Jobs, Community, CommunityMembers, CommunityPosts
+    Jobs, Community, CommunityMembers, CommunityPosts, CouponCode, Subscriptions
 
 openai.api_key = os.getenv("OPEN_AI_KEY")
 
@@ -358,5 +358,32 @@ def SendPostCommunity(request):
     except CommunityMembers.DoesNotExist:
         return HttpResponse("Community Does Not Exist For You")
 
+
+def Checkout(request, plan_id):
+    plan = Plans.objects.get(id=plan_id)
+    return render(request, "checkout.html", context={"plan": plan})
+
+
+def PaymentSuccess(request, plan_id, user_id):
+    plan = Plans.objects.get(id=plan_id)
+    user = User.objects.get(id=user_id)
+    user.access = plan.access
+    user.save()
+    Subscriptions.objects.create(user=user, plan=plan)
+    return render(request, "payment_success.html", context={"plan": plan})
+
+
+def PaymentCancel(request):
+    return HttpResponse("PAYMENT CANCEL")
+
+
+def ValidateCouponCode(request, coupon_code):
+    try:
+        coupon = CouponCode.objects.get(code=coupon_code.split("=")[1])
+
+        return JsonResponse(["valid", coupon.price], safe=False)
+    except Exception as e:
+        print(e)
+        return JsonResponse(["invalid"], safe=False)
 
 

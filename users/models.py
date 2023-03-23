@@ -119,6 +119,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     user_id = models.UUIDField(default=uuid.uuid4, unique=True)
     premium = models.IntegerField(choices=PremiumFlags.choices, default=0)
     joined_on = models.DateTimeField(auto_now_add=True)
+    purchased_on = models.DateTimeField(null=True, blank=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
 

@@ -20,11 +20,11 @@ from django.urls import path, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
-from engine.views import TextToTexTView
+from engine.views import TextToTexTView, CreateCheckoutSessionView
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans, \
     IndustriesView, GetIndustriesData, TextToImage, GetImages, JobsView, CapabilitiesView, Communities, JoinCommunity, \
-    SendPostCommunity
+    SendPostCommunity, Checkout, PaymentSuccess, PaymentCancel, ValidateCouponCode
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -79,6 +79,12 @@ urlpatterns = [
     path("communities/", Communities, name="Communities"),
     path("join/community/", JoinCommunity, name="JoinCommunity"),
     path("send/post/community/", SendPostCommunity, name="SendPostCommunity"),
+
+    path("checkout/<int:plan_id>/", Checkout, name="Checkout"),
+    path("checkout/Session/", CreateCheckoutSessionView, name="CreateCheckoutSessionView"),
+    path("payment/success/<int:plan_id>/<int:user_id>/", PaymentSuccess, name="payment-success"),
+    path("payment/cancel/", PaymentCancel, name="payment-cancel"),
+    path("validate/coupon_code/<str:coupon_code>/", ValidateCouponCode, name="ValidateCouponCode"),
 
     # API's
     path('api/v1/text_to_text/', TextToTexTView.as_view(), name="TextToTexTView"),

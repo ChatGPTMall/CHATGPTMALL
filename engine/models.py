@@ -99,11 +99,21 @@ class PlanType(models.TextChoices):
     TIMEPERIOD = "TIMEPERIOD", _('Time Period')
 
 
+class AccessTypes(models.TextChoices):
+    NO_ACCESS = "NO_ACCESS", _('No Access')
+    TEXT_TO_TEXT = "TEXT_TO_TEXT", _('Text To Text')
+    VOICE_TO_Voice = "VOICE_TO_Voice", _('Voice To Voice')
+    VOICE_TO_IMAGE = "VOICE_TO_IMAGE", _('Voice To Image')
+    TEXT_TO_IMAGE = "TEXT_TO_IMAGE", _('Text To Image')
+
+
 class Plans(models.Model):
     title = models.CharField(max_length=200)
     price = models.FloatField(default=0)
     plan_type = models.CharField(choices=PlanType.choices, max_length=30, default="MONTHLY")
+    access = models.CharField(choices=AccessTypes.choices, max_length=30, default="NO_ACCESS")
     description = models.TextField()
+    days = models.IntegerField(default=5)
     requests = models.IntegerField(default=0)
     added_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
@@ -226,3 +236,35 @@ class CommunityPosts(models.Model):
     class Meta:
         verbose_name = _("Community Post")
         verbose_name_plural = _("Community Posts")
+
+
+class CouponCode(models.Model):
+    code = models.CharField(_("Coupon Code"), max_length=35)
+    description = models.TextField(_("Coupon Description"))
+    price = models.FloatField(_("Coupon Discount"), default=0)
+    start_date = models.DateTimeField(null=False)
+    end_date = models.DateTimeField(null=False)
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.description
+
+    class Meta:
+        verbose_name = _("Coupon Code")
+        verbose_name_plural = _("Coupons")
+
+
+class Subscriptions(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="purchases")
+    plan = models.ForeignKey(Plans, models.CASCADE, related_name="plan_purchases")
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.email
+
+    class Meta:
+        verbose_name = _("Subscription")
+        verbose_name_plural = _("Subscriptions")
+
+
+

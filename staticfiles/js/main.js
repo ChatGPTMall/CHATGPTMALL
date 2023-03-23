@@ -31,6 +31,36 @@ $(document).ready(function(){
       });
    });
 
+    $("#redeem_button").on("click", (e)=>{
+        var price = $("#total_price").val();
+        console.log(price, typeof(price))
+        var coupon_code = $("#coupon_code").val()
+        if(coupon_code == ""){
+            alert("Please enter valid coupon code")
+        }else{
+            $.ajax({
+                type: "GET",
+                url: `/validate/coupon_code/coupon_code=${coupon_code}/`,
+                success: function (data) {
+                    if(data[0] == "invalid"){
+                        alert("invalid coupon code or expired")
+                    }else{
+                       var discount = data[1]
+                       var p = parseInt(price);
+                       if(discount > p){
+                        alert("invalid coupon code or expired")
+                       }else{
+                            $("#coupon_price").text(discount);
+                            $("#total_price").val(p-discount);
+                            $("#cp").text(coupon_code);
+                            $("#price").text("$"+(p-discount));
+                            $("#show_coupon").show();
+                       }
+                    }
+                },
+            });
+        }
+    });
 
 });
 
