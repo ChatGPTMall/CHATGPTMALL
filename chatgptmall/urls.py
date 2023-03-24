@@ -24,7 +24,7 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans, \
     IndustriesView, GetIndustriesData, TextToImage, GetImages, JobsView, CapabilitiesView, Communities, JoinCommunity, \
-    SendPostCommunity, Checkout, PaymentSuccess, PaymentCancel, ValidateCouponCode
+    SendPostCommunity, Checkout, PaymentSuccess, PaymentCancel, ValidateCouponCode, JoinedCommunities
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -77,6 +77,7 @@ urlpatterns = [
     path('marketing/capabilities/', CapabilitiesView, name="CapabilitiesView"),
 
     path("communities/", Communities, name="Communities"),
+    path("joined/communities/", JoinedCommunities, name="JoinedCommunities"),
     path("join/community/", JoinCommunity, name="JoinCommunity"),
     path("send/post/community/", SendPostCommunity, name="SendPostCommunity"),
 

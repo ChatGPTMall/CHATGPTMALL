@@ -212,7 +212,7 @@ class Community(models.Model):
 
 class CommunityMembers(models.Model):
     community = models.ForeignKey(Community, related_name="members", on_delete=models.CASCADE)
-    user = models.OneToOneField(User, related_name='team', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='team', on_delete=models.CASCADE)
     added_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -239,15 +239,16 @@ class CommunityPosts(models.Model):
 
 
 class CouponCode(models.Model):
+    provider = models.CharField(_("Coupon Provider"), default="CHATGPTMALL", max_length=200)
+    currency = models.CharField(max_length=100)
     code = models.CharField(_("Coupon Code"), max_length=35)
-    description = models.TextField(_("Coupon Description"))
     price = models.FloatField(_("Coupon Discount"), default=0)
     start_date = models.DateTimeField(null=False)
     end_date = models.DateTimeField(null=False)
     added_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.description
+        return self.code
 
     class Meta:
         verbose_name = _("Coupon Code")
@@ -265,6 +266,14 @@ class Subscriptions(models.Model):
     class Meta:
         verbose_name = _("Subscription")
         verbose_name_plural = _("Subscriptions")
+
+
+class UploadCoupons(models.Model):
+    file = models.FileField(upload_to="Coupons")
+
+    class Meta:
+        verbose_name = _("Upload Coupon")
+        verbose_name_plural = _("Upload Coupons")
 
 
 

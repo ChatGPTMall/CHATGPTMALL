@@ -3,9 +3,10 @@ import urllib
 from io import BytesIO
 from urllib import request
 from urllib.request import urlopen
-
+from django.conf import settings
 import openai
 from django.core.files import File
+from django.core.mail import send_mail
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib import messages
 from users.models import User
@@ -72,6 +73,10 @@ def RegisterView(request):
             user = User.objects.create(first_name=fname, last_name=lname, email=email)
             user.set_password(password)
             user.save()
+            subject = "Chatgptmall Account Created"
+            message = "Congratulations {} you are successfully registered on CHATGPTMALL".format(user.get_full_name())
+            send_mail(subject=subject, message=message, from_email=settings.EMAIL_HOST_USER,
+                      recipient_list=[email], fail_silently=True)
             return redirect('/api/login/')
         except IntegrityError as e:
             redirect('/api/register/')
@@ -307,25 +312,25 @@ def GetIndustriesData(request):
 
 
 def Communities(request):
-    is_member = False
-    if request.user.is_authenticated:
-        if CommunityMembers.objects.filter(user=request.user).exists():
-            is_member = True
-            communities = Community.objects.filter(community_id=request.user.team.community.community_id)
-        else:
-            communities = Community.objects.all()
-    else:
-        communities = Community.objects.all()
+    communities = Community.objects.all()
     return render(request, "communities.html", context={
         "communities": communities,
-        "is_member": is_member,
     })
+
+
+def JoinedCommunities(request):
+    if request.user.is_authenticated:
+        if CommunityMembers.objects.filter(user=request.user).exists():
+            communities_id = request.user.team.all().values_list("community__community_id", flat=True)
+            communities = Community.objects.filter(community_id__in=communities_id)
+            return render(request, "joined_communities.html", context={"communities": communities})
+        return render(request, "joined_communities.html")
+    return redirect("/api/login/")
 
 
 def JoinCommunity(request):
     try:
         if request.user.is_authenticated:
-
             team_id = request.POST.get("team_id", None)
             show_welcome_ms = request.POST.get("show_welcome_ms", None)
             community = Community.objects.get(community_id=team_id)

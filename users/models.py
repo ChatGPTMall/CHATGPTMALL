@@ -153,3 +153,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         """
         full_name = '%s %s' % (self.first_name, self.last_name)
         return full_name.strip()
+
+
+class UploadUsers(models.Model):
+    file = models.FileField(upload_to="Users")
+
+    class Meta:
+        verbose_name = _("Upload User")
+        verbose_name_plural = _("Upload Users")
