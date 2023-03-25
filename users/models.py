@@ -120,6 +120,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     premium = models.IntegerField(choices=PremiumFlags.choices, default=0)
     joined_on = models.DateTimeField(auto_now_add=True)
     purchased_on = models.DateTimeField(null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+    about = models.TextField(null=True, blank=True)
+    city = models.TextField(null=True, blank=True)
+    country = models.CharField(null=True, blank=True, max_length=100)
+    postal_code = models.CharField(null=True, blank=True, max_length=100)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
 

@@ -197,6 +197,7 @@ class Community(models.Model):
                                     validators=[MinLengthValidator(6), is_aphanum])
     name = models.CharField(_("Community Name"), max_length=150)
     logo = models.ImageField(upload_to="Communities/Logo", null=True, blank=True)
+    leader = models.ForeignKey(User, related_name='community_leaders', on_delete=models.CASCADE)
     added_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -265,7 +266,7 @@ class Subscriptions(models.Model):
 
     class Meta:
         verbose_name = _("Subscription")
-        verbose_name_plural = _("Subscriptions")
+        verbose_name_plural = _("User Subscriptions")
 
 
 class UploadCoupons(models.Model):
@@ -274,6 +275,20 @@ class UploadCoupons(models.Model):
     class Meta:
         verbose_name = _("Upload Coupon")
         verbose_name_plural = _("Upload Coupons")
+
+
+class AllRequests(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="all_requests")
+    plan = models.ForeignKey(Plans, models.CASCADE, related_name="plan_requests")
+    requests = models.IntegerField(default=0)
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.email
+
+    class Meta:
+        verbose_name = _("Request")
+        verbose_name_plural = _("All Requests")
 
 
 

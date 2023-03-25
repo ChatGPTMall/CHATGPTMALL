@@ -14,13 +14,14 @@
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/owl.carousel.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/stylesheet.css' %}" rel="stylesheet">
+    <link href="{% static 'css/profile.css' %}" rel="stylesheet">
     <style>
       .p-3 p{
         color:white !important;
       }
 
     </style>
-    <title>CHATGPTMALL | Home</title>
+    <title>CHATGPTMALL | Profile</title>
   </head>
   <body>
     <!------------------------------Header section---------------------------->
@@ -91,7 +92,6 @@
              {{request.user.get_full_name}}
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'ProfileView' %}">Profile</a></li>
               <li><a class="dropdown-item" href="{% url 'ApiKeyView' %}">API Key</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="{% url 'Logout' %}">Logout</a></li>
@@ -108,48 +108,123 @@
       </div>
     </nav>
 
-
-
-
-
-    <!------------------------------Header section---------------------------->
-          <div>
-            <div class="feature-section">
-              <div class="main-container">
-                <div class="container-fluid py-5">
-                  <div class="row p-3">
-                    <div class="d-flex flex-wrap py-4">
-                      <div class="col-md-6">
-                        <div class="blog-card-container my-2 mx-2">
-                          <div class="feature-section-img-container">
-                            <img style="border-radius: 64px;" class="w-100" src="{% static 'images/iot.png' %}"
-                              alt="choose teatcher.png">
-                          </div>
-                        </div>
+  <div class="main-content">
+    <!-- Top navbar -->
+    <!-- Header -->
+    <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 600px; background-image: url(https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cm9ib3RzfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60); background-size: cover; background-position: center top;">
+      <!-- Mask -->
+      <span class="mask bg-gradient-default opacity-8"></span>
+      <!-- Header container -->
+    </div>
+    <!-- Page content -->
+    <div class="container-fluid mt--7">
+      <div class="row">
+        <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
+          <div class="card card-profile shadow">
+<!--            <div class="row justify-content-center">-->
+<!--              <div class="col-lg-3 order-lg-2">-->
+<!--                <div class="card-profile-image">-->
+<!--                  <a href="#">-->
+<!--                    <img src="https://demos.creative-tim.com/argon-dashboard/assets-old/img/theme/team-4.jpg" class="rounded-circle">-->
+<!--                  </a>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+            <div class="card-body pt-0 pt-md-4">
+              <div class="row">
+                <div class="col">
+                  <div class="card-profile-stats d-flex justify-content-center mt-md-5">
+                    <div><h2 class="text-center">Plan Details</h2></div>
+                  </div>
+                </div>
+              </div>
+              <div class="text-center">
+                {% for plan in plans %}
+                <h3>Plan Name: <b>{{plan.title}}</b></h3>
+                <h3>Request Send: <b>{{plan.requests}}</b></h3>
+                <h3>Request Left: <b>{{plan.requests_left}}</b></h3>
+                <hr class="my-4">
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-8 order-xl-1">
+          <div class="card bg-secondary shadow">
+            <div class="card-header bg-white border-0">
+              <div class="row align-items-center">
+                <div class="col-8">
+                  <h3 class="mb-0">My account</h3>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <form method="post" action="{% url 'ProfileUpdate' %}">
+                {% csrf_token %}
+                <h6 class="heading-small text-muted mb-4">User information</h6>
+                <div class="pl-lg-4">
+                  <div class="row">
+                    <div class="col-lg-6">
+                      <div class="form-group focused">
+                        <label class="form-control-label" for="input-first-name">First name</label>
+                        <input type="text" id="input-first-name" name="first_name" class="form-control form-control-alternative" placeholder="First name" value="{{request.user.first_name}}">
                       </div>
-
-
-                      <div class="col-md-6">
-                        <div class="feature-content-container my-2 mx-2" style="margin-left: 70px !important;">
-                          <div class="blog-card-img-container mt-5">
-                            <p class="blog-title pt-4 pb-2">OUR FEATURE</p>
-                            <h2 class="blog-headline">Generate your perfect Product’s image based on your voice chat</h2>
-                          </div>
-                          <div style="position: relative;">
-                            <br>
-                            <a href="{% url 'VoiceToImage' %}" class="btn become-teacher-button">Voice To Image
-                              <i class="fa fa-microphone p-3 "></i></a>
-                          </div>
-                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="form-group focused">
+                        <label class="form-control-label" for="input-last-name">Last name</label>
+                        <input type="text" id="input-last-name" name="last_name" class="form-control form-control-alternative" placeholder="Last name" value="{{request.user.last_name}}">
                       </div>
                     </div>
                   </div>
-
                 </div>
+                <hr class="my-4">
+                <!-- Address -->
+                <h6 class="heading-small text-muted mb-4">Contact information</h6>
+                <div class="pl-lg-4">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group focused">
+                        <label class="form-control-label" for="input-address">Address</label>
+                        <input id="input-address" name="address" class="form-control form-control-alternative"
+                               placeholder="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09" value="{{request.user.address}}" type="text">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <div class="form-group focused">
+                        <label class="form-control-label" for="input-city">City</label>
+                        <input type="text" id="input-city" name="city" class="form-control form-control-alternative" placeholder="City" value="{{request.user.city}}">
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="form-group focused">
+                        <label class="form-control-label" for="input-country">Country</label>
+                        <input type="text" id="input-country" name="country" class="form-control form-control-alternative" placeholder="Country" value="{{request.user.country}}">
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="form-group">
+                        <label class="form-control-label" for="input-country">Postal code</label>
+                        <input type="number" id="input-postal-code" name="postal_code" value="{{request.user.postal_code}}" class="form-control form-control-alternative" placeholder="Postal code">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <hr class="my-4">
 
-              </div>
+                <div class="col-md-4">
+                  <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                </div>
+              </form>
             </div>
-         </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
 
 

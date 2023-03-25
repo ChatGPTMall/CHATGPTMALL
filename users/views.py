@@ -9,6 +9,8 @@ from django.core.files import File
 from django.core.mail import send_mail
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib import messages
+from django.utils import timezone
+
 from users.models import User
 import speech_recognition as sr
 from django.db import IntegrityError
@@ -81,6 +83,37 @@ def RegisterView(request):
         except IntegrityError as e:
             redirect('/api/register/')
     return render(request, "register.html")
+
+
+def ProfileView(request):
+    if request.user.is_authenticated:
+        plans = []
+        for plan in request.user.purchases.all():
+            try:
+                requests = plan.plan_requests.get(user=request.user).requests
+            except Exception as e:
+                requests = 0
+            added_on = plan.added_on
+            title = plan.plan.title
+            plans.append({
+                "added_on": added_on,
+                "title": title,
+                "requests": requests,
+                "requests_left": plan.plan.requests - requests,
+            })
+        return render(request, "profile.html", context={"plans": plans})
+    return redirect('/api/login/')
+
+
+def ProfileUpdate(request):
+    request.user.first_name = request.POST.get("first_name")
+    request.user.last_name = request.POST.get("last_name")
+    request.user.address = request.POST.get("address")
+    request.user.city = request.POST.get("city")
+    request.user.country = request.POST.get("country")
+    request.user.postal_code = request.POST.get("postal_code")
+    request.user.save()
+    return redirect("/api/profile/")
 
 
 def VoiceToImage(request):
@@ -373,6 +406,7 @@ def PaymentSuccess(request, plan_id, user_id):
     plan = Plans.objects.get(id=plan_id)
     user = User.objects.get(id=user_id)
     user.access = plan.access
+    user.purchased_on = timezone.now()
     user.save()
     Subscriptions.objects.create(user=user, plan=plan)
     return render(request, "payment_success.html", context={"plan": plan})
@@ -385,7 +419,6 @@ def PaymentCancel(request):
 def ValidateCouponCode(request, coupon_code):
     try:
         coupon = CouponCode.objects.get(code=coupon_code.split("=")[1])
-
         return JsonResponse(["valid", coupon.price], safe=False)
     except Exception as e:
         print(e)
