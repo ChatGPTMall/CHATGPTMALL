@@ -19,6 +19,9 @@
       .p-3 p{
         color:white !important;
       }
+      .hid{
+        display:none;
+      }
 
     </style>
     <title>CHATGPTMALL | Home</title>
@@ -158,13 +161,22 @@
               <h2 class="start-learning-section-headline text-center">Join Your Team</h2>
                 <p class="start-learning-section-paragraph text-center pt-2
                   pb-5">Join your team with TeamId provided</p>
+              <form method="post" action="{% url 'Communities' %}" class="form-inline" style="display: flex;justify-content: center;">
+                {% csrf_token %}
+                <div class="form-group ">
+                  <div class="col-md-6">
+                    <input type="text" name="q" class="form-control" id="inputPassword" placeholder="Search Teams">
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">Search</button>
+              </form>
               {% for community in communities %}
               <div class="col-md-3 g-3">
                   <div class="card-container p-4">
                     <div class="learning-section-card text-center">
                       <div>
 
-                        <img style="width:-webkit-fill-available;height:130px;"
+                        <img style="width:-webkit-fill-available;height:190px;"
                              src="/media/{{community.logo}}" alt="icon-1.png">
                       </div>
                       <div>

@@ -43,7 +43,7 @@ class UploadCouponsAdmin(admin.ModelAdmin):
 
 
 class CouponCodeAdmin(admin.ModelAdmin):
-    list_display = ('provider', 'currency', 'code', 'price', 'start_date', 'end_date', 'added_on')
+    list_display = ('provider', 'currency', 'code', 'is_expired', 'price', 'start_date', 'end_date', 'added_on')
 
 
 admin.site.register(Category)

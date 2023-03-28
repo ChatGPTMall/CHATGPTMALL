@@ -62,6 +62,12 @@ $(document).ready(function(){
         }
     });
 
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip({
+    trigger: 'click'
+  })
+})
+
 });
 
 
@@ -93,3 +99,11 @@ $('.owl-theme').owlCarousel({
       }
   }
 })
+
+//function get_data(url){
+//  console.log(url)
+//  document.getElementById(`${url}`).select();
+//  document.execCommand("copy");
+//}
+
+

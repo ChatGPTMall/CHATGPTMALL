@@ -345,7 +345,11 @@ def GetIndustriesData(request):
 
 
 def Communities(request):
-    communities = Community.objects.all()
+    q = request.POST.get("q")
+    if q:
+        communities = Community.objects.filter(name__icontains=q)
+    else:
+        communities = Community.objects.all()
     return render(request, "communities.html", context={
         "communities": communities,
     })
@@ -364,14 +368,27 @@ def JoinedCommunities(request):
 def JoinCommunity(request):
     try:
         if request.user.is_authenticated:
+            uri = request.build_absolute_uri('/')
+            is_leader = False
+            members = list()
             team_id = request.POST.get("team_id", None)
             show_welcome_ms = request.POST.get("show_welcome_ms", None)
             community = Community.objects.get(community_id=team_id)
             member, created = CommunityMembers.objects.get_or_create(user=request.user, community=community)
+            if request.user.community_leaders.filter(community_id=community.community_id).exists():
+                is_leader = True
+            for com in community.members.all():
+                members.append(dict({
+                    "name": com.user.get_full_name(),
+                    "email": com.user.email,
+                }))
             context = {
                 "community": community,
                 "total_members": community.members.all().count(),
-                "posts": community.feed.all()
+                "posts": community.feed.all(),
+                "members": members,
+                "is_leader": is_leader,
+                "uri": uri
             }
             if not created:
                 return render(request, "community_responses.html", context=context)
@@ -418,10 +435,27 @@ def PaymentCancel(request):
 
 def ValidateCouponCode(request, coupon_code):
     try:
-        coupon = CouponCode.objects.get(code=coupon_code.split("=")[1])
+        coupon = CouponCode.objects.get(code=coupon_code.split("=")[1], is_expired=False)
+        coupon.is_expired = True
+        coupon.save()
         return JsonResponse(["valid", coupon.price], safe=False)
     except Exception as e:
-        print(e)
         return JsonResponse(["invalid"], safe=False)
+
+
+def ShareTeam(request, team_id):
+    members = list()
+    team = Community.objects.get(id=team_id)
+    for com in team.members.all():
+        members.append(dict({
+            "first_name": com.user.first_name,
+            "last_name": com.user.last_name,
+            "email": com.user.email,
+        }))
+    return render(request, "shareteam.html", context={
+        "team": team,
+        "members": members,
+        "total_members": len(members)
+    })
 
 

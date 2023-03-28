@@ -12,6 +12,8 @@
       rel="stylesheet">
     <link href="{% static 'css/all.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link href="{% static 'css/owl.carousel.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/stylesheet.css' %}" rel="stylesheet">
     <style>
@@ -20,93 +22,60 @@
       }
 
     </style>
-    <title>CHATGPTMALL | Home</title>
+    <title>CHATGPTMALL | Teams Share</title>
   </head>
   <body>
-    <!------------------------------Header section---------------------------->
-    <nav class="navbar navbar-expand-lg" style="padding: 20px;">
-      <div class="container">
-        <a class="navbar-brand" href="{% url 'HomepageView' %}">
-          {% if show_logo %}
-          <img style="height: 68px;position: relative;top: 21px;"
-               src="https://www.zkteco.com/cn/uploads/image/20230228/5142aefc758659aafe58c2832e6d13f5.png">
-          {% endif %}
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent" aria-expanded="false"
-          aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-            <li class="nav-item nav-item-active">
-              <a class="nav-link active-link fw-bold" aria-current="page"
-                href="{% url 'HomepageView' %}">Home</a>
-            </li>
 
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-             Marketing
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'IndustriesView' %}">Industries</a></li>
-              <li><a class="dropdown-item" href="{% url 'JobsView' %}">Job Roles</a></li>
-              <li><a class="dropdown-item" href="{% url 'CapabilitiesView' %}">Capabilities</a></li>
-            </ul>
-           </li>
-          </ul>
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-             Our Services
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'VoiceToVoice' %}">Voice To Voice</a></li>
-              <li><a class="dropdown-item" href="{% url 'VoiceToImage' %}">Voice To Image</a></li>
-              <li><a class="dropdown-item" href="{% url 'TextToText' %}">Text To Text</a></li>
-              <li><a class="dropdown-item" href="{% url 'TextToImage' %}">Text To Image</a></li>
-            </ul>
-           </li>
-          </ul>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'our_plans' %}">Our Plans</a>
-            </li>
-            <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-             Communities
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'Communities' %}">All Communities</a></li>
-              <li><a class="dropdown-item" href="{% url 'JoinedCommunities' %}">Joined Communities</a></li>
-            </ul>
-           </li>
-          </ul>
 
-          {% if request.user.is_authenticated %}
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-             {{request.user.get_full_name}}
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{% url 'ProfileView' %}">Profile</a></li>
-              <li><a class="dropdown-item" href="{% url 'ApiKeyView' %}">API Key</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="{% url 'Logout' %}">Logout</a></li>
-            </ul>
-           </li>
-          </ul>
-          {% else %}
-          <div class="d-flex">
-            <a href="{% url 'LoginView' %}" class="btn signin">Sign In</a>
-            <a href="{% url 'RegisterView' %}" class="btn register-btn">Register now </a>
+
+<!------------------------------Start learning section---------------------------->
+
+    <div style="background-position:center;background:url('https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80')">
+      <div class="start-learning-section">
+        <div class="main-container py-5">
+          <div class="container py-5">
+            <div class="row py-5">
+              <h2 class="start-learning-section-headline text-center" style="color:white !important;">Join Your Team</h2><br>
+                <p class="start-learning-section-paragraph text-center pt-2
+                  pb-5">Total Members: {{total_members}}</p>
+                <form style="display: flex;justify-content: center;" method="post" action="{% url 'JoinCommunity' %}">
+                    {% csrf_token %}
+                    <input type="hidden" value="{{team.community_id}}" name="team_id">
+                    <button type="submit" class="btn btn-primary my-2"
+                            style="background-color:#5B61EB !important;color:white;">Join Now</button>
+                </form>
+              </div>
+            </div>
           </div>
-          {% endif %}
         </div>
       </div>
-    </nav>
+
+
+    <div class="container" style="margin-top:50px;">
+        <h2>Team Members</h2><br>
+        <div class="row">
+            <table class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">First Name</th>
+                  <th scope="col">Last Name</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for member in members %}
+                <tr>
+                  <td>{{member.first_name}}</td>
+                  <td>{{member.last_name}}</td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+
 
 
 
@@ -148,42 +117,85 @@
 
 
     <!------------------------------Start learning section---------------------------->
+<!--    <div>-->
+<!--      <div class="start-learning-section">-->
+<!--        <div class="main-container py-5">-->
+<!--          <div class="container py-5">-->
+<!--            <div class="row py-5">-->
+<!--              <h2 class="start-learning-section-headline text-center">Start your-->
+<!--                Learning<br/>-->
+<!--                  Journey Today!</h2>-->
+<!--                <p class="start-learning-section-paragraph text-center pt-2-->
+<!--                  pb-5">Lorem ipsum dolor-->
+<!--                  sit amet, consectetur.</p>-->
+<!--                <div class="col-md-3 g-3">-->
+<!--                  <div class="card-container p-4">-->
+<!--                    <div class="learning-section-card text-center">-->
+<!--                      <div>-->
+<!--                        <img src="{% static 'homepage/images/icon-1.png' %}" alt="icon-1.png">-->
+<!--                      </div>-->
+<!--                      <div class="pb-3">-->
+<!--                        <h3 class="card-headline mt-5">Learn with Experts</h3>-->
+<!--                        <p class="card-paragraph text-muted my-3">Grursus mal-->
+<!--                          suada faci lisis that ipsum ameti consecte.</p>-->
+<!--                      </div>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </div>-->
 
-    <div>
-      <div class="start-learning-section">
-        <div class="main-container py-5">
-          <div class="container py-5">
-            <div class="row py-5">
-              <h2 class="start-learning-section-headline text-center">Joined Teams</h2>
+<!--                <div class="col-md-3 g-3">-->
+<!--                  <div class="card-container p-4">-->
+<!--                    <div class="learning-section-card text-center">-->
+<!--                      <div>-->
+<!--                        <img src="{% static 'homepage/images/icon-2.png' %}" alt="icon-2.png">-->
+<!--                      </div>-->
+<!--                      <div class="pb-3">-->
+<!--                        <h3 class="card-headline mt-5">Learn Anything</h3>-->
+<!--                        <p class="card-paragraph text-muted my-3">Grursus mal-->
+<!--                          suada faci lisis that ipsum ameti consecte.</p>-->
+<!--                      </div>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </div>-->
 
-              {% for community in communities %}
-              <div class="col-md-3 g-3">
-                  <div class="card-container p-4">
-                    <div class="learning-section-card text-center">
-                      <div>
-                        <img style="width:-webkit-fill-available;height:190px;"
-                             src="/media/{{community.logo}}" alt="icon-1.png">
-                      </div>
-                      <div>
-                        <h3 class="card-headline mt-5" style="font-size:17px;">{{community.name}}</h3>
-                        <p>Total Members: {{community.get_members}}</p>
-                          <form method="post" action="{% url 'JoinCommunity' %}">
-                            {% csrf_token %}
-                            <input type="hidden" name="team_id" value="{{community.community_id}}">
-                            <input type="hidden" name="show_welcome_ms">
-                            <button type="submit" class="btn btn-lg my-3 mb-2"
-                                    style="background-color:#5B61EB !important;color:white;">Go</button>
-                          </form>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              {% endfor %}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+
+<!--                <div class="col-md-3 g-3">-->
+<!--                  <div class="card-container p-4">-->
+<!--                    <div class="learning-section-card text-center">-->
+<!--                      <div>-->
+<!--                        <img src="{% static 'homepage/images/icon-3.png' %}" alt="icon-3.png">-->
+<!--                      </div>-->
+<!--                      <div class="pb-3">-->
+<!--                        <h3 class="card-headline mt-5">Flexible Learning</h3>-->
+<!--                        <p class="card-paragraph text-muted my-3">Grursus mal-->
+<!--                          suada faci lisis that ipsum ameti consecte.</p>-->
+<!--                      </div>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </div>-->
+
+<!--                <div class="col-md-3 g-3">-->
+<!--                  <div class="card-container p-4">-->
+<!--                    <div class="learning-section-card text-center">-->
+<!--                      <div>-->
+<!--                        <img src="{% static 'homepage/images/icon-4.png' %}" alt="icon-4.png">-->
+<!--                      </div>-->
+<!--                      <div class="pb-3">-->
+<!--                        <h3 class="card-headline mt-5">Industrial Standard</h3>-->
+<!--                        <p class="card-paragraph text-muted my-3">Grursus mal-->
+<!--                          suada faci lisis that ipsum ameti consecte.</p>-->
+<!--                      </div>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+
+<!--            </div>-->
+
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+
 
 
 
@@ -417,7 +429,6 @@
 
         <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
         <script src="{% static 'js/jquery-3.6.1.min.js' %}"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <script src="{% static 'js/owl.carousel.min.js' %}"></script>
         <script src="{% static 'js/main.js' %}"></script>
       </body>

@@ -25,7 +25,7 @@ from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, Upl
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans, \
     IndustriesView, GetIndustriesData, TextToImage, GetImages, JobsView, CapabilitiesView, Communities, JoinCommunity, \
     SendPostCommunity, Checkout, PaymentSuccess, PaymentCancel, ValidateCouponCode, JoinedCommunities, ProfileView, \
-    ProfileUpdate
+    ProfileUpdate, ShareTeam
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -92,6 +92,8 @@ urlpatterns = [
 
     # API's
     path('api/v1/text_to_text/', TextToTexTView.as_view(), name="TextToTexTView"),
+
+    path("team/share/<int:team_id>/", ShareTeam, name="ShareTeam"),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

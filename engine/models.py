@@ -244,6 +244,7 @@ class CouponCode(models.Model):
     currency = models.CharField(max_length=100)
     code = models.CharField(_("Coupon Code"), max_length=35)
     price = models.FloatField(_("Coupon Discount"), default=0)
+    is_expired = models.BooleanField(default=False)
     start_date = models.DateTimeField(null=False)
     end_date = models.DateTimeField(null=False)
     added_on = models.DateTimeField(auto_now_add=True)
