@@ -197,7 +197,7 @@ class Community(models.Model):
                                     validators=[MinLengthValidator(6), is_aphanum])
     name = models.CharField(_("Community Name"), max_length=150)
     logo = models.ImageField(upload_to="Communities/Logo", null=True, blank=True)
-    leader = models.ForeignKey(User, related_name='community_leaders', on_delete=models.CASCADE)
+    leader = models.ForeignKey(User, related_name='community_leaders', on_delete=models.CASCADE, null=True, blank=True)
     added_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -291,5 +291,12 @@ class AllRequests(models.Model):
         verbose_name = _("Request")
         verbose_name_plural = _("All Requests")
 
+
+class UploadTeams(models.Model):
+    file = models.FileField(upload_to="Files/Teams")
+
+    class Meta:
+        verbose_name = _("Upload Team")
+        verbose_name_plural = _("Upload Teams")
 
 

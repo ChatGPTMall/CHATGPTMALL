@@ -1,7 +1,8 @@
 import pandas as pd
 from django.contrib import admin
 from engine.models import Items, Category, ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, \
-    Jobs, Capabilities, Community, CommunityMembers, CommunityPosts, CouponCode, UploadCoupons, Subscriptions
+    Jobs, Capabilities, Community, CommunityMembers, CommunityPosts, CouponCode, UploadCoupons, Subscriptions, \
+    UploadTeams
 
 
 # Register your models here.
@@ -42,6 +43,28 @@ class UploadCouponsAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
+class UploadTeamsAdmin(admin.ModelAdmin):
+    def save_model(self, request, obj, form, change):
+        file = form.cleaned_data.get('file')
+        if file:
+            if file.name.endswith('.csv'):
+                df = pd.read_csv(file)
+            elif file.name.endswith('.xlsx'):
+                df = pd.read_excel(file)
+            else:
+                raise ValueError('Invalid file format')
+            records = df.to_dict(orient='records')
+            for coupon in records:
+                try:
+                    name = coupon["team_name"]
+                    Community.objects.create(name=name)
+                except KeyError:
+                    raise ValueError('Invalid file format')
+                except Exception as e:
+                    raise ValueError(str(e))
+        super().save_model(request, obj, form, change)
+
+
 class CouponCodeAdmin(admin.ModelAdmin):
     list_display = ('provider', 'currency', 'code', 'is_expired', 'price', 'start_date', 'end_date', 'added_on')
 
@@ -60,5 +83,6 @@ admin.site.register(CommunityMembers)
 admin.site.register(CommunityPosts)
 admin.site.register(CouponCode, CouponCodeAdmin)
 admin.site.register(UploadCoupons, UploadCouponsAdmin)
+admin.site.register(UploadTeams, UploadTeamsAdmin)
 admin.site.register(Subscriptions)
 admin.site.register(VoiceToVoiceRequests, VoiceToVoiceRequestsAdmin)

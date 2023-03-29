@@ -1,6 +1,7 @@
 import os
 import urllib
 from io import BytesIO
+from io import BytesIO as IO
 from urllib import request
 from urllib.request import urlopen
 from django.conf import settings
@@ -10,7 +11,7 @@ from django.core.mail import send_mail
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib import messages
 from django.utils import timezone
-
+import pandas as pd
 from users.models import User
 import speech_recognition as sr
 from django.db import IntegrityError
@@ -458,4 +459,23 @@ def ShareTeam(request, team_id):
         "total_members": len(members)
     })
 
+
+def DownloadTeams(request):
+    uri = request.build_absolute_uri('/')
+    communities = list()
+    for community in Community.objects.all():
+        communities.append({
+            "name": community.name,
+            "community_id": community.community_id,
+            "link": uri + "team/share/{}/".format(community.id)
+        })
+    dataframe = pd.DataFrame(communities, index=None)
+    excel_file = IO()
+    xl_writer = pd.ExcelWriter(excel_file, engine='xlsxwriter')
+    dataframe.to_excel(xl_writer, 'ActiveLicenses', index=False)
+    xl_writer.save()
+    excel_file.seek(0)
+    response = HttpResponse(excel_file.read(), content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=all_team.xlsx'
+    return response
 

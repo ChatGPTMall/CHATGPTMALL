@@ -175,12 +175,16 @@
                   <div class="card-container p-4">
                     <div class="learning-section-card text-center">
                       <div>
-
+                        {% if community.logo %}
                         <img style="width:-webkit-fill-available;height:190px;"
                              src="/media/{{community.logo}}" alt="icon-1.png">
+                        {% else %}
+                        <img style="width:-webkit-fill-available;height:190px;"
+                             src="https://images.unsplash.com/photo-1587377838789-968194a7cc88?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=930&q=80" alt="icon-1.png">
+                        {% endif %}
                       </div>
                       <div>
-                        <h3 class="card-headline mt-5" style="font-size:17px;">{{community.name}}</h3>
+                        <h3 class="card-headline mt-5" style="font-size:13px;word-wrap: break-word;">{{community.name}}</h3>
                         <p>Total Members: {{community.get_members}}</p>
                         {% if is_member %}
                           <form method="post" action="{% url 'JoinCommunity' %}">
