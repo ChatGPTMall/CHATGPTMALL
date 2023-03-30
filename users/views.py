@@ -380,8 +380,9 @@ def JoinCommunity(request):
                 is_leader = True
             for com in community.members.all():
                 members.append(dict({
-                    "name": com.user.get_full_name(),
-                    "email": com.user.email,
+                    "f_name": com.user.first_name,
+                    "l_name": com.user.last_name,
+                    "email": com.user.email
                 }))
             context = {
                 "community": community,
