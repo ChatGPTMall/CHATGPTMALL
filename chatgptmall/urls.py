@@ -92,7 +92,7 @@ urlpatterns = [
 
     # API's
     path('api/v1/text_to_text/', TextToTexTView.as_view(), name="TextToTexTView"),
-    path('api/v1/text_to_image/', TextToImageView.as_view(), name="TextToImage"),
+    path('api/v1/text_to_image/', TextToImageView.as_view(), name="TextToImagesAPI"),
 
     path("team/share/<int:team_id>/", ShareTeam, name="ShareTeam"),
     path("downloads/teams/", DownloadTeams, name="DownloadTeams"),
