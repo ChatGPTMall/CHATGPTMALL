@@ -228,7 +228,10 @@ class CommunityPosts(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
     community = models.ForeignKey(Community, related_name="feed", on_delete=models.CASCADE)
     question = models.TextField(_("User Question"), unique=True)
-    response = models.TextField(_("AI Response"))
+    response = models.TextField(_("AI Response"), null=True, blank=True)
+    image1 = models.URLField(null=True, blank=True)
+    image2 = models.URLField(null=True, blank=True)
+    image3 = models.URLField(null=True, blank=True)
     added_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

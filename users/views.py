@@ -179,7 +179,7 @@ def VoiceOutPut(request):
 def UploadVoice(request):
     text = request.GET.get('text', '')
     response = ImagesDB.objects.filter(question__icontains=text)
-    URL = os.getenv("DEPLOYED_HOST", "https://my.chatgptmall.tech")
+    URL = os.getenv("DEPLOYED_HOST", "https://madeinthai.org")
     if not response:
         response = openai.Image.create(prompt="{}".format(text), n=3, size="1024x1024")
         images = list()
@@ -406,10 +406,20 @@ def SendPostCommunity(request):
     try:
         question = request.GET.get('question', '')
         response = request.GET.get('response', '')
+        images = request.GET.get('images', None)
         if not CommunityPosts.objects.filter(question=question).exists():
-            community = CommunityMembers.objects.get(user=request.user)
-            CommunityPosts.objects.create(
-                user=request.user, community=community.community, question=question, response=response)
+            community = CommunityMembers.objects.filter(user=request.user).first()
+            if images:
+                images = images.split(",")
+                post = CommunityPosts.objects.create(
+                    user=request.user, community=community.community, question=question)
+                post.image1 = images[0]
+                post.image2 = images[2]
+                post.image3 = images[2]
+                post.save()
+            else:
+                CommunityPosts.objects.create(
+                    user=request.user, community=community.community, question=question, response=response)
             return HttpResponse("Post Uploaded Successfully")
         return HttpResponse("Post Already Exists")
     except CommunityMembers.DoesNotExist:
