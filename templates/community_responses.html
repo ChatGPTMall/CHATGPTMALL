@@ -39,10 +39,9 @@
   display: table;
 }
 
-.cont img {
+.cont .prof {
   float: left;
   max-width: 60px;
-  width: 100%;
   margin-right: 20px;
   border-radius: 50%;
 }
@@ -171,17 +170,30 @@
     </div>
     {% for post in posts %}
     <div class="container cont">
-      <img src="https://i.pinimg.com/474x/4b/71/f8/4b71f8137985eaa992d17a315997791e.jpg" alt="Avatar" style="width:100%;">
+      <img class="prof" src="https://i.pinimg.com/474x/4b/71/f8/4b71f8137985eaa992d17a315997791e.jpg" alt="Avatar" style="width:100%;">
         <p>{{post.user.get_full_name}}</p>
         <p>{{post.question}}</p>
       <span class="time-right">{{post.added_on}}</span>
     </div>
 
+
+    {% if post.image1 or post.image2 or post.image3 %}
     <div class="container cont darker">
-      <img src="https://w1.pngwing.com/pngs/278/853/png-transparent-line-art-nose-chatbot-internet-bot-artificial-intelligence-snout-head-smile-black-and-white.png" alt="Avatar" class="right" style="width:100%;">
+      <img class="right" src="https://w1.pngwing.com/pngs/278/853/png-transparent-line-art-nose-chatbot-internet-bot-artificial-intelligence-snout-head-smile-black-and-white.png" alt="Avatar" style="width:27px;">
+      <div class="row">
+          <img style="height:200px;width:200px;" src="{{post.image1}}">
+          <img style="height:200px;width:200px;" src="{{post.image2}}">
+          <img style="height:200px;width:200px;" src="{{post.image3}}">
+      </div>
+      <span class="time-left">{{post.added_on}}</span>
+    </div>
+    {% else %}
+    <div class="container cont darker">
+      <img src="https://w1.pngwing.com/pngs/278/853/png-transparent-line-art-nose-chatbot-internet-bot-artificial-intelligence-snout-head-smile-black-and-white.png" alt="Avatar" class="right" style="width:27px;">
       <p>{{post.response}}</p>
       <span class="time-left">{{post.added_on}}</span>
     </div>
+    {% endif %}
     {% endfor %}
 
 
