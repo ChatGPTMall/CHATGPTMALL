@@ -227,7 +227,7 @@ class CommunityMembers(models.Model):
 class CommunityPosts(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
     community = models.ForeignKey(Community, related_name="feed", on_delete=models.CASCADE)
-    question = models.TextField(_("User Question"), unique=True)
+    question = models.TextField(_("User Question"))
     response = models.TextField(_("AI Response"), null=True, blank=True)
     image1 = models.URLField(null=True, blank=True)
     image2 = models.URLField(null=True, blank=True)

@@ -251,11 +251,23 @@ def get_chatgpt_response(request):
 
 
 def TextToText(request):
-    return render(request, "TextToText.html")
+    if request.user.is_authenticated:
+        if CommunityMembers.objects.filter(user=request.user).exists():
+            communities_id = request.user.team.all().values_list("community__community_id", flat=True)
+            communities = Community.objects.filter(community_id__in=communities_id)
+            return render(request, "TextToText.html", context={"communities": communities})
+        return render(request, "TextToText.html")
+    return redirect("/api/login/")
 
 
 def TextToImage(request):
-    return render(request, "TextToImage.html")
+    if request.user.is_authenticated:
+        if CommunityMembers.objects.filter(user=request.user).exists():
+            communities_id = request.user.team.all().values_list("community__community_id", flat=True)
+            communities = Community.objects.filter(community_id__in=communities_id)
+            return render(request, "TextToImage.html", context={"communities": communities})
+        return render(request, "TextToImage.html")
+    return redirect("/api/login/")
 
 
 def CreateAPIkey(request):
@@ -403,27 +415,39 @@ def JoinCommunity(request):
 
 
 def SendPostCommunity(request):
+    page = request.POST.get("page")
     try:
-        question = request.GET.get('question', '')
-        response = request.GET.get('response', '')
-        images = request.GET.get('images', None)
-        if not CommunityPosts.objects.filter(question=question).exists():
-            community = CommunityMembers.objects.filter(user=request.user).first()
-            if images:
-                images = images.split(",")
+        # question = request.GET.get('question', '')
+        # response = request.GET.get('response', '')
+        # images = request.GET.get('images', None)
+        question = request.POST.get("input")
+        response = request.POST.get("response")
+        images = request.POST.get("images")
+        multiple_communities = request.POST.getlist("multiple_communities")
+        multiple_communities = [int(item) for item in multiple_communities]
+        all_comms = CommunityMembers.objects.filter(user=request.user, community__id__in=multiple_communities)
+        if images:
+            images = images.split(",")
+            for comm in all_comms:
                 post = CommunityPosts.objects.create(
-                    user=request.user, community=community.community, question=question)
+                    user=request.user, community=comm.community, question=question)
                 post.image1 = images[0]
                 post.image2 = images[2]
                 post.image3 = images[2]
                 post.save()
-            else:
+        else:
+            for comm in all_comms:
                 CommunityPosts.objects.create(
-                    user=request.user, community=community.community, question=question, response=response)
-            return HttpResponse("Post Uploaded Successfully")
-        return HttpResponse("Post Already Exists")
+                    user=request.user, community=comm.community, question=question, response=response)
+        if page == "text_to_text":
+            return redirect("/api/text_to_text/")
+        else:
+            return redirect("/api/text_to_image/")
     except CommunityMembers.DoesNotExist:
-        return HttpResponse("Community Does Not Exist For You")
+        if page == "text_to_text":
+            return redirect("/api/text_to_text/")
+        else:
+            return redirect("/api/text_to_text/")
 
 
 def Checkout(request, plan_id):
