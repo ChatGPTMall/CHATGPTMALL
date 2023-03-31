@@ -4,15 +4,17 @@ $(document).ready(function() {
     $("#loading").hide();
     $("#send_post_community").hide();
     document.querySelector('#send_post_community').onclick = function() {
-        var xhr = new XMLHttpRequest();
-         xhr.open('GET', `/send/post/community/?question=${post_text}&images=${post_images}`, true);
-         xhr.onreadystatechange = function() {
-              if (this.readyState == 4 && this.status == 200) {
-                var resp = this.responseText;
-                alert(resp);
-              }
-         };
-         xhr.send();
+            $("#input").val(post_text)
+            $("#response").val(post_images)
+//        var xhr = new XMLHttpRequest();
+//         xhr.open('GET', `/send/post/community/?question=${post_text}&images=${post_images}`, true);
+//         xhr.onreadystatechange = function() {
+//              if (this.readyState == 4 && this.status == 200) {
+//                var resp = this.responseText;
+//                alert(resp);
+//              }
+//         };
+//         xhr.send();
     }
     document.querySelector('#text_to_text_btn').onclick = function() {
         var text_to_text = $("#text_to_text_input").val();

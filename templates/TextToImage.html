@@ -51,7 +51,7 @@
               </div>
                 <br>
               <a type="submit" id="text_to_text_btn" class="btn btn-primary">Generate Images</a>
-              <a type="submit" id="send_post_community" class="btn btn-primary">Post To Community</a>
+              <a type="submit" id="send_post_community" data-toggle="modal" data-target="#myModal" class="btn btn-primary">Post To Community</a>
             </form>
         </div>
     </div>
@@ -71,6 +71,43 @@
             <h2 >Please Login To Access Our Voice To Voice Service </h2>
         </div>
     {% endif %}
+
+
+<div class="container">
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Select Teams</h3>
+        </div>
+        <div class="modal-body">
+          <form method="post" action="{% url 'SendPostCommunity' %}">
+            {% csrf_token %}
+              <input type="hidden" id="page" name="page" value="text_to_image">
+              <input type="hidden" id="input" name="input">
+              <input type="hidden" id="response" name="images">
+          <div class="form-group">
+            <select name="multiple_communities" class="form-select form-control" multiple>
+                {% for comm in communities %}
+                <option value="{{comm.id}}">{{comm.name}}</option>
+                {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary" style="background-color:#5B61EB !important;color:white;">Send Post</button>
+        </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn" data-dismiss="modal" style="background-color:#5B61EB !important;color:white;">X</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
 <script src="{% static 'chat/js/jquery-1.12.3.js' %}"></script>
 <script src="https://cdn.WebRTC-Experiment.com/MediaStreamRecorder.js"></script>
 <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>

@@ -25,14 +25,16 @@ $(document).ready(function() {
     document.querySelector('#post').onclick = function() {
         var question = $("#text_to_text_input").val();
         var response = $("#text_to_text_show").text();
-        var xhr = new XMLHttpRequest();
-         xhr.open('GET', `/send/post/community/?question=${question}&response=${response}`, true);
-         xhr.onreadystatechange = function() {
-              if (this.readyState == 4 && this.status == 200) {
-                var resp = this.responseText;
-                alert(resp);
-              }
-         };
-         xhr.send();
+        $("#input").val(question)
+        $("#response").val(response)
+//        var xhr = new XMLHttpRequest();
+//         xhr.open('GET', `/send/post/community/?question=${question}&response=${response}`, true);
+//         xhr.onreadystatechange = function() {
+//              if (this.readyState == 4 && this.status == 200) {
+//                var resp = this.responseText;
+//                alert(resp);
+//              }
+//         };
+//         xhr.send();
     }
 });
