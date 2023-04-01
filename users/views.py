@@ -181,9 +181,9 @@ def UploadVoice(request):
     response = ImagesDB.objects.filter(question__icontains=text)
     URL = os.getenv("DEPLOYED_HOST", "https://madeinthai.org")
     if not response:
-        response = openai.Image.create(prompt="{}".format(text), n=3, size="1024x1024")
+        resp = openai.Image.create(prompt="{}".format(text), n=3, size="1024x1024")
         images = list()
-        for image in response['data']:
+        for image in resp['data']:
             images.append(image.url)
         if request.user.is_authenticated:
             imagedb = ImagesDB.objects.create(question=text, user=request.user)
@@ -363,8 +363,22 @@ def Communities(request):
         communities = Community.objects.filter(name__icontains=q)
     else:
         communities = Community.objects.all()
+
+    page_num = request.GET.get('page', 1)
+
+    paginator = Paginator(communities, 8)
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+        # if page is not an integer, deliver the first page
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        # if the page is out of range, deliver the last page
+        page_obj = paginator.page(paginator.num_pages)
+
     return render(request, "communities.html", context={
         "communities": communities,
+        "page_obj": page_obj
     })
 
 
@@ -384,9 +398,13 @@ def JoinCommunity(request):
             uri = request.build_absolute_uri('/')
             is_leader = False
             members = list()
-            team_id = request.POST.get("team_id", None)
             show_welcome_ms = request.POST.get("show_welcome_ms", None)
-            community = Community.objects.get(community_id=team_id)
+            try:
+                team_id = request.POST.get("team_id", None)
+                community = Community.objects.get(community_id=team_id)
+            except Exception as e:
+                team_id = request.GET.get("team_id")
+                community = Community.objects.get(community_id=team_id)
             member, created = CommunityMembers.objects.get_or_create(user=request.user, community=community)
             if request.user.community_leaders.filter(community_id=community.community_id).exists():
                 is_leader = True
@@ -396,13 +414,26 @@ def JoinCommunity(request):
                     "l_name": com.user.last_name,
                     "email": com.user.email
                 }))
+            posts = community.feed.all()
+            page_num = request.GET.get('page', 1)
+
+            paginator = Paginator(posts, 4)
+            try:
+                page_obj = paginator.page(page_num)
+            except PageNotAnInteger:
+                # if page is not an integer, deliver the first page
+                page_obj = paginator.page(1)
+            except EmptyPage:
+                # if the page is out of range, deliver the last page
+                page_obj = paginator.page(paginator.num_pages)
             context = {
                 "community": community,
                 "total_members": community.members.all().count(),
-                "posts": community.feed.all(),
+                "page_obj": page_obj,
                 "members": members,
                 "is_leader": is_leader,
-                "uri": uri
+                "uri": uri,
+                "team_id": community.community_id
             }
             if not created:
                 return render(request, "community_responses.html", context=context)
@@ -424,6 +455,7 @@ def SendPostCommunity(request):
         response = request.POST.get("response")
         images = request.POST.get("images")
         multiple_communities = request.POST.getlist("multiple_communities")
+        print(multiple_communities)
         multiple_communities = [int(item) for item in multiple_communities]
         all_comms = CommunityMembers.objects.filter(user=request.user, community__id__in=multiple_communities)
         if images:

@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'chat/css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <script src="{% static 'chat/js/multiselect.min.js' %}"></script>
     <style>
         #back{
             background: #2844FA;
@@ -78,10 +79,10 @@
               <input type="hidden" id="input" name="input">
               <input type="hidden" id="response" name="response">
           <div class="form-group">
-            <select name="multiple_communities" class="form-select form-control" multiple>
-                {% for comm in communities %}
-                <option value="{{comm.id}}">{{comm.name}}</option>
-                {% endfor %}
+              <select name="multiple_communities" class="form-select form-control" id='testSelect1' multiple>
+                  {% for comm in communities %}
+                    <option value='{{comm.id}}'>{{comm.name}}</option>
+                  {% endfor %}
             </select>
           </div>
           <button type="submit" class="btn btn-primary" style="background-color:#5B61EB !important;color:white;">Send Post</button>
@@ -101,6 +102,23 @@
 <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 <script src="{% static 'chat/js/bootstrap.min.js' %}"></script>
 <script src="{% static 'chat/js/text_to_text.js' %}"></script>
+<script>
+	document.multiselect('#testSelect1')
+		.setCheckBoxClick("checkboxAll", function(target, args) {
+			console.log("Checkbox 'Select All' was clicked and got value ", args.checked);
+		})
+		.setCheckBoxClick("1", function(target, args) {
+			console.log("Checkbox for item with value '1' was clicked and got value ", args.checked);
+		});
+
+	function enable() {
+		document.multiselect('#testSelect1').setIsEnabled(true);
+	}
+
+	function disable() {
+		document.multiselect('#testSelect1').setIsEnabled(false);
+	}
+</script>
 </body>
 </html>
 
