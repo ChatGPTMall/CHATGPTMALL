@@ -111,7 +111,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(_('first name'), max_length=30)
     last_name = models.CharField(_('last name'), max_length=150, null=True)
     email = LowercaseEmailField(_('email address'), unique=True)
-    access = models.CharField(choices=AccessTypes.choices, max_length=30, default="NO_ACCESS")
+    access = models.CharField(choices=AccessTypes.choices, max_length=30, default="TEXT_TO_TEXT")
     is_staff = models.BooleanField(_('staff status'), default=False)
     is_superuser = models.BooleanField(_('superuser'), default=False)
     is_active = models.BooleanField(_('active'), default=True)

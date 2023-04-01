@@ -424,6 +424,7 @@ def SendPostCommunity(request):
         response = request.POST.get("response")
         images = request.POST.get("images")
         multiple_communities = request.POST.getlist("multiple_communities")
+        print(multiple_communities)
         multiple_communities = [int(item) for item in multiple_communities]
         all_comms = CommunityMembers.objects.filter(user=request.user, community__id__in=multiple_communities)
         if images:
