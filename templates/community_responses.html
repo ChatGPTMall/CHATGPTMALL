@@ -61,6 +61,10 @@
   float: left;
   color: #999;
 }
+.pagination a{
+        font-size: 16px;
+        padding: 0px 4px;
+      }
 
     </style>
     <title>CHATGPTMALL | {{community.name}}</title>
@@ -168,7 +172,7 @@
                         </button>
             </div>
     </div>
-    {% for post in posts %}
+    {% for post in page_obj %}
     <div class="container cont">
       <img class="prof" src="https://i.pinimg.com/474x/4b/71/f8/4b71f8137985eaa992d17a315997791e.jpg" alt="Avatar" style="width:100%;">
         <p>{{post.user.get_full_name}}</p>
@@ -195,6 +199,39 @@
     </div>
     {% endif %}
     {% endfor %}
+
+
+    <div class="container pagination" style="display: flex;justify-content: center;padding:17px 0px;">
+      {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}&team_id={{team_id}}">« Previous</a>
+
+          {% if page_obj.number > 3 %}
+            <a href="?page=1&team_id={{team_id}}">1</a>
+            {% if page_obj.number > 4 %}
+              <span>...</span>
+            {% endif %}
+          {% endif %}
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <a href="?page={{ num }}&team_id={{team_id}}">{{ num }}</a>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a href="?page={{ num }}&team_id={{team_id}}">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          {% if page_obj.number < page_obj.paginator.num_pages|add:'-3' %}
+            <span style="color:blue;">...</span>
+            <a href="?page={{ page_obj.paginator.num_pages }}&team_id={{team_id}}">{{ page_obj.paginator.num_pages }}</a>
+          {% elif page_obj.number < page_obj.paginator.num_pages|add:'-2' %}
+            <a href="?page={{ page_obj.paginator.num_pages }}&team_id={{team_id}}">{{ page_obj.paginator.num_pages }}</a>
+          {% endif %}
+
+          <a href="?page={{ page_obj.next_page_number }}&team_id={{team_id}}">Next »</a>
+        {% endif %}
+    </div>
 
 
     <div class="container">
