@@ -21,7 +21,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, Capabilities, \
-    Jobs, Community, CommunityMembers, CommunityPosts, CouponCode, Subscriptions
+    Jobs, Community, CommunityMembers, CommunityPosts, CouponCode, Subscriptions, Items
 
 openai.api_key = os.getenv("OPEN_AI_KEY")
 
@@ -291,7 +291,7 @@ def ApiKeyView(request):
 
 def OurPlans(request):
     context = {
-        "monthly_plans": Plans.objects.filter(plan_type="MONTHLY"),
+        "monthly_plans": Plans.objects.filter(plan_type="MONTHLY").order_by("-added_on"),
         "yearly_plans":  Plans.objects.filter(plan_type="YEARLY"),
         "time_period_plans": Plans.objects.filter(plan_type="TIMEPERIOD"),
     }
@@ -545,4 +545,13 @@ def DownloadTeams(request):
     response = HttpResponse(excel_file.read(), content_type='application/ms-excel')
     response['Content-Disposition'] = 'attachment; filename=all_team.xlsx'
     return response
+
+
+def ShopWithText(request):
+    q = request.POST.get("q")
+    if q:
+        items = Items.objects.filter(title__icontains=q)
+    else:
+        items = []
+    return render(request, "text_shop.html", context={"items": items})
 

@@ -26,6 +26,32 @@
         font-size: 16px;
         padding: 0px 4px;
       }
+      .goog-te-gadget-icon {
+    display:none;
+  }
+  .skiptranslate iframe{
+    display:none !important;
+  }
+
+  .goog-te-gadget-simple {
+      background-color: #ecebf0 !important;
+      border:0 !important;
+      font-size: 10pt;
+     font-weight:800;
+      display: inline-block;
+      padding:10px 10px !important;
+      cursor: pointer;
+      zoom: 1;
+  }
+
+  .goog-te-gadget-simple  span {
+     color:#3e3065 !important;
+
+  }
+  body {
+      top: 0px !important;
+      }
+
 
     </style>
     <title>CHATGPTMALL | Home</title>
@@ -91,7 +117,7 @@
             </ul>
            </li>
           </ul>
-
+          <div id="google_translate_element"></div>
           {% if request.user.is_authenticated %}
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item dropdown">
@@ -521,5 +547,22 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <script src="{% static 'js/owl.carousel.min.js' %}"></script>
         <script src="{% static 'js/main.js' %}"></script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+        <script type="text/javascript">
+         function setCookie(key, value, expiry) {
+            var expires = new Date();
+            expires.setTime(expires.getTime() + (expiry * 24 * 60 * 60 * 1000));
+            document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+          }
+            function googleTranslateElementInit() {
+                  setCookie('googtrans', '/en/zh-CN',1);
+                  new google.translate.TranslateElement({
+                    pageLanguage: 'en',
+                    includedLanguages: "ar,en,es,jv,ko,pa,pt,ru,zh-CN",
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+                  },
+                  'google_translate_element');
+            }
+      </script>
       </body>
     </html>

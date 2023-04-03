@@ -18,6 +18,31 @@
       .p-3 p{
         color:white !important;
       }
+      .goog-te-gadget-icon {
+          display:none;
+        }
+        .skiptranslate iframe{
+          display:none !important;
+        }
+
+        .goog-te-gadget-simple {
+            background-color: #ecebf0 !important;
+            border:0 !important;
+            font-size: 10pt;
+           font-weight:800;
+            display: inline-block;
+            padding:10px 10px !important;
+            cursor: pointer;
+            zoom: 1;
+        }
+
+        .goog-te-gadget-simple  span {
+           color:#3e3065 !important;
+
+        }
+        body {
+            top: 0px !important;
+            }
 
     </style>
     <title>CHATGPTMALL | Home</title>
@@ -75,6 +100,15 @@
             </li>
             <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+             Shop
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'ShopWithText' %}">Shop With Text</a></li>
+              <li><a class="dropdown-item" href="">Shop With Voice</a></li>
+            </ul>
+           </li>
+            <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
              Communities
             </a>
             <ul class="dropdown-menu">
@@ -86,7 +120,7 @@
             </ul>
            </li>
           </ul>
-
+          <div id="google_translate_element"></div>
           {% if request.user.is_authenticated %}
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item dropdown">
@@ -102,6 +136,7 @@
            </li>
           </ul>
           {% else %}
+
           <div class="d-flex">
             <a href="{% url 'LoginView' %}" class="btn signin">Sign In</a>
             <a href="{% url 'RegisterView' %}" class="btn register-btn">Register now </a>
@@ -135,7 +170,8 @@
                       <div class="col-md-6">
                         <div class="feature-content-container my-2 mx-2" style="margin-left: 70px !important;">
                           <div class="blog-card-img-container mt-5">
-                            <p class="blog-title pt-4 pb-2">OUR FEATURE</p>
+                            <p class="blog-title pt-4 pb-2">OUR FEATURE </p>
+
                             <h2 class="blog-headline">Generate your perfect Product’s image based on your voice chat</h2>
                           </div>
                           <div style="position: relative;">
@@ -515,5 +551,23 @@
         <script src="{% static 'js/jquery-3.6.1.min.js' %}"></script>
         <script src="{% static 'js/owl.carousel.min.js' %}"></script>
         <script src="{% static 'js/main.js' %}"></script>
+        <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+        <script type="text/javascript">
+         function setCookie(key, value, expiry) {
+            var expires = new Date();
+            expires.setTime(expires.getTime() + (expiry * 24 * 60 * 60 * 1000));
+            document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+          }
+            function googleTranslateElementInit() {
+                  setCookie('googtrans', '/en/zh-CN',1);
+                  new google.translate.TranslateElement({
+                    pageLanguage: 'en',
+                    includedLanguages: "ar,en,es,jv,ko,pa,pt,ru,zh-CN",
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+                  },
+                  'google_translate_element');
+            }
+      </script>
+
       </body>
     </html>
