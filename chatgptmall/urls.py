@@ -25,7 +25,7 @@ from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, Upl
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans, \
     IndustriesView, GetIndustriesData, TextToImage, GetImages, JobsView, CapabilitiesView, Communities, JoinCommunity, \
     SendPostCommunity, Checkout, PaymentSuccess, PaymentCancel, ValidateCouponCode, JoinedCommunities, ProfileView, \
-    ProfileUpdate, ShareTeam, DownloadTeams
+    ProfileUpdate, ShareTeam, DownloadTeams, ShopWithText
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -89,6 +89,9 @@ urlpatterns = [
     path("payment/success/<int:plan_id>/<int:user_id>/", PaymentSuccess, name="payment-success"),
     path("payment/cancel/", PaymentCancel, name="payment-cancel"),
     path("validate/coupon_code/<str:coupon_code>/", ValidateCouponCode, name="ValidateCouponCode"),
+
+    # Shop
+    path("api/v1/shop/text/", ShopWithText, name="ShopWithText"),
 
     # API's
     path('api/v1/text_to_text/', TextToTexTView.as_view(), name="TextToTexTView"),

@@ -1,0 +1,62 @@
+{% extends 'parent.html' %}
+{% block tittle %}Shop | MadeinThai{% endblock %}
+{% block body %}
+  <!-- ======= Hero Section ======= -->
+  <section id="hero" class="hero d-flex align-items-center">
+    <div class="container">
+      <div class="row gy-4 d-flex justify-content-between">
+        <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
+          <h2 data-aos="fade-up">Shop With Open AI</h2>
+          <p data-aos="fade-up" data-aos-delay="100"></p>
+
+          <form action="{% url 'ShopWithText' %}" method="post"
+                class="form-search d-flex align-items-stretch mb-3" data-aos="fade-up" data-aos-delay="200">
+            {% csrf_token %}
+            <input type="text" name="q" class="form-control" placeholder="Search your items">
+            <button type="submit" class="btn btn-primary">Search</button>
+          </form>
+
+        </div>
+
+        <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
+          <img src="shop/img/hero-img.svg" class="img-fluid mb-3 mb-lg-0" alt="">
+        </div>
+
+      </div>
+    </div>
+  </section><!-- End Hero Section -->
+
+  <main id="main">
+
+
+    <!-- ======= Services Section ======= -->
+    <section id="service" class="services pt-0">
+      <div class="container" data-aos="fade-up">
+
+<!--        <div class="section-header">-->
+<!--          <span>Our Services</span>-->
+<!--          <h2>Our Services</h2>-->
+
+<!--        </div>-->
+        <br>
+        <div class="row gy-4">
+
+          {% for item in items %}
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="card">
+              <div class="card-img" style="display: flex;justify-content: center;">
+                <img src="/media/{{item.image}}" style="height:160px;" alt="" class="img-fluid">
+              </div>
+              <h3 style="text-align:center;"><a href="" class="stretched-link">{{item.title}}</a></h3>
+              <p style="text-align:center;">{{item.description}}</p>
+              <a class="get-a-quote" style="text-align:center;margin-bottom:23px;">Learn How To Use?</a>
+            </div>
+          </div><!-- End Card Item -->
+          {% endfor %}
+        </div>
+
+      </div>
+    </section><!-- End Services Section -->
+
+  </main><!-- End #main -->
+{% endblock %}
