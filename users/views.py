@@ -366,7 +366,7 @@ def Communities(request):
 
     page_num = request.GET.get('page', 1)
 
-    paginator = Paginator(communities, 8)
+    paginator = Paginator(communities.order_by("-added_on"), 8)
     try:
         page_obj = paginator.page(page_num)
     except PageNotAnInteger:
@@ -380,6 +380,17 @@ def Communities(request):
         "communities": communities,
         "page_obj": page_obj
     })
+
+
+def CreateTeams(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            team_name = request.POST.get("team_name")
+            logo = request.FILES.get("logo")
+            community = Community.objects.create(name=team_name, logo=logo, leader=request.user)
+            CommunityMembers.objects.create(user=request.user, community=community)
+        return render(request, "create_teams.html")
+    return redirect("/api/login/")
 
 
 def JoinedCommunities(request):
@@ -554,4 +565,13 @@ def ShopWithText(request):
     else:
         items = []
     return render(request, "text_shop.html", context={"items": items})
+
+
+def ItemHowToUse(request, item_id):
+    item = Items.objects.get(id=item_id)
+    if request.method == "POST":
+        uses = request.POST.get("usecase")
+        item.description = uses
+        item.save()
+    return render(request, "item_uses.html", context={"item": item})
 

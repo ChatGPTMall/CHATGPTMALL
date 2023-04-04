@@ -79,6 +79,10 @@
              Communities
             </a>
             <ul class="dropdown-menu">
+              {% if request.user.is_authenticated %}
+              <li><a class="dropdown-item" href="{% url 'DownloadTeams' %}">Download Communities</a></li>
+              <li><a class="dropdown-item" href="{% url 'CreateTeams' %}">Create Communities</a></li>
+              {% endif %}
               <li><a class="dropdown-item" href="{% url 'Communities' %}">All Communities</a></li>
               <li><a class="dropdown-item" href="{% url 'JoinedCommunities' %}">Joined Communities</a></li>
             </ul>
