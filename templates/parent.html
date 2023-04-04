@@ -105,10 +105,18 @@
   <script src="{% static 'shop/vendor/glightbox/js/glightbox.min.js' %}"></script>
   <script src="{% static 'shop/vendor/swiper/swiper-bundle.min.js' %}"></script>
   <script src="{% static 'shop/vendor/aos/aos.js' %}"></script>
-  <script src="{% static 'shop/vendor/php-email-form/validate.js' %}"></script>
+  <script src="https://cdn.tiny.cloud/1/your-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>;
 
   <!-- Template Main JS File -->
   <script src="{% static 'shop/js/main.js' %}"></script>
+<script>
+   tinymce.init({
+   selector: '#editor',
+   plugins: 'powerpaste casechange searchreplace autolink directionality advcode visualblocks visualchars image link media mediaembed codesample table charmap pagebreak nonbreaking anchor tableofcontents insertdatetime advlist lists checklist wordcount tinymcespellchecker editimage help formatpainter permanentpen charmap linkchecker emoticons advtable export autosave',
+   toolbar: 'undo redo print spellcheckdialog formatpainter | blocks fontfamily fontsize | bold italic underline forecolor backcolor | link image | alignleft aligncenter alignright alignjustify lineheight | checklist bullist numlist indent outdent | removeformat',
+   height: '700px'
+       });
+</script>
 
 </body>
 

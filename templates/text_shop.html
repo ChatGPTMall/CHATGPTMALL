@@ -1,5 +1,6 @@
 {% extends 'parent.html' %}
 {% block tittle %}Shop | MadeinThai{% endblock %}
+{% load static %}
 {% block body %}
   <!-- ======= Hero Section ======= -->
   <section id="hero" class="hero d-flex align-items-center">
@@ -19,7 +20,7 @@
         </div>
 
         <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
-          <img src="shop/img/hero-img.svg" class="img-fluid mb-3 mb-lg-0" alt="">
+          <img src="{% static 'shop/vendor/img/hero-img.svg' %}" class="img-fluid mb-3 mb-lg-0" alt="">
         </div>
 
       </div>
@@ -47,9 +48,11 @@
               <div class="card-img" style="display: flex;justify-content: center;">
                 <img src="/media/{{item.image}}" style="height:160px;" alt="" class="img-fluid">
               </div>
-              <h3 style="text-align:center;"><a href="" class="stretched-link">{{item.title}}</a></h3>
-              <p style="text-align:center;">{{item.description}}</p>
+              <h3 style="text-align:center;"><a href="{% url 'ItemHowToUse' item.id %}" class="stretched-link">{{item.title}}</a></h3>
               <a class="get-a-quote" style="text-align:center;margin-bottom:23px;">Learn How To Use?</a>
+              <p style="text-align:center;margin-bottom:23px;">
+                <a target="_blank" href="{% url 'ItemHowToUse' item.id %}">Upload How To Use?</a>
+              </p>
             </div>
           </div><!-- End Card Item -->
           {% endfor %}
