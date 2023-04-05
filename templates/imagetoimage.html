@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+{% load static %}
+{% load i18n %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CHATGPTMALL | Text To Image</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <script src="{% static 'chat/js/multiselect.min.js' %}"></script>
+    <style>
+        #back{
+            background: #2844FA;
+            color: white;
+            font-size: 15px;
+            border-radius: 13px;
+            margin: 10px;
+        }
+        #card-images{
+            height: 360px;
+            width: 360px;
+        }
+        .download_images{
+            cursor: pointer;
+            position: absolute;
+            right: 23px;
+            top: 10px;
+            color: black;
+            background-color: white !important;
+            padding: 5px 5px;
+            font-weight: 500;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-light bg-light">
+    <a class="navbar-brand" id="back" href="{% url 'HomepageView' %}">
+    <i class="fa fa-arrow-left" aria-hidden="true"></i> Back
+  </a>
+</nav>
+    <div class="container">
+        <div class="row">
+            <form>
+              <div class="mb-3">
+                <label for="text_input" class="form-label">Enter Your Text</label>
+                <textarea class="form-control" id="text_input" aria-describedby="Your Text"></textarea>
+              </div><br>
+              <div class="mb-3">
+                <label for="image" class="form-label">Choose Image</label>
+                <input type="file" class="form-control" id="image" name="image">
+              </div>
+                <br><br>
+              <a type="submit" id="text_to_text_btn" class="btn btn-primary">Generate Image</a>
+            </form>
+        </div>
+    </div>
+    <br><br>
+    <div class="container">
+            <img id="loading" src="{% static 'images/loading.svg' %}">
+        </div>
+    <div class="container">
+        <div class="row" id="images_row">
+            <img src="" id="im" style="height: 253px;width: 336px;">
+        </div>
+    </div>
+
+
+<div class="container">
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Select Teams</h3>
+        </div>
+        <div class="modal-body">
+          <form method="post" action="{% url 'SendPostCommunity' %}">
+            {% csrf_token %}
+              <input type="hidden" id="page" name="page" value="text_to_image">
+              <input type="hidden" id="input" name="input">
+              <input type="hidden" id="response" name="images">
+          <div class="form-group">
+            <select name="multiple_communities" class="form-select form-control" id='testSelect1' multiple>
+                  {% for comm in communities %}
+                    <option value='{{comm.id}}'>{{comm.name}}</option>
+                  {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary" style="background-color:#5B61EB !important;color:white;">Send Post</button>
+        </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn" data-dismiss="modal" style="background-color:#5B61EB !important;color:white;">X</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+<script src="{% static 'chat/js/jquery-1.12.3.js' %}"></script>
+<script src="https://cdn.WebRTC-Experiment.com/MediaStreamRecorder.js"></script>
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<script src="{% static 'chat/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'chat/js/image_to_image.js' %}"></script>
+<script>
+	document.multiselect('#testSelect1')
+		.setCheckBoxClick("checkboxAll", function(target, args) {
+			console.log("Checkbox 'Select All' was clicked and got value ", args.checked);
+		})
+		.setCheckBoxClick("1", function(target, args) {
+			console.log("Checkbox for item with value '1' was clicked and got value ", args.checked);
+		});
+
+	function enable() {
+		document.multiselect('#testSelect1').setIsEnabled(true);
+	}
+
+	function disable() {
+		document.multiselect('#testSelect1').setIsEnabled(false);
+	}
+</script>
+</body>
+</html>
+

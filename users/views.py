@@ -270,6 +270,10 @@ def TextToImage(request):
     return redirect("/api/login/")
 
 
+def ImageToImage(request):
+    return render(request, "imagetoimage.html")
+
+
 def CreateAPIkey(request):
     Token.objects.filter(user=request.user).delete()
     token = Token.objects.create(user=request.user)
