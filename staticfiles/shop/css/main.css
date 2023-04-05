@@ -1913,3 +1913,13 @@ section {
 .footer .credits a {
   color: #fff;
 }
+
+.text_use{
+    width: 159px;
+    padding: 7px 20px;
+    background: white;
+    border-radius: 9px;
+    color: black;
+    font-weight: 400;
+    font-size: 14px;
+}
