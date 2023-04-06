@@ -4,7 +4,10 @@ from io import BytesIO
 from io import BytesIO as IO
 from urllib import request
 from urllib.request import urlopen
+
+import requests
 from django.conf import settings
+from PIL import Image, ImageDraw, ImageFont
 import openai
 from django.core.files import File
 from django.core.mail import send_mail
@@ -277,11 +280,56 @@ def ImageToImage(request):
 def ImageAnalysis(request):
     return render(request, "imageanalysis.html")
 
+
+def ObjectsDetection(request):
+    return render(request, "ObjectsDetection.html")
+
 @csrf_exempt
 def SaveAnalysisImage(request):
     img = ImageAnalysisDB.objects.create(file=request.FILES.get("image"))
     URL = os.getenv("DEPLOYED_HOST", "https://madeinthai.org")
     return HttpResponse(str(URL+img.file.url))
+
+@csrf_exempt
+def ObjDetect(request):
+    img = ImageAnalysisDB.objects.create(file=request.FILES.get("image"))
+    image = Image.open(img.file)
+    URL = os.getenv("DEPLOYED_HOST", "https://madeinthai.org")
+    url = "https://microsoft-computer-vision3.p.rapidapi.com/detect"
+
+    payload = {
+        "url": str(URL+img.file.url)
+    }
+    headers = {
+        "content-type": "application/json",
+        "X-RapidAPI-Key": "3ec1eef879msh365ea5d96552e49p15a7e9jsn95f1d7c21fd9",
+        "X-RapidAPI-Host": "microsoft-computer-vision3.p.rapidapi.com"
+    }
+
+    response = requests.request("POST", url, json=payload, headers=headers)
+    results = response.json()
+    image_draw = ImageDraw.Draw(image)
+    # font = ImageFont.truetype('arial.ttf', 16)
+    print(results)
+    for obj in results["objects"]:
+        left = obj["rectangle"]["x"]
+        top = obj["rectangle"]["y"]
+        width = obj["rectangle"]["w"]
+        height = obj["rectangle"]["h"]
+        shape = [(left, top), (left + width, top+height)]
+        image_draw.rectangle(shape, outline='blue', width=3)
+        text = f'{obj["object"]} ({obj["confidence"] * 100}%)'
+        image_draw.text((left + 5 - 1, top + height - 30 + 1), text, (0, 0, 0))
+        image_draw.text((left + 5, top + height - 30), text, (255, 0, 0))
+    blob = BytesIO()
+    image.save(blob, 'JPEG')
+    final_image = ImageAnalysisDB.objects.create(file=File(blob))
+    final_image.file.save("test.png", File(blob))
+    data = dict({
+        "url": URL + str(final_image.file.url),
+        "results": results
+    })
+    return JsonResponse(data, safe=False)
 
 
 def CreateAPIkey(request):

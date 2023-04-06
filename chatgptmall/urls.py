@@ -26,7 +26,7 @@ from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, Upl
     IndustriesView, GetIndustriesData, TextToImage, GetImages, JobsView, CapabilitiesView, Communities, JoinCommunity, \
     SendPostCommunity, Checkout, PaymentSuccess, PaymentCancel, ValidateCouponCode, JoinedCommunities, ProfileView, \
     ProfileUpdate, ShareTeam, DownloadTeams, ShopWithText, ItemHowToUse, CreateTeams, ImageToImage, ImageAnalysis, \
-    SaveAnalysisImage
+    SaveAnalysisImage, ObjectsDetection, ObjDetect
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -70,8 +70,10 @@ urlpatterns = [
     path('api/text_to_image/', TextToImage, name="TextToImage"),
     path('api/image_to_image/', ImageToImage, name="ImageToImage"),
     path('api/image/analysis/', ImageAnalysis, name="ImageAnalysis"),
+    path('api/image/objects/detection/', ObjectsDetection, name="ObjectsDetection"),
     path('api/images/', GetImages, name="GetImages"),
     path("analysis/image/save/", SaveAnalysisImage, name="SaveAnalysisImage"),
+    path("objects/detect/", ObjDetect, name="ObjDetect"),
 
     path("create/api_key/", CreateAPIkey, name="CreateAPIkey"),
     path("delete_key/", DeleteAPIkey, name="DeleteAPIkey"),
