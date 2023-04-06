@@ -1,20 +1,19 @@
-import ast
 import os
+import ast
+import openai
+import stripe
+import requests
 from io import BytesIO
 from urllib.request import urlopen
 from django.core.files import File
-import openai
-import stripe
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from rest_framework import generics, status
 from rest_framework.response import Response
-# Create your views here.
 from engine.models import ImagesDB
-from engine.serializers import TextToTexTViewSerializer
+from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-
 from users.models import User
 
 openai.api_key = os.getenv("OPEN_AI_KEY")
@@ -89,6 +88,30 @@ class TextToImageView(generics.CreateAPIView):
             "input": input,
             "images": show_images
         }), status=201)
+
+
+class ImageAnalysisView(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ImageAnalysisViewSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        image_url = request.data["image_url"]
+        url = "https://microsoft-computer-vision3.p.rapidapi.com/describe?language=en&maxCandidates=1&descriptionExclude%5B0%5D=Celebrities"
+
+        querystring = {"language": "en", "maxCandidates": "1", "descriptionExclude[0]": "Celebrities"}
+
+        payload = {"url": image_url}
+        headers = {
+            "content-type": "application/json",
+            "X-RapidAPI-Key": "3ec1eef879msh365ea5d96552e49p15a7e9jsn95f1d7c21fd9",
+            "X-RapidAPI-Host": "microsoft-computer-vision3.p.rapidapi.com"
+        }
+
+        response = requests.request("POST", url, json=payload, headers=headers, params=querystring)
+        return Response(response.json(), status=status.HTTP_201_CREATED)
+
 
 
 # for payments

@@ -21,7 +21,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, Capabilities, \
-    Jobs, Community, CommunityMembers, CommunityPosts, CouponCode, Subscriptions, Items
+    Jobs, Community, CommunityMembers, CommunityPosts, CouponCode, Subscriptions, Items, ImageAnalysisDB
 
 openai.api_key = os.getenv("OPEN_AI_KEY")
 
@@ -272,6 +272,16 @@ def TextToImage(request):
 
 def ImageToImage(request):
     return render(request, "imagetoimage.html")
+
+
+def ImageAnalysis(request):
+    return render(request, "imageanalysis.html")
+
+@csrf_exempt
+def SaveAnalysisImage(request):
+    img = ImageAnalysisDB.objects.create(file=request.FILES.get("image"))
+    URL = os.getenv("DEPLOYED_HOST", "https://madeinthai.org")
+    return HttpResponse(str(URL+img.file.url))
 
 
 def CreateAPIkey(request):

@@ -304,3 +304,7 @@ class UploadTeams(models.Model):
         verbose_name_plural = _("Upload Teams")
 
 
+class ImageAnalysisDB(models.Model):
+    file = models.ImageField(upload_to="Analysis/images", null=True, blank=True)
+
+

@@ -20,12 +20,13 @@ from django.urls import path, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
-from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageView
+from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageView, ImageAnalysisView
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans, \
     IndustriesView, GetIndustriesData, TextToImage, GetImages, JobsView, CapabilitiesView, Communities, JoinCommunity, \
     SendPostCommunity, Checkout, PaymentSuccess, PaymentCancel, ValidateCouponCode, JoinedCommunities, ProfileView, \
-    ProfileUpdate, ShareTeam, DownloadTeams, ShopWithText, ItemHowToUse, CreateTeams, ImageToImage
+    ProfileUpdate, ShareTeam, DownloadTeams, ShopWithText, ItemHowToUse, CreateTeams, ImageToImage, ImageAnalysis, \
+    SaveAnalysisImage
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -68,7 +69,9 @@ urlpatterns = [
     path('api/text_to_text/', TextToText, name="TextToText"),
     path('api/text_to_image/', TextToImage, name="TextToImage"),
     path('api/image_to_image/', ImageToImage, name="ImageToImage"),
+    path('api/image/analysis/', ImageAnalysis, name="ImageAnalysis"),
     path('api/images/', GetImages, name="GetImages"),
+    path("analysis/image/save/", SaveAnalysisImage, name="SaveAnalysisImage"),
 
     path("create/api_key/", CreateAPIkey, name="CreateAPIkey"),
     path("delete_key/", DeleteAPIkey, name="DeleteAPIkey"),
@@ -99,6 +102,7 @@ urlpatterns = [
     # API's
     path('api/v1/text_to_text/', TextToTexTView.as_view(), name="TextToTexTView"),
     path('api/v1/text_to_image/', TextToImageView.as_view(), name="TextToImagesAPI"),
+    path('api/v1/image/analysis/', ImageAnalysisView.as_view(), name="ImageAnalysisView"),
 
     path("team/share/<int:team_id>/", ShareTeam, name="ShareTeam"),
     path("downloads/teams/", DownloadTeams, name="DownloadTeams"),
