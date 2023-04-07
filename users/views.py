@@ -310,7 +310,6 @@ def ObjDetect(request):
     results = response.json()
     image_draw = ImageDraw.Draw(image)
     # font = ImageFont.truetype('arial.ttf', 16)
-    print(results)
     for obj in results["objects"]:
         left = obj["rectangle"]["x"]
         top = obj["rectangle"]["y"]

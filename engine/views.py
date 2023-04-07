@@ -1,17 +1,20 @@
 import os
 import ast
+import urllib
+
 import openai
 import stripe
 import requests
 from io import BytesIO
 from urllib.request import urlopen
+from PIL import Image, ImageDraw, ImageFont
 from django.core.files import File
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from rest_framework import generics, status
 from rest_framework.response import Response
-from engine.models import ImagesDB
+from engine.models import ImagesDB, ImageAnalysisDB
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from users.models import User
@@ -111,6 +114,54 @@ class ImageAnalysisView(generics.CreateAPIView):
 
         response = requests.request("POST", url, json=payload, headers=headers, params=querystring)
         return Response(response.json(), status=status.HTTP_201_CREATED)
+
+
+class ObjectsDetectionView(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ImageAnalysisViewSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        image_url = request.data["image_url"]
+        result = urllib.request.urlretrieve(image_url)
+        image = Image.open(File(open(result[0], "rb")))
+        URL = os.getenv("DEPLOYED_HOST", "https://madeinthai.org")
+        url = "https://microsoft-computer-vision3.p.rapidapi.com/detect"
+
+        payload = {
+            "url": str(image_url)
+        }
+        headers = {
+            "content-type": "application/json",
+            "X-RapidAPI-Key": "3ec1eef879msh365ea5d96552e49p15a7e9jsn95f1d7c21fd9",
+            "X-RapidAPI-Host": "microsoft-computer-vision3.p.rapidapi.com"
+        }
+
+        response = requests.request("POST", url, json=payload, headers=headers)
+        results = response.json()
+        image_draw = ImageDraw.Draw(image)
+        # font = ImageFont.truetype('arial.ttf', 16)
+        for obj in results["objects"]:
+            left = obj["rectangle"]["x"]
+            top = obj["rectangle"]["y"]
+            width = obj["rectangle"]["w"]
+            height = obj["rectangle"]["h"]
+            shape = [(left, top), (left + width, top + height)]
+            image_draw.rectangle(shape, outline='blue', width=3)
+            text = f'{obj["object"]} ({obj["confidence"] * 100}%)'
+            image_draw.text((left + 5 - 1, top + height - 30 + 1), text, (0, 0, 0))
+            image_draw.text((left + 5, top + height - 30), text, (255, 0, 0))
+        blob = BytesIO()
+        image.save(blob, 'JPEG')
+        final_image = ImageAnalysisDB.objects.create(file=File(blob))
+        final_image.file.save("test.png", File(blob))
+        data = dict({
+            "url": URL + str(final_image.file.url),
+            "results": results
+        })
+        return Response(data)
+
 
 
 

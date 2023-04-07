@@ -20,7 +20,8 @@ from django.urls import path, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
-from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageView, ImageAnalysisView
+from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageView, ImageAnalysisView, \
+    ObjectsDetectionView
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans, \
     IndustriesView, GetIndustriesData, TextToImage, GetImages, JobsView, CapabilitiesView, Communities, JoinCommunity, \
@@ -105,6 +106,7 @@ urlpatterns = [
     path('api/v1/text_to_text/', TextToTexTView.as_view(), name="TextToTexTView"),
     path('api/v1/text_to_image/', TextToImageView.as_view(), name="TextToImagesAPI"),
     path('api/v1/image/analysis/', ImageAnalysisView.as_view(), name="ImageAnalysisView"),
+    path('api/v1/objects/detection/', ObjectsDetectionView.as_view(), name="ObjectsDetectionView"),
 
     path("team/share/<int:team_id>/", ShareTeam, name="ShareTeam"),
     path("downloads/teams/", DownloadTeams, name="DownloadTeams"),
