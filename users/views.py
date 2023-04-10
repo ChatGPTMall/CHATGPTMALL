@@ -1,11 +1,7 @@
 import os
-import urllib
 from io import BytesIO
 from io import BytesIO as IO
-from urllib import request
 from urllib.request import urlopen
-
-import cv2
 import requests
 from django.conf import settings
 from PIL import Image, ImageDraw, ImageFont
@@ -16,9 +12,6 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib import messages
 from django.utils import timezone
 import pandas as pd
-
-from engine.tracker import EuclideanDistTracker
-from engine.video_analysis import DirectionTracker
 from users.models import User
 import speech_recognition as sr
 from django.db import IntegrityError
