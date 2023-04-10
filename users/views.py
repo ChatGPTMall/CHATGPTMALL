@@ -327,39 +327,7 @@ def SaveAnalysisImage(request):
 
 @csrf_exempt
 def AnalysisVideo(request):
-    video = request.FILES.get("video")
-    body_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_upperbody.xml")
-    cap = cv2.VideoCapture("test.mp4")
-    tracker: EuclideanDistTracker = EuclideanDistTracker()
-    dt: DirectionTracker = DirectionTracker(500)
-    while True:
-        _, frame = cap.read()
-        # frame = cv2.resize(frame, (0 , 0), fx=0.5, fy=0.5)
-
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        boxes = body_cascade.detectMultiScale(gray, 1.1, 3)
-        detections = []
-        for (x, y, w, h) in boxes:
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            # cv2.circle(frame, ((x + w) - (w // 2), (y + h) - (h // 2)), 5, (0, 255, 0), -1)
-            detections.append([x, y, w, h])
-
-        points = tracker.update(detections)
-
-        for point in points:
-            p = dt.update(point)
-            x, y, w, h, i = point
-            cv2.putText(frame, str(i), (x, y - 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 1)
-            cv2.circle(frame, ((x + w) - (w // 2), (y + h) - (h // 2)), 5, (0, 0, 255), -1)
-
-        cv2.imshow("Frame", frame)
-
-        if (cv2.waitKey(30) == 27):
-            break
-
-    print(f"Total people: {dt.people}")
-    cap.release()
-    cv2.destroyAllWindows()
+    pass
 
 @csrf_exempt
 def ObjDetect(request):
