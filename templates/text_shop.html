@@ -48,8 +48,8 @@
               <div class="card-img" style="display: flex;justify-content: center;">
                 <img src="/media/{{item.image}}" style="height:160px;" alt="" class="img-fluid">
               </div>
-              <h3 style="text-align:center;"><a href="{% url 'ItemHowToUse' item.id %}" class="stretched-link">{{item.title}}</a></h3>
-              <a class="get-a-quote" style="text-align:center;margin-bottom:23px;">Learn How To Use?</a>
+              <h3 style="text-align:center;"><a href="{% url 'LearHowToUse' item.id %}" class="stretched-link">{{item.title}}</a></h3>
+              <a class="get-a-quote" href="{% url 'LearHowToUse' item.id %}" style="text-align:center;margin-bottom:23px;">Learn How To Use?</a>
               <p style="text-align:center;margin-bottom:23px;">
                 <a target="_blank" href="{% url 'ItemHowToUse' item.id %}">Upload How To Use?</a>
               </p>

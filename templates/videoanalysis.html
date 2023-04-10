@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CHATGPTMALL | TextToText</title>
+    <title>CHATGPTMALL | Image Analysis</title>
     <link rel="stylesheet" type="text/css" href="{% static 'chat/css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'chat/css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css">
@@ -18,31 +18,21 @@
             border-radius: 13px;
             margin: 10px;
         }
-        .goog-te-gadget-icon {
-    display:none;
-  }
-  .skiptranslate iframe{
-    display:none !important;
-  }
-
-  .goog-te-gadget-simple {
-      background-color: #ecebf0 !important;
-      border:0 !important;
-      font-size: 10pt;
-     font-weight:800;
-      display: inline-block;
-      padding:10px 10px !important;
-      cursor: pointer;
-      zoom: 1;
-  }
-
-  .goog-te-gadget-simple  span {
-     color:#3e3065 !important;
-
-  }
-  body {
-      top: 0px !important;
-      }
+        #card-images{
+            height: 360px;
+            width: 360px;
+        }
+        .download_images{
+            cursor: pointer;
+            position: absolute;
+            right: 23px;
+            top: 10px;
+            color: black;
+            background-color: white !important;
+            padding: 5px 5px;
+            font-weight: 500;
+            font-size: 10px;
+        }
     </style>
 </head>
 <body>
@@ -50,39 +40,30 @@
     <a class="navbar-brand" id="back" href="{% url 'HomepageView' %}">
     <i class="fa fa-arrow-left" aria-hidden="true"></i> Back
   </a>
-    <div id="google_translate_element"></div>
 </nav>
-{% if request.user.is_authenticated %}
     <div class="container">
         <div class="row">
-            <form>
+            <form id="upload-file" enctype="multipart/form-data">
+                {% csrf_token %}
               <div class="mb-3">
-                <label for="text_to_text_input" class="form-label">Enter Your Text</label>
-                  <textarea class="form-control" id="text_to_text_input" aria-describedby="Your Text"></textarea>
+                <label for="image" class="form-label">Choose Video</label>
+                <input type="file" class="form-control" id="image" name="video">
               </div>
-                <br>
-                <div class="mb-3">
-                    <label>No of Words</label>
-                    <input type="number" class="form-control" id="no_of_words" required>
-                </div>
-                <br>
-              <a type="submit" id="text_to_text_btn" class="btn btn-primary">Get Response</a>
+                <br><br>
+              <button type="submit" id="btn_analysis" class="btn btn-primary">Generate Video Analysis</button>
             </form>
         </div>
     </div>
     <br><br>
     <div class="container">
-        <div class="row">
-            <p id="text_to_text_show"></p>
-            <a id="post" data-toggle="modal" data-target="#myModal" class="btn"
-               style="background-color:#5B61EB !important;color:white;">Send To Community</a>
+            <img id="loading" src="{% static 'images/loading.svg' %}">
+        </div>
+    <div class="container">
+        <div class="row" id="images_row">
+            <textarea name="" class="form-control" id="myTextarea" rows="15"></textarea>
         </div>
     </div>
-{% else %}
-        <div class="text-center">
-            <h2 >Please Login To Access Our Voice To Voice Service </h2>
-        </div>
-    {% endif %}
+
 
 <div class="container">
   <!-- Modal -->
@@ -97,11 +78,11 @@
         <div class="modal-body">
           <form method="post" action="{% url 'SendPostCommunity' %}">
             {% csrf_token %}
-              <input type="hidden" id="page" name="page" value="text_to_text">
+              <input type="hidden" id="page" name="page" value="text_to_image">
               <input type="hidden" id="input" name="input">
-              <input type="hidden" id="response" name="response">
+              <input type="hidden" id="response" name="images">
           <div class="form-group">
-              <select name="multiple_communities" class="form-select form-control" id='testSelect1' multiple>
+            <select name="multiple_communities" class="form-select form-control" id='testSelect1' multiple>
                   {% for comm in communities %}
                     <option value='{{comm.id}}'>{{comm.name}}</option>
                   {% endfor %}
@@ -123,7 +104,7 @@
 <script src="https://cdn.WebRTC-Experiment.com/MediaStreamRecorder.js"></script>
 <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 <script src="{% static 'chat/js/bootstrap.min.js' %}"></script>
-<script src="{% static 'chat/js/text_to_text.js' %}"></script>
+<script src="{% static 'chat/js/vid_analysis.js' %}"></script>
 <script>
 	document.multiselect('#testSelect1')
 		.setCheckBoxClick("checkboxAll", function(target, args) {
@@ -140,24 +121,6 @@
 	function disable() {
 		document.multiselect('#testSelect1').setIsEnabled(false);
 	}
-</script>
-<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-<script type="text/javascript">
-   function setCookie(key, value, expiry) {
-      var expires = new Date();
-      expires.setTime(expires.getTime() + (expiry * 24 * 60 * 60 * 1000));
-      document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
-    }
-      function googleTranslateElementInit() {
-            setCookie('googtrans', '/en/zh-CN',1);
-            new google.translate.TranslateElement({
-              pageLanguage: 'en',
-              includedLanguages: "ar,en,es,jv,ko,pa,pt,ru,zh-CN",
-              layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-            },
-            'google_translate_element');
-      }
 </script>
 </body>
 </html>

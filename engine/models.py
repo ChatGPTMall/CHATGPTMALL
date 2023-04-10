@@ -6,6 +6,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator
 from django.utils.translation import gettext_lazy as _
 
+from users.s3_storage import ItemVideosS3Storage
+
 
 class Category(models.Model):
     title = models.CharField(max_length=200)
@@ -24,6 +26,7 @@ class Items(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     image = models.ImageField(upload_to="images/items/", null=True, blank=True)
+    video = models.FileField(null=True, blank=True, upload_to="items/videos")
     price = models.FloatField(default=0)
     added_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
@@ -105,6 +108,9 @@ class AccessTypes(models.TextChoices):
     VOICE_TO_Voice = "VOICE_TO_Voice", _('Voice To Voice')
     VOICE_TO_IMAGE = "VOICE_TO_IMAGE", _('Voice To Image')
     TEXT_TO_IMAGE = "TEXT_TO_IMAGE", _('Text To Image')
+    IMAGE_TO_IMAGE = "IMAGE_TO_IMAGE", _('Image To Image')
+    IMAGE_ANALYSIS = "IMAGE_ANALYSIS", _('Image Analysis')
+    OBJECTS_DETECTION = "OBJECTS_DETECTION", _('Objects Detection')
 
 
 class Plans(models.Model):
@@ -228,8 +234,11 @@ class CommunityMembers(models.Model):
 class CommunityPosts(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
     community = models.ForeignKey(Community, related_name="feed", on_delete=models.CASCADE)
-    question = models.TextField(_("User Question"))
+    is_object = models.BooleanField(default=False)
+    question = models.TextField(_("User Question"), null=True, blank=True)
     response = models.TextField(_("AI Response"), null=True, blank=True)
+    input_image = models.URLField(null=True, blank=True)
+    response_image = models.URLField(null=True, blank=True)
     image1 = models.URLField(null=True, blank=True)
     image2 = models.URLField(null=True, blank=True)
     image3 = models.URLField(null=True, blank=True)
@@ -264,10 +273,12 @@ class CouponCode(models.Model):
 class Subscriptions(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="purchases")
     plan = models.ForeignKey(Plans, models.CASCADE, related_name="plan_purchases")
+    is_expired = models.BooleanField(default=False)
+    requests_send = models.IntegerField(default=0)
     added_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user.email
+        return self.user.email + " " + str(self.plan)
 
     class Meta:
         verbose_name = _("Subscription")

@@ -202,23 +202,34 @@
         <h2>OpenAI Responses</h2>
         <div>
         <input style="opacity:0;" type="text" value="{{uri}}team/share/{{community.id}}/" id="comm">
-        <button style="background-color:#5B61EB !important;color:white;"
-                                class="btn btn-lg my-3 mb-2"
+        <button style="background-color:#5B61EB !important;color:white;"class="btn btn-lg my-3 mb-2"
                 data-toggle="modal" data-target="#myModal">View Members</button>
-        <button data-toggle="tooltip" data-placement="top" title="Copied To Clipboard" onclick="get_data()" style="background-color:#5B61EB !important;color:white;" class="btn btn-lg my-3 mb-2">
+        <button data-toggle="tooltip" data-placement="top" title="Copied To Clipboard"
+                onclick="get_data()" style="background-color:#5B61EB !important;color:white;" class="btn btn-lg my-3 mb-2">
                           Share <i class="copy fa fa-clone"
                                            style="font-size:24px;cursor:pointer;"></i>
                         </button>
+            <button style="background-color:#5B61EB !important;color:white;"class="btn btn-lg my-3 mb-2"
+                data-toggle="modal" data-target="#myModal2">Upload items</button>
             </div>
     </div>
     {% for post in page_obj %}
-    <div class="container cont">
-      <img class="prof" src="https://i.pinimg.com/474x/4b/71/f8/4b71f8137985eaa992d17a315997791e.jpg" alt="Avatar" style="width:100%;">
-        <p>{{post.user.get_full_name}}</p>
-        <p>{{post.question}}</p>
-      <span class="time-right">{{post.added_on}}</span>
-    </div>
-
+    {% if post.input_image %}
+        <div class="container cont darker">
+          <img class="right" src="https://i.pinimg.com/474x/4b/71/f8/4b71f8137985eaa992d17a315997791e.jpg" alt="Avatar" style="width:27px;">
+          <div class="row">
+              <img style="height:200px;width:200px;" src="{{post.input_image}}">
+          </div>
+          <span class="time-left">{{post.added_on}}</span>
+        </div>
+    {% else %}
+        <div class="container cont">
+          <img class="prof" src="https://i.pinimg.com/474x/4b/71/f8/4b71f8137985eaa992d17a315997791e.jpg" alt="Avatar" style="width:100%;">
+            <p>{{post.user.get_full_name}}</p>
+            <p>{{post.question}}</p>
+          <span class="time-right">{{post.added_on}}</span>
+        </div>
+    {% endif %}
 
     {% if post.image1 or post.image2 or post.image3 %}
     <div class="container cont darker">
@@ -231,11 +242,21 @@
       <span class="time-left">{{post.added_on}}</span>
     </div>
     {% else %}
-    <div class="container cont darker">
-      <img src="https://w1.pngwing.com/pngs/278/853/png-transparent-line-art-nose-chatbot-internet-bot-artificial-intelligence-snout-head-smile-black-and-white.png" alt="Avatar" class="right" style="width:27px;">
-      <p>{{post.response}}</p>
-      <span class="time-left">{{post.added_on}}</span>
-    </div>
+    {% if post.response_image %}
+        <div class="container cont darker">
+          <img class="right" src="https://w1.pngwing.com/pngs/278/853/png-transparent-line-art-nose-chatbot-internet-bot-artificial-intelligence-snout-head-smile-black-and-white.png" alt="Avatar" style="width:27px;">
+          <div class="row">
+              <img style="height:200px;width:200px;" src="{{post.response_image}}">
+          </div>
+          <span class="time-left">{{post.added_on}}</span>
+        </div>
+    {% else %}
+        <div class="container cont darker">
+          <img src="https://w1.pngwing.com/pngs/278/853/png-transparent-line-art-nose-chatbot-internet-bot-artificial-intelligence-snout-head-smile-black-and-white.png" alt="Avatar" class="right" style="width:27px;">
+          <p>{{post.response}}</p>
+          <span class="time-left">{{post.added_on}}</span>
+        </div>
+        {% endif %}
     {% endif %}
     {% endfor %}
 
@@ -306,6 +327,63 @@
               {% endfor %}
               </tbody>
             </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn" data-dismiss="modal" style="background-color:#5B61EB !important;color:white;">X</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+    <div class="container">
+  <!-- Modal -->
+  <div class="modal fade" id="myModal2" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Community Post</h3>
+        </div>
+        <div class="modal-body">
+            <form class="row g-3" action="{% url 'UploadCommunityPost' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="team_id" value="{{community.community_id}}">
+              <div class="col-md-12">
+                <label for="inputEmail4" class="form-label">Item Name</label>
+                <input type="text" name="item_name" class="form-control" id="inputEmail4" placeholder="item name" required>
+              </div>
+              <div class="col-md-12">
+                <label for="inputPassword4" class="form-label">Item Category</label>
+                <input type="text" name="item_category" class="form-control" id="inputPassword4" placeholder="item category" required>
+              </div>
+              <div class="col-md-12">
+                <label for="inputAddress" class="form-label">How To Use?</label>
+                  <textarea class="form-control" name="item_desc" id="inputAddress" placeholder="Item Description" required></textarea>
+              </div>
+                <div class="col-md-12">
+                    <label for="formFile" class="form-label">Item Image</label>
+                    <input class="form-control" name="item_image" type="file" id="formFile" required>
+                </div>
+                <div class="col-md-12">
+                    <label for="formFile" class="form-label">Item Video(Optional)</label>
+                    <input class="form-control" name="item_video" type="file" id="video">
+                </div>
+              <div class="col-md-12">
+                <label for="inputState" class="form-label">Upload Items To Shop</label>
+                <select id="inputState" name="upload" class="form-select" required>
+                  <option selected>Choose...</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </div>
+              <div class="col-md-12">
+                <button type="submit" class="btn btn-primary">Upload Item To Community</button>
+              </div>
+            </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn" data-dismiss="modal" style="background-color:#5B61EB !important;color:white;">X</button>

@@ -51,6 +51,8 @@
               </div>
                 <br><br>
               <button type="submit" id="btn_analysis" class="btn btn-primary">Detect Objects</button>
+                <a type="submit" id="send_post_community" data-toggle="modal" data-target="#myModal"
+                   class="btn btn-primary">Post To Community</a>
             </form>
         </div>
     </div>
@@ -77,10 +79,11 @@
           <h3 class="modal-title">Select Teams</h3>
         </div>
         <div class="modal-body">
-          <form method="post" action="{% url 'SendPostCommunity' %}">
+          <form method="post" action="{% url 'SendObjectCommunity' %}">
             {% csrf_token %}
-              <input type="hidden" id="page" name="page" value="text_to_image">
-              <input type="hidden" id="input" name="input">
+              <input type="hidden" id="page" name="page" value="object">
+              <input type="hidden" id="image_input" name="image_input">
+              <input type="hidden" id="image_response" name="image_response">
               <input type="hidden" id="response" name="images">
           <div class="form-group">
             <select name="multiple_communities" class="form-select form-control" id='testSelect1' multiple>

@@ -21,13 +21,14 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageView, ImageAnalysisView, \
-    ObjectsDetectionView
+    ObjectsDetectionView, ShopItemsView, ShopCategoriesView
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans, \
     IndustriesView, GetIndustriesData, TextToImage, GetImages, JobsView, CapabilitiesView, Communities, JoinCommunity, \
     SendPostCommunity, Checkout, PaymentSuccess, PaymentCancel, ValidateCouponCode, JoinedCommunities, ProfileView, \
     ProfileUpdate, ShareTeam, DownloadTeams, ShopWithText, ItemHowToUse, CreateTeams, ImageToImage, ImageAnalysis, \
-    SaveAnalysisImage, ObjectsDetection, ObjDetect
+    SaveAnalysisImage, ObjectsDetection, ObjDetect, SendObjectCommunity, VideoAnalysis, AnalysisVideo, \
+    UploadCommunityPost, LearHowToUse
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -71,9 +72,11 @@ urlpatterns = [
     path('api/text_to_image/', TextToImage, name="TextToImage"),
     path('api/image_to_image/', ImageToImage, name="ImageToImage"),
     path('api/image/analysis/', ImageAnalysis, name="ImageAnalysis"),
+    path('api/v1/video/analysis/', VideoAnalysis, name="VideoAnalysis"),
     path('api/image/objects/detection/', ObjectsDetection, name="ObjectsDetection"),
     path('api/images/', GetImages, name="GetImages"),
     path("analysis/image/save/", SaveAnalysisImage, name="SaveAnalysisImage"),
+    path("analysis/video/", AnalysisVideo, name="AnalysisVideo"),
     path("objects/detect/", ObjDetect, name="ObjDetect"),
 
     path("create/api_key/", CreateAPIkey, name="CreateAPIkey"),
@@ -91,6 +94,8 @@ urlpatterns = [
     path("joined/communities/", JoinedCommunities, name="JoinedCommunities"),
     path("join/community/", JoinCommunity, name="JoinCommunity"),
     path("send/post/community/", SendPostCommunity, name="SendPostCommunity"),
+    path("send/object/community/", SendObjectCommunity, name="SendObjectCommunity"),
+    path("upload/community/post/", UploadCommunityPost, name="UploadCommunityPost"),
 
     path("checkout/<int:plan_id>/", Checkout, name="Checkout"),
     path("checkout/Session/", CreateCheckoutSessionView, name="CreateCheckoutSessionView"),
@@ -101,12 +106,15 @@ urlpatterns = [
     # Shop
     path("api/v1/shop/text/", ShopWithText, name="ShopWithText"),
     path("item/how_to_use/<int:item_id>/", ItemHowToUse, name="ItemHowToUse"),
+    path("item/details/<int:item_id>/", LearHowToUse, name="LearHowToUse"),
 
     # API's
     path('api/v1/text_to_text/', TextToTexTView.as_view(), name="TextToTexTView"),
     path('api/v1/text_to_image/', TextToImageView.as_view(), name="TextToImagesAPI"),
     path('api/v1/image/analysis/', ImageAnalysisView.as_view(), name="ImageAnalysisView"),
     path('api/v1/objects/detection/', ObjectsDetectionView.as_view(), name="ObjectsDetectionView"),
+    path('api/v1/shop/items/', ShopItemsView.as_view(), name="ShopItemsView"),
+    path('api/v1/shop/categories/', ShopCategoriesView.as_view(), name="ShopItemsView"),
 
     path("team/share/<int:team_id>/", ShareTeam, name="ShareTeam"),
     path("downloads/teams/", DownloadTeams, name="DownloadTeams"),

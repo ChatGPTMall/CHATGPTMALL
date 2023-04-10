@@ -5,6 +5,7 @@ from io import BytesIO as IO
 from urllib import request
 from urllib.request import urlopen
 
+import cv2
 import requests
 from django.conf import settings
 from PIL import Image, ImageDraw, ImageFont
@@ -15,6 +16,9 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib import messages
 from django.utils import timezone
 import pandas as pd
+
+from engine.tracker import EuclideanDistTracker
+from engine.video_analysis import DirectionTracker
 from users.models import User
 import speech_recognition as sr
 from django.db import IntegrityError
@@ -24,7 +28,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, Capabilities, \
-    Jobs, Community, CommunityMembers, CommunityPosts, CouponCode, Subscriptions, Items, ImageAnalysisDB
+    Jobs, Community, CommunityMembers, CommunityPosts, CouponCode, Subscriptions, Items, ImageAnalysisDB, Category
 
 openai.api_key = os.getenv("OPEN_AI_KEY")
 
@@ -255,40 +259,107 @@ def get_chatgpt_response(request):
 
 def TextToText(request):
     if request.user.is_authenticated:
-        if CommunityMembers.objects.filter(user=request.user).exists():
-            communities_id = request.user.team.all().values_list("community__community_id", flat=True)
-            communities = Community.objects.filter(community_id__in=communities_id)
-            return render(request, "TextToText.html", context={"communities": communities})
-        return render(request, "TextToText.html")
+        if Subscriptions.objects.filter(user=request.user, plan__access="TEXT_TO_IMAGE", is_expired=False).exists():
+            if CommunityMembers.objects.filter(user=request.user).exists():
+                communities_id = request.user.team.all().values_list("community__community_id", flat=True)
+                communities = Community.objects.filter(community_id__in=communities_id)
+                return render(request, "TextToText.html", context={"communities": communities})
+            return render(request, "TextToText.html")
     return redirect("/api/login/")
 
 
 def TextToImage(request):
     if request.user.is_authenticated:
-        if CommunityMembers.objects.filter(user=request.user).exists():
-            communities_id = request.user.team.all().values_list("community__community_id", flat=True)
-            communities = Community.objects.filter(community_id__in=communities_id)
-            return render(request, "TextToImage.html", context={"communities": communities})
-        return render(request, "TextToImage.html")
+        if Subscriptions.objects.filter(user=request.user, plan__access="TEXT_TO_IMAGE", is_expired=False).exists():
+            if CommunityMembers.objects.filter(user=request.user).exists():
+                communities_id = request.user.team.all().values_list("community__community_id", flat=True)
+                communities = Community.objects.filter(community_id__in=communities_id)
+                return render(request, "TextToImage.html", context={"communities": communities})
+            return render(request, "TextToImage.html")
     return redirect("/api/login/")
 
 
 def ImageToImage(request):
-    return render(request, "imagetoimage.html")
+    if Subscriptions.objects.filter(user=request.user, plan__access="IMAGE_TO_IMAGE", is_expired=False).exists():
+        return render(request, "imagetoimage.html")
+    return redirect("/api/login/")
 
 
 def ImageAnalysis(request):
-    return render(request, "imageanalysis.html")
+    if Subscriptions.objects.filter(user=request.user, plan__access="IMAGE_ANALYSIS", is_expired=False).exists():
+        return render(request, "imageanalysis.html")
+    return redirect("/api/login/")
+
+
+def VideoAnalysis(request):
+    # if Subscriptions.objects.filter(user=request.user, plan__access="VIDEO_ANALYSIS", is_expired=False).exists():
+    # return redirect("/api/login/")
+    return render(request, "videoanalysis.html")
 
 
 def ObjectsDetection(request):
-    return render(request, "ObjectsDetection.html")
+    if request.user.is_authenticated:
+        if Subscriptions.objects.filter(user=request.user, plan__access="OBJECTS_DETECTION", is_expired=False).exists():
+            communities = []
+            if CommunityMembers.objects.filter(user=request.user).exists():
+                communities_id = request.user.team.all().values_list("community__community_id", flat=True)
+                communities = Community.objects.filter(community_id__in=communities_id)
+            return render(request, "ObjectsDetection.html", context={"communities": communities})
+    return redirect("/api/login/")
+
 
 @csrf_exempt
 def SaveAnalysisImage(request):
     img = ImageAnalysisDB.objects.create(file=request.FILES.get("image"))
     URL = os.getenv("DEPLOYED_HOST", "https://madeinthai.org")
+    try:
+        subscription = Subscriptions.objects.get(user=request.user, plan__access="IMAGE_ANALYSIS", is_expired=False)
+        subscription.requests_send += 1
+        subscription.save()
+        plan = subscription.plan
+        if subscription.requests_send >= plan.requests:
+            subscription.is_expired = True
+            subscription.save()
+    except Exception as e:
+        pass
     return HttpResponse(str(URL+img.file.url))
+
+
+@csrf_exempt
+def AnalysisVideo(request):
+    video = request.FILES.get("video")
+    body_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_upperbody.xml")
+    cap = cv2.VideoCapture("test.mp4")
+    tracker: EuclideanDistTracker = EuclideanDistTracker()
+    dt: DirectionTracker = DirectionTracker(500)
+    while True:
+        _, frame = cap.read()
+        # frame = cv2.resize(frame, (0 , 0), fx=0.5, fy=0.5)
+
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        boxes = body_cascade.detectMultiScale(gray, 1.1, 3)
+        detections = []
+        for (x, y, w, h) in boxes:
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            # cv2.circle(frame, ((x + w) - (w // 2), (y + h) - (h // 2)), 5, (0, 255, 0), -1)
+            detections.append([x, y, w, h])
+
+        points = tracker.update(detections)
+
+        for point in points:
+            p = dt.update(point)
+            x, y, w, h, i = point
+            cv2.putText(frame, str(i), (x, y - 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 1)
+            cv2.circle(frame, ((x + w) - (w // 2), (y + h) - (h // 2)), 5, (0, 0, 255), -1)
+
+        cv2.imshow("Frame", frame)
+
+        if (cv2.waitKey(30) == 27):
+            break
+
+    print(f"Total people: {dt.people}")
+    cap.release()
+    cv2.destroyAllWindows()
 
 @csrf_exempt
 def ObjDetect(request):
@@ -296,7 +367,6 @@ def ObjDetect(request):
     image = Image.open(img.file)
     URL = os.getenv("DEPLOYED_HOST", "https://madeinthai.org")
     url = "https://microsoft-computer-vision3.p.rapidapi.com/detect"
-
     payload = {
         "url": str(URL+img.file.url)
     }
@@ -325,9 +395,20 @@ def ObjDetect(request):
     final_image = ImageAnalysisDB.objects.create(file=File(blob))
     final_image.file.save("test.png", File(blob))
     data = dict({
+        "url2": payload["url"],
         "url": URL + str(final_image.file.url),
         "results": results
     })
+    try:
+        subscription = Subscriptions.objects.get(user=request.user, plan__access="OBJECTS_DETECTION", is_expired=False)
+        subscription.requests_send += 1
+        subscription.save()
+        plan = subscription.plan
+        if subscription.requests_send >= plan.requests:
+            subscription.is_expired = True
+            subscription.save()
+    except Exception as e:
+        pass
     return JsonResponse(data, safe=False)
 
 
@@ -486,7 +567,7 @@ def JoinCommunity(request):
                     "l_name": com.user.last_name,
                     "email": com.user.email
                 }))
-            posts = community.feed.all()
+            posts = community.feed.all().order_by("-added_on")
             page_num = request.GET.get('page', 1)
 
             paginator = Paginator(posts, 4)
@@ -527,7 +608,6 @@ def SendPostCommunity(request):
         response = request.POST.get("response")
         images = request.POST.get("images")
         multiple_communities = request.POST.getlist("multiple_communities")
-        print(multiple_communities)
         multiple_communities = [int(item) for item in multiple_communities]
         all_comms = CommunityMembers.objects.filter(user=request.user, community__id__in=multiple_communities)
         if images:
@@ -552,6 +632,37 @@ def SendPostCommunity(request):
             return redirect("/api/text_to_text/")
         else:
             return redirect("/api/text_to_text/")
+
+
+def SendObjectCommunity(request):
+    page = request.POST.get("page")
+    image_input = request.POST.get("image_input")
+    image_response = request.POST.get("image_response")
+    multiple_communities = request.POST.getlist("multiple_communities")
+    multiple_communities = [int(item) for item in multiple_communities]
+    all_comms = CommunityMembers.objects.filter(user=request.user, community__id__in=multiple_communities)
+    for comm in all_comms:
+        CommunityPosts.objects.create(
+            user=request.user, community=comm.community, input_image=image_input, response_image=image_response)
+
+    return redirect("/api/image/objects/detection/")
+
+
+def UploadCommunityPost(request):
+    team_id = request.POST.get("team_id")
+    name = request.POST.get("item_name")
+    cat = request.POST.get("item_category")
+    image = request.FILES.get("item_image")
+    video = request.FILES.get("item_video")
+    item_desc = request.POST.get("item_desc")
+    upload = request.POST.get("upload")
+    if upload == "yes":
+        category, created = Category.objects.get_or_create(title=cat)
+        Items.objects.create(category=category, title=name, description=item_desc, image=image, video=video)
+    question = "How to use {}".format(name)
+    com = Community.objects.get(community_id=team_id)
+    CommunityPosts.objects.create(user=request.user, question=question, response=item_desc, community=com)
+    return redirect("/join/community/?team_id={}".format(team_id))
 
 
 def Checkout(request, plan_id):
@@ -635,4 +746,9 @@ def ItemHowToUse(request, item_id):
         item.description = uses
         item.save()
     return render(request, "item_uses.html", context={"item": item})
+
+
+def LearHowToUse(request, item_id):
+    item = Items.objects.get(id=item_id)
+    return render(request, "item_detail.html", context={"item": item})
 

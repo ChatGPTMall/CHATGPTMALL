@@ -2,6 +2,7 @@ $(document).ready(function() {
     $("#loading").hide();
     $("#img").hide();
     $("#myTextarea").hide();
+    $("#send_post_community").hide();
     $('body').on('submit','#upload-file',function(e){
                $("#loading").show();
                e.preventDefault()
@@ -13,8 +14,13 @@ $(document).ready(function() {
                      success: function (response) {
                         $("#loading").hide();
                         $("#myTextarea").show();
+                        $("#send_post_community").show();
                         $("#img").show();
+                        console.log(response)
                         var url = response.url
+                        var url2 = response.url2
+                        $("#image_input").val(url2)
+                        $("#image_response").val(url)
                         console.log(url)
                         document.getElementById('img').src = url
                         var str = JSON.stringify(response)

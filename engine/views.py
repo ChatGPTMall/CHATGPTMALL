@@ -1,23 +1,24 @@
 import os
 import ast
 import urllib
-
 import openai
 import stripe
 import requests
 from io import BytesIO
-from urllib.request import urlopen
-from PIL import Image, ImageDraw, ImageFont
-from django.core.files import File
-from django.conf import settings
-from django.shortcuts import render, redirect
-from django.urls import reverse
-from rest_framework import generics, status
-from rest_framework.response import Response
-from engine.models import ImagesDB, ImageAnalysisDB
-from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer
-from rest_framework.permissions import IsAuthenticated, AllowAny
 from users.models import User
+from django.urls import reverse
+from django.conf import settings
+from django.core.files import File
+from urllib.request import urlopen
+from rest_framework import generics, status
+from PIL import Image, ImageDraw, ImageFont
+from rest_framework.response import Response
+from django.shortcuts import render, redirect
+from engine.models import ImagesDB, ImageAnalysisDB, Items, Category
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
+    ShopCategoriesViewSerializer
 
 openai.api_key = os.getenv("OPEN_AI_KEY")
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -163,6 +164,39 @@ class ObjectsDetectionView(generics.CreateAPIView):
         return Response(data)
 
 
+class ShopItemsView(generics.CreateAPIView):
+    parser_classes = (MultiPartParser, FormParser)
+    serializer_class = ShopItemsViewSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        category, created = Category.objects.get_or_create(title=request.data["category"])
+        if not Items.objects.filter(title=request.data["title"]).exists():
+            item = Items.objects.create(
+                title=request.data["title"], description=request.data["description"],
+                image=request.data['image'], category=category)
+            URL = os.getenv("DEPLOYED_HOST", "https://madeinthai.org")
+            return Response({
+                "item_id": item.id,
+                "category_id": category.id,
+                "category_title": category.title,
+                "title": item.title,
+                "description": item.description,
+                "image": URL + item.image.url,
+                "added_on": item.added_on,
+                "updated_on": item.updated_on
+            }, status=status.HTTP_201_CREATED)
+        return Response({"error": "item already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ShopCategoriesView(generics.ListAPIView):
+    serializer_class = ShopCategoriesViewSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Category.objects.all()
 
 
 # for payments
