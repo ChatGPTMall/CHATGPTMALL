@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}MadeinThai | Voice To Command{% endblock title %}
+{% load static %}
+{% block content %}
+        <div class="container">
+            <div class="experiment jumbotron" style="background-color: white;padding-top:0px">
+                <br>
+                <h3>Automate Your Phone</h3><br>
+                <div>
+                    <button id="start-recording">
+                    <img class="mic_icon" src="{% static 'images/mic.jpeg' %}">
+                </button>
+                <button id="stop-recording" disabled>
+                    <img class="mic_icon" src="{% static 'images/stop_mic.png' %}">
+                </button>
+                <button id="pause-recording" disabled></button>
+                <button id="resume-recording" disabled></button>
+                <button id="voice_text_btn" disabled style="display:none;"></button>
+                </div>
+
+            </div>
+
+            <section class="experiment">
+                <div id="audios-container"></div>
+            </section>
+
+            <div id="text_div" style="display:flex;">
+                <input type="text" class="form-control" name="voice_text" id="voice_text"><br>
+                <button id="submit_command" class="btn btn-primary"
+                        style="background-color:#5B61EB !important;color:white;">Submit Command</button>
+            </div>
+
+    </div><br>
+    <div class="container">
+        <img id="img_command" src="" style="height: 253px;width: 336px;">
+    </div>
+    <div class="container" style="margin-top: 67px;">
+        <div class="row" id="openai">
+            <img id="loading" src="{% static 'images/loading.svg' %}">
+        </div>
+    </div>
+{% endblock content %}

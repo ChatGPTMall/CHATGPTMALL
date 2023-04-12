@@ -21,7 +21,8 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, Capabilities, \
-    Jobs, Community, CommunityMembers, CommunityPosts, CouponCode, Subscriptions, Items, ImageAnalysisDB, Category
+    Jobs, Community, CommunityMembers, CommunityPosts, CouponCode, Subscriptions, Items, ImageAnalysisDB, Category, \
+    VoiceCommands
 
 openai.api_key = os.getenv("OPEN_AI_KEY")
 
@@ -179,7 +180,6 @@ def VoiceOutPut(request):
 def UploadVoice(request):
     text = request.GET.get('text', '')
     response = ImagesDB.objects.filter(question__icontains=text)
-    URL = os.getenv("DEPLOYED_HOST", "https://madeinthai.org")
     if not response:
         resp = openai.Image.create(prompt="{}".format(text), n=3, size="1024x1024")
         images = list()
@@ -204,17 +204,30 @@ def UploadVoice(request):
 
         show_images = list()
 
-        show_images.append(URL+imagedb.image1.url)
-        show_images.append(URL+imagedb.image2.url)
-        show_images.append(URL+imagedb.image3.url)
+        show_images.append(imagedb.image1.url)
+        show_images.append(imagedb.image2.url)
+        show_images.append(imagedb.image3.url)
 
         return JsonResponse(show_images, safe=False)
     else:
         show_images = list()
-        show_images.append(URL+response.last().image1.url)
-        show_images.append(URL+response.last().image2.url)
-        show_images.append(URL+response.last().image3.url)
+        show_images.append(response.last().image1.url)
+        show_images.append(response.last().image2.url)
+        show_images.append(response.last().image3.url)
         return JsonResponse(show_images, safe=False)
+
+
+def GetCommand(request):
+    return render(request, "voice_to_command.html")
+
+
+def ResponseCommand(request):
+    text = request.GET.get('text', '')
+    try:
+        command = VoiceCommands.objects.get(input=text)
+        return HttpResponse(command.image.url)
+    except Exception as e:
+        return HttpResponse("invalid")
 
 
 def GetImages(request):
@@ -304,7 +317,6 @@ def ObjectsDetection(request):
 @csrf_exempt
 def SaveAnalysisImage(request):
     img = ImageAnalysisDB.objects.create(file=request.FILES.get("image"))
-    URL = os.getenv("DEPLOYED_HOST", "https://madeinthai.org")
     try:
         subscription = Subscriptions.objects.get(user=request.user, plan__access="IMAGE_ANALYSIS", is_expired=False)
         subscription.requests_send += 1
@@ -315,7 +327,7 @@ def SaveAnalysisImage(request):
             subscription.save()
     except Exception as e:
         pass
-    return HttpResponse(str(URL+img.file.url))
+    return HttpResponse(str(img.file.url))
 
 
 @csrf_exempt
@@ -326,10 +338,9 @@ def AnalysisVideo(request):
 def ObjDetect(request):
     img = ImageAnalysisDB.objects.create(file=request.FILES.get("image"))
     image = Image.open(img.file)
-    URL = os.getenv("DEPLOYED_HOST", "https://madeinthai.org")
     url = "https://microsoft-computer-vision3.p.rapidapi.com/detect"
     payload = {
-        "url": str(URL+img.file.url)
+        "url": str(img.file.url)
     }
     headers = {
         "content-type": "application/json",
@@ -357,7 +368,7 @@ def ObjDetect(request):
     final_image.file.save("test.png", File(blob))
     data = dict({
         "url2": payload["url"],
-        "url": URL + str(final_image.file.url),
+        "url": str(final_image.file.url),
         "results": results
     })
     try:

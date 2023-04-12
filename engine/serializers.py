@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from engine.models import Category
+from engine.models import Category, Items
 
 
 class TextToTexTViewSerializer(serializers.Serializer):
@@ -16,6 +16,12 @@ class ShopItemsViewSerializer(serializers.Serializer):
     title = serializers.CharField(required=True)
     description = serializers.CharField(required=True)
     image = serializers.ImageField(required=True)
+
+
+class GetItemsViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Items
+        fields = "__all__"
 
 
 class ShopCategoriesViewSerializer(serializers.ModelSerializer):

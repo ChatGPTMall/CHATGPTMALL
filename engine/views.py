@@ -18,7 +18,7 @@ from engine.models import ImagesDB, ImageAnalysisDB, Items, Category
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
-    ShopCategoriesViewSerializer
+    ShopCategoriesViewSerializer, GetItemsViewSerializer
 
 openai.api_key = os.getenv("OPEN_AI_KEY")
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -189,6 +189,14 @@ class ShopItemsView(generics.CreateAPIView):
                 "updated_on": item.updated_on
             }, status=status.HTTP_201_CREATED)
         return Response({"error": "item already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetItemsView(generics.ListAPIView):
+    serializer_class = GetItemsViewSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Items.objects.all()
 
 
 class ShopCategoriesView(generics.ListAPIView):

@@ -13,7 +13,6 @@
 <body>
 {% include "chat_script.html" %}
 {% if request.user.is_authenticated %}
-    {% if request.user.access == "VOICE_TO_IMAGE" %}
         <div class="container">
             <section class="experiment" >
 
@@ -34,9 +33,6 @@
 
         </article>
     </div>
-    {% else %}
-        <div class="text-center"><h2 >You Do Not Have Access To This Feature</h2></div>
-    {% endif %}
 {% else %}
 <div class="text-center"><h2 >Please Login To Access Our Voice To Voice Service </h2></div>
 {% endif %}

@@ -21,14 +21,14 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageView, ImageAnalysisView, \
-    ObjectsDetectionView, ShopItemsView, ShopCategoriesView
+    ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans, \
     IndustriesView, GetIndustriesData, TextToImage, GetImages, JobsView, CapabilitiesView, Communities, JoinCommunity, \
     SendPostCommunity, Checkout, PaymentSuccess, PaymentCancel, ValidateCouponCode, JoinedCommunities, ProfileView, \
     ProfileUpdate, ShareTeam, DownloadTeams, ShopWithText, ItemHowToUse, CreateTeams, ImageToImage, ImageAnalysis, \
     SaveAnalysisImage, ObjectsDetection, ObjDetect, SendObjectCommunity, VideoAnalysis, AnalysisVideo, \
-    UploadCommunityPost, LearHowToUse
+    UploadCommunityPost, LearHowToUse, GetCommand, ResponseCommand
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -64,6 +64,8 @@ urlpatterns = [
 
     path('api/show_voice_out_put/', VoiceOutPut, name="VoiceOutPut"),
     path('upload_voice/', UploadVoice, name="UploadVoice"),
+    path('voice/command/', GetCommand, name="GetCommand"),
+    path('response/commands/', ResponseCommand, name="ResponseCommand"),
 
     path('api/voice_to_voice/', VoiceToVoice, name="VoiceToVoice"),
     path('api/get_voice/', get_chatgpt_response, name="get_chatgpt_response"),
@@ -114,6 +116,7 @@ urlpatterns = [
     path('api/v1/image/analysis/', ImageAnalysisView.as_view(), name="ImageAnalysisView"),
     path('api/v1/objects/detection/', ObjectsDetectionView.as_view(), name="ObjectsDetectionView"),
     path('api/v1/shop/items/', ShopItemsView.as_view(), name="ShopItemsView"),
+    path('api/v1/items/', GetItemsView.as_view(), name="ShGetItemsViewopItemsView"),
     path('api/v1/shop/categories/', ShopCategoriesView.as_view(), name="ShopItemsView"),
 
     path("team/share/<int:team_id>/", ShareTeam, name="ShareTeam"),

@@ -319,3 +319,16 @@ class ImageAnalysisDB(models.Model):
     file = models.ImageField(upload_to="Analysis/images", null=True, blank=True)
 
 
+class VoiceCommands(models.Model):
+    input = models.TextField()
+    image = models.ImageField(upload_to="Commands/Images")
+
+    def __str__(self):
+        return self.input
+
+    class Meta:
+        verbose_name = _("Voice Command")
+        verbose_name_plural = _("Voice Commands")
+
+
+
