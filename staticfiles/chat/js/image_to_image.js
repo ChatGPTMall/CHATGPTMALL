@@ -35,6 +35,9 @@ $(document).ready(function() {
                         var url = urlCreator.createObjectURL(response);
                         $("#im").show();
                         document.getElementById('im').src = url
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('GET', `/api/image_to_image/calculate/`, true);
+                        xhr.send();
                     })
                     .catch(err => console.error(err));
         }

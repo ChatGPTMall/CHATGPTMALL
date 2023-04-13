@@ -231,13 +231,23 @@ def UploadVoice(request):
 
 
 def GetCommand(request):
-    return render(request, "voice_to_command.html")
+    if request.user.is_authenticated:
+        if Subscriptions.objects.filter(user=request.user, plan__access="VOICE_TO_COMMAND", is_expired=False).exists():
+            return render(request, "voice_to_command.html")
+    return redirect("/api/login/")
 
 
 def ResponseCommand(request):
     text = request.GET.get('text', '')
     try:
         command = VoiceCommands.objects.get(input=text)
+        subscription = Subscriptions.objects.get(user=request.user, plan__access="VOICE_TO_COMMAND", is_expired=False)
+        subscription.requests_send += 1
+        subscription.save()
+        plan = subscription.plan
+        if subscription.requests_send >= plan.requests:
+            subscription.is_expired = True
+            subscription.save()
         return HttpResponse(command.image.url)
     except Exception as e:
         return HttpResponse("invalid")
@@ -307,14 +317,30 @@ def TextToImage(request):
 
 
 def ImageToImage(request):
-    if Subscriptions.objects.filter(user=request.user, plan__access="IMAGE_TO_IMAGE", is_expired=False).exists():
-        return render(request, "imagetoimage.html")
+    if request.user.is_authenticated:
+        if Subscriptions.objects.filter(user=request.user, plan__access="IMAGE_TO_IMAGE", is_expired=False).exists():
+            return render(request, "imagetoimage.html")
     return redirect("/api/login/")
 
 
+def ImageToImageCalculate(request):
+    try:
+        subscription = Subscriptions.objects.get(user=request.user, plan__access="IMAGE_TO_IMAGE", is_expired=False)
+        subscription.requests_send += 1
+        subscription.save()
+        plan = subscription.plan
+        if subscription.requests_send >= plan.requests:
+            subscription.is_expired = True
+            subscription.save()
+        return HttpResponse("IMAGE UPDATED")
+    except Exception as e:
+        return HttpResponse("IMAGE UPDATED")
+
+
 def ImageAnalysis(request):
-    if Subscriptions.objects.filter(user=request.user, plan__access="IMAGE_ANALYSIS", is_expired=False).exists():
-        return render(request, "imageanalysis.html")
+    if request.user.is_authenticated:
+        if Subscriptions.objects.filter(user=request.user, plan__access="IMAGE_ANALYSIS", is_expired=False).exists():
+            return render(request, "imageanalysis.html")
     return redirect("/api/login/")
 
 
