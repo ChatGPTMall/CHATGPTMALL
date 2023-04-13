@@ -1,10 +1,8 @@
 {% extends 'base.html' %}
-{% block title %}CHATGPTMALL | VoiceToImage{% endblock title %}
+{% block title %}Progrow | VoiceToImage{% endblock title %}
 {% load static %}
 {% block content %}
-{% if request.user.is_authenticated %}
     {% if is_active %}
-        {% if request.user.access == "VOICE_TO_IMAGE" %}
           <div class="container">
             <br>
             <h1>Generate your perfect product’s image <br>based on your voice chat</h1><br><br>
@@ -41,16 +39,10 @@
         </div>
     </div>
               {% else %}
-                <div class="text-center"><h2 >You Do Not Have Access To This Feature</h2></div>
-              {% endif %}
-              {% else %}
         <div class="text-center"><h2 >Limit Exceeded please buy more requests</h2></div>
      {% endif %}
-{% else %}
-        <div class="text-center">
-            <h2 >Please Login To Access Our Voice To Voice Service </h2>
-        </div>
-    {% endif %}
-
+    <div>
+        <button id="submit_command" style="display:none;"></button>
+    </div>
 
 {% endblock content %}

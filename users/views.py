@@ -91,17 +91,15 @@ def ProfileView(request):
     if request.user.is_authenticated:
         plans = []
         for plan in request.user.purchases.all():
-            try:
-                requests = plan.plan_requests.get(user=request.user).requests
-            except Exception as e:
-                requests = 0
             added_on = plan.added_on
             title = plan.plan.title
+            left = plan.plan.requests - plan.requests_send
+            left = 0 if left < 0 else left
             plans.append({
                 "added_on": added_on,
                 "title": title,
-                "requests": requests,
-                "requests_left": plan.plan.requests - requests,
+                "requests": plan.requests_send,
+                "requests_left": left,
             })
         return render(request, "profile.html", context={"plans": plans})
     return redirect('/api/login/')
@@ -119,16 +117,16 @@ def ProfileUpdate(request):
 
 
 def VoiceToImage(request):
-    images_generated = 0
     is_active = True
     if request.user.is_authenticated:
-        for image in request.user.images.all():
-            images_generated += len(image.images)
-        if request.user.premium == 0 and images_generated >= 10:
-            is_active = False
-        if request.user.premium == 1 and images_generated >= 30:
-            is_active = False
-    return render(request, "chat.html", context={"is_active": is_active})
+        if Subscriptions.objects.filter(user=request.user, plan__access="VOICE_TO_IMAGE", is_expired=False).exists():
+            subscription = Subscriptions.objects.filter(
+                user=request.user, plan__access="VOICE_TO_IMAGE").last()
+            if subscription:
+                if subscription.requests_send >= subscription.plan.requests:
+                    is_active = False
+            return render(request, "chat.html", context={"is_active": is_active})
+    return redirect('/api/login/')
 
 
 def ShopVoiceToVoice(request):
@@ -140,24 +138,25 @@ def ShopVoiceToVoice(request):
 
 
 def VoiceToVoice(request):
-    is_active = True
-    try:
-        obj = VoiceToVoiceRequests.objects.get(user=request.user)
-        if obj.user.premium == 0:
-            if obj.requests_send >= 20:
-                is_active = False
-        if obj.user.premium == 1:
-            if obj.requests_send >= 100:
-                is_active = False
-        context = {
-            "is_active": is_active,
-        }
-        return render(request, "voice_to_voice.html", context=context)
-    except Exception as e:
-        context = {
-            "is_active": is_active
-        }
-        return render(request, "voice_to_voice.html", context=context)
+    if request.user.is_authenticated:
+        if Subscriptions.objects.filter(user=request.user, plan__access="VOICE_TO_Voice", is_expired=False).exists():
+            is_active = True
+            try:
+                obj = Subscriptions.objects.get(user=request.user)
+                if obj.requests_send >= 20:
+                    is_active = False
+                if obj.requests_send >= 100:
+                    is_active = False
+                context = {
+                    "is_active": is_active,
+                }
+                return render(request, "voice_to_voice.html", context=context)
+            except Exception as e:
+                context = {
+                    "is_active": is_active
+                }
+                return render(request, "voice_to_voice.html", context=context)
+    return redirect("/api/login/")
 
 
 @csrf_exempt
@@ -178,6 +177,20 @@ def VoiceOutPut(request):
 
 
 def UploadVoice(request):
+    try:
+        img = request.GET.get('img', None)
+        if img:
+            plan__access = "TEXT_TO_IMAGE"
+        else:
+            plan__access = "VOICE_TO_IMAGE"
+        obj = Subscriptions.objects.get(user=request.user, plan__access=plan__access)
+        obj.requests_send += 1
+        obj.save()
+        if obj.requests_send >= obj.plan.requests:
+            obj.is_expired = True
+            obj.save()
+    except Exception as e:
+        pass
     text = request.GET.get('text', '')
     response = ImagesDB.objects.filter(question__icontains=text)
     if not response:
@@ -236,13 +249,21 @@ def GetImages(request):
 
 def get_chatgpt_response(request):
     try:
-        obj = VoiceToVoiceRequests.objects.get(user=request.user)
+        words = request.GET.get('words', None)
+        if words:
+            plan__access = "TEXT_TO_TEXT"
+        else:
+            plan__access = "VOICE_TO_Voice"
+            words = 2000
+        obj = Subscriptions.objects.get(user=request.user, plan__access=plan__access)
         obj.requests_send += 1
         obj.save()
+        if obj.requests_send >= obj.plan.requests:
+            obj.is_expired = True
+            obj.save()
     except Exception as e:
-        VoiceToVoiceRequests.objects.create(user=request.user, requests_send=1)
+        words = request.GET.get('words', None)
     prompt = request.GET.get('text', '')
-    words = request.GET.get('words')
     response = ResponsesDB.objects.filter(question__icontains=prompt)
     if not response:
         response = openai.ChatCompletion.create(
@@ -265,7 +286,7 @@ def get_chatgpt_response(request):
 
 def TextToText(request):
     if request.user.is_authenticated:
-        if Subscriptions.objects.filter(user=request.user, plan__access="TEXT_TO_IMAGE", is_expired=False).exists():
+        if Subscriptions.objects.filter(user=request.user, plan__access="TEXT_TO_TEXT", is_expired=False).exists():
             if CommunityMembers.objects.filter(user=request.user).exists():
                 communities_id = request.user.team.all().values_list("community__community_id", flat=True)
                 communities = Community.objects.filter(community_id__in=communities_id)

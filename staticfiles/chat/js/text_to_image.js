@@ -19,11 +19,12 @@ $(document).ready(function() {
     document.querySelector('#text_to_text_btn').onclick = function() {
         var text_to_text = $("#text_to_text_input").val();
         $("#loading").show();
+        var gen_img = "test";
         if(text_to_text == ""){
             alert("Please Enter Something");
         }else{
          var xhr = new XMLHttpRequest();
-         xhr.open('GET', `/upload_voice/?text=${text_to_text}`, true);
+         xhr.open('GET', `/upload_voice/?text=${text_to_text}&img=${gen_img}`, true);
          xhr.onreadystatechange = function() {
               if (this.readyState == 4 && this.status == 200) {
                     $("#loading").hide();

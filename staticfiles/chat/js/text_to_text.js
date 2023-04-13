@@ -4,7 +4,7 @@ $(document).ready(function() {
         var text_to_text = $("#text_to_text_input").val();
         var no_of_words = $("#no_of_words").val();
         if(no_of_words == ""){
-            no_of_words = 50
+            no_of_words = 2000
         }
         if(text_to_text == ""){
             alert("Please Enter Something");

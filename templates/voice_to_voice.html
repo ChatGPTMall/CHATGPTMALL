@@ -64,7 +64,6 @@
 </nav>
     {% if request.user.is_authenticated %}
         {% if is_active %}
-        {% if request.user.access == "VOICE_TO_Voice" %}
         <main role="main" class="container">
           <div class="">
             <h2>Voice To Voice Chat</h2>
@@ -95,9 +94,6 @@
               <p id="response"></p>
           </div>
         </main>
-        {% else %}
-        <div class="text-center"><h2 >You Do Not Have Access To This Feature</h2></div>
-    {% endif %}
         {% else %}
             <div class="text-center">
                 <h2 >Your have exceeded your quota please Buy requests again </h2>
