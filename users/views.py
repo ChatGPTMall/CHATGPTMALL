@@ -1,4 +1,5 @@
 import os
+import random
 from io import BytesIO
 from io import BytesIO as IO
 from urllib.request import urlopen
@@ -22,9 +23,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, Capabilities, \
     Jobs, Community, CommunityMembers, CommunityPosts, CouponCode, Subscriptions, Items, ImageAnalysisDB, Category, \
-    VoiceCommands
+    VoiceCommands, KeyManagement
 
-openai.api_key = os.getenv("OPEN_AI_KEY")
+# openai.api_key = os.getenv("OPEN_AI_KEY")
 
 
 def HomepageView(request):
@@ -126,7 +127,7 @@ def VoiceToImage(request):
                 if subscription.requests_send >= subscription.plan.requests:
                     is_active = False
             return render(request, "chat.html", context={"is_active": is_active})
-    return redirect('/api/login/')
+    return redirect('/api/renew/subscription/')
 
 
 def ShopVoiceToVoice(request):
@@ -156,7 +157,7 @@ def VoiceToVoice(request):
                     "is_active": is_active
                 }
                 return render(request, "voice_to_voice.html", context=context)
-    return redirect("/api/login/")
+    return redirect("/api/renew/subscription/")
 
 
 @csrf_exempt
@@ -194,34 +195,37 @@ def UploadVoice(request):
     text = request.GET.get('text', '')
     response = ImagesDB.objects.filter(question__icontains=text)
     if not response:
-        resp = openai.Image.create(prompt="{}".format(text), n=3, size="1024x1024")
-        images = list()
-        for image in resp['data']:
-            images.append(image.url)
-        if request.user.is_authenticated:
-            imagedb = ImagesDB.objects.create(question=text, user=request.user)
-        else:
-            ImagesDB.objects.create(question=text, images=images)
+        key = request.user.keys().last()
+        if key:
+            openai.api_key = key.key
+            resp = openai.Image.create(prompt="{}".format(text), n=3, size="1024x1024")
+            images = list()
+            for image in resp['data']:
+                images.append(image.url)
+            if request.user.is_authenticated:
+                imagedb = ImagesDB.objects.create(question=text, user=request.user)
+            else:
+                ImagesDB.objects.create(question=text, images=images)
 
-        response1 = urlopen(images[0])
-        io1 = BytesIO(response1.read())
-        imagedb.image1.save("image_one.jpg", File(io1))
+            response1 = urlopen(images[0])
+            io1 = BytesIO(response1.read())
+            imagedb.image1.save("image_one.jpg", File(io1))
 
-        response2 = urlopen(images[1])
-        io2 = BytesIO(response2.read())
-        imagedb.image2.save("image_two.jpg", File(io2))
+            response2 = urlopen(images[1])
+            io2 = BytesIO(response2.read())
+            imagedb.image2.save("image_two.jpg", File(io2))
 
-        response3 = urlopen(images[2])
-        io3 = BytesIO(response3.read())
-        imagedb.image3.save("image_three.jpg", File(io3))
+            response3 = urlopen(images[2])
+            io3 = BytesIO(response3.read())
+            imagedb.image3.save("image_three.jpg", File(io3))
 
-        show_images = list()
+            show_images = list()
 
-        show_images.append(imagedb.image1.url)
-        show_images.append(imagedb.image2.url)
-        show_images.append(imagedb.image3.url)
+            show_images.append(imagedb.image1.url)
+            show_images.append(imagedb.image2.url)
+            show_images.append(imagedb.image3.url)
 
-        return JsonResponse(show_images, safe=False)
+            return JsonResponse(show_images, safe=False)
     else:
         show_images = list()
         show_images.append(response.last().image1.url)
@@ -234,7 +238,7 @@ def GetCommand(request):
     if request.user.is_authenticated:
         if Subscriptions.objects.filter(user=request.user, plan__access="VOICE_TO_COMMAND", is_expired=False).exists():
             return render(request, "voice_to_command.html")
-    return redirect("/api/login/")
+    return redirect("/api/renew/subscription/")
 
 
 def ResponseCommand(request):
@@ -276,20 +280,23 @@ def get_chatgpt_response(request):
     prompt = request.GET.get('text', '')
     response = ResponsesDB.objects.filter(question__icontains=prompt)
     if not response:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            max_tokens=int(words),
-            messages=[
-                {"role": "system", "content": "You are a chatbot"},
-                {"role": "user", "content": "{}?".format(prompt)},
-            ]
-        )
+        key = request.user.keys().last()
+        if key:
+            openai.api_key = key.key
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                max_tokens=int(words),
+                messages=[
+                    {"role": "system", "content": "You are a chatbot"},
+                    {"role": "user", "content": "{}?".format(prompt)},
+                ]
+            )
 
-        result = ''
-        for choice in response.choices:
-            result += choice.message.content
-        ResponsesDB.objects.create(question=prompt, answer=result)
-        return HttpResponse(str(result))
+            result = ''
+            for choice in response.choices:
+                result += choice.message.content
+            ResponsesDB.objects.create(question=prompt, answer=result)
+            return HttpResponse(str(result))
     else:
         return HttpResponse(str(response.last().answer))
 
@@ -302,7 +309,7 @@ def TextToText(request):
                 communities = Community.objects.filter(community_id__in=communities_id)
                 return render(request, "TextToText.html", context={"communities": communities})
             return render(request, "TextToText.html")
-    return redirect("/api/login/")
+    return redirect("/api/renew/subscription/")
 
 
 def TextToImage(request):
@@ -313,14 +320,14 @@ def TextToImage(request):
                 communities = Community.objects.filter(community_id__in=communities_id)
                 return render(request, "TextToImage.html", context={"communities": communities})
             return render(request, "TextToImage.html")
-    return redirect("/api/login/")
+    return redirect("/api/renew/subscription/")
 
 
 def ImageToImage(request):
     if request.user.is_authenticated:
         if Subscriptions.objects.filter(user=request.user, plan__access="IMAGE_TO_IMAGE", is_expired=False).exists():
             return render(request, "imagetoimage.html")
-    return redirect("/api/login/")
+    return redirect("/api/renew/subscription/")
 
 
 def ImageToImageCalculate(request):
@@ -341,7 +348,7 @@ def ImageAnalysis(request):
     if request.user.is_authenticated:
         if Subscriptions.objects.filter(user=request.user, plan__access="IMAGE_ANALYSIS", is_expired=False).exists():
             return render(request, "imageanalysis.html")
-    return redirect("/api/login/")
+    return redirect("/api/renew/subscription/")
 
 
 def VideoAnalysis(request):
@@ -358,7 +365,7 @@ def ObjectsDetection(request):
                 communities_id = request.user.team.all().values_list("community__community_id", flat=True)
                 communities = Community.objects.filter(community_id__in=communities_id)
             return render(request, "ObjectsDetection.html", context={"communities": communities})
-    return redirect("/api/login/")
+    return redirect("/api/renew/subscription/")
 
 
 @csrf_exempt
@@ -770,4 +777,49 @@ def ItemHowToUse(request, item_id):
 def LearHowToUse(request, item_id):
     item = Items.objects.get(id=item_id)
     return render(request, "item_detail.html", context={"item": item})
+
+
+def KeyManagementView(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            key = request.POST.get("key")
+            KeyManagement.objects.get_or_create(user=request.user, key=key)
+        keys = request.user.keys.all()
+        return render(request, "key_management.html", {"keys": keys})
+    return redirect("/api/login/")
+
+
+def ForgotPassword(request):
+    try:
+        if request.method == "POST":
+            email = request.POST.get("email")
+            user = User.objects.get(email=email)
+            token = random.randint(10000, 99999)
+            user.reset_token = token
+            user.save()
+            subject = 'Password Reset Token'
+            message = 'Your password reset token is {}'.format(token)
+            user.email_user(subject, message, from_email="no-reply@doctustech.com")
+            return redirect("/api/change/password/")
+        return render(request, "forgot_password.html")
+    except User.DoesNotExist:
+        return redirect("/api/forgot/password/")
+
+
+def ChangePassword(request):
+    try:
+        if request.method == "POST":
+            token = request.POST.get("token")
+            password = request.POST.get("password")
+            user = User.objects.get(reset_token=token)
+            user.set_password(password)
+            user.save()
+            return redirect("/api/login/")
+        return render(request, "change_password.html")
+    except User.DoesNotExist:
+        return redirect("/api/change/password/")
+
+
+def RenewSubscription(request):
+    return render(request, "renew.html")
 

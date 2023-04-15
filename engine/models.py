@@ -332,4 +332,17 @@ class VoiceCommands(models.Model):
         verbose_name_plural = _("Voice Commands")
 
 
+class KeyManagement(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="keys")
+    key = models.CharField(_("Open AI Key"), max_length=200)
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.email + " " + self.key
+
+    class Meta:
+        verbose_name = _("Open AI Key")
+        verbose_name_plural = _("Open AI Keys")
+
+
 
