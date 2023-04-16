@@ -33,7 +33,8 @@ def HomepageView(request):
     DEPLOYED_HOST = os.getenv("DEPLOYED_HOST", None)
     if DEPLOYED_HOST == "https://madeinthai.org":
         show_logo = True
-    return render(request, "homepage.html", context={"show_logo": show_logo})
+    key = KeyManagement.objects.all().last()
+    return render(request, "homepage.html", context={"show_logo": show_logo, "key": key})
 
 
 def Logout(request):
@@ -195,7 +196,7 @@ def UploadVoice(request):
     text = request.GET.get('text', '')
     response = ImagesDB.objects.filter(question__icontains=text)
     if not response:
-        key = request.user.keys().last()
+        key = KeyManagement.objects.all().last()
         if key:
             openai.api_key = key.key
             resp = openai.Image.create(prompt="{}".format(text), n=3, size="1024x1024")
@@ -280,7 +281,7 @@ def get_chatgpt_response(request):
     prompt = request.GET.get('text', '')
     response = ResponsesDB.objects.filter(question__icontains=prompt)
     if not response:
-        key = request.user.keys().last()
+        key = KeyManagement.objects.all().last()
         if key:
             openai.api_key = key.key
             response = openai.ChatCompletion.create(
@@ -783,7 +784,8 @@ def KeyManagementView(request):
     if request.user.is_authenticated:
         if request.method == "POST":
             key = request.POST.get("key")
-            KeyManagement.objects.get_or_create(user=request.user, key=key)
+            organization = request.POST.get("organization")
+            KeyManagement.objects.get_or_create(user=request.user, key=key, organization=organization)
         keys = request.user.keys.all()
         return render(request, "key_management.html", {"keys": keys})
     return redirect("/api/login/")
@@ -822,4 +824,8 @@ def ChangePassword(request):
 
 def RenewSubscription(request):
     return render(request, "renew.html")
+
+def deletekey(request, id):
+    KeyManagement.objects.filter(id=id).delete()
+    return redirect("/api/key/management/")
 

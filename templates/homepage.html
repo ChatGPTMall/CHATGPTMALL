@@ -136,7 +136,9 @@
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'ProfileView' %}">Profile</a></li>
               <li><a class="dropdown-item" href="{% url 'ApiKeyView' %}">API Key</a></li>
+              {% if request.user.premium == 2 %}
               <li><a class="dropdown-item" href="{% url 'KeyManagement' %}">Key Management</a></li>
+              {% endif %}
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="{% url 'Logout' %}">Logout</a></li>
             </ul>
@@ -177,9 +179,9 @@
                       <div class="col-md-6">
                         <div class="feature-content-container my-2 mx-2" style="margin-left: 70px !important;">
                           <div class="blog-card-img-container mt-5">
-                            <p class="blog-title pt-4 pb-2">OUR FEATURE </p>
+                            <h1 class="pt-4 pb-2" style="font-weight: 900;">Key Sponsor: {{key.organization}} </h1>
 
-                            <h2 class="blog-headline">Generate your perfect Product’s image based on your voice chat</h2>
+                            <h2 class="blog-headline" style="font-size:40px;font-weight:300 !important;">Generate your perfect Product’s image based on your voice chat</h2>
                           </div>
                           <div style="position: relative;">
                             <br>

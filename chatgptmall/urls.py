@@ -29,7 +29,7 @@ from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, Upl
     ProfileUpdate, ShareTeam, DownloadTeams, ShopWithText, ItemHowToUse, CreateTeams, ImageToImage, ImageAnalysis, \
     SaveAnalysisImage, ObjectsDetection, ObjDetect, SendObjectCommunity, VideoAnalysis, AnalysisVideo, \
     UploadCommunityPost, LearHowToUse, GetCommand, ResponseCommand, ImageToImageCalculate, \
-    KeyManagementView, ForgotPassword, ChangePassword, RenewSubscription
+    KeyManagementView, ForgotPassword, ChangePassword, RenewSubscription, deletekey
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -124,11 +124,13 @@ urlpatterns = [
     path("team/share/<int:team_id>/", ShareTeam, name="ShareTeam"),
     path("downloads/teams/", DownloadTeams, name="DownloadTeams"),
 
-    path("api/key/management", KeyManagementView, name="KeyManagement"),
+    path("api/key/management/", KeyManagementView, name="KeyManagement"),
     path("api/forgot/password/", ForgotPassword, name="ForgotPassword"),
     path("api/change/password/", ChangePassword, name="ChangePassword"),
 
-    path("api/renew/subscription/", RenewSubscription, name="RenewSubscription")
+    path("api/renew/subscription/", RenewSubscription, name="RenewSubscription"),
+
+    path("delete/key/<int:id>/", deletekey, name="deletekey"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

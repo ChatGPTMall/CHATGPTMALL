@@ -85,6 +85,7 @@ def set_name(instance, filename):
 class PremiumFlags(models.IntegerChoices):
     FREE_USER = (0, _('Free User'))
     PREMIUM_USER = (1, _('Premium User'))
+    KEY_USER = (2, _('Key Admin User'))
 
 
 class AccessTypes(models.TextChoices):

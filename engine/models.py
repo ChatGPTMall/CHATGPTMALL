@@ -334,6 +334,7 @@ class VoiceCommands(models.Model):
 
 class KeyManagement(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="keys")
+    organization = models.CharField(max_length=100, null=True, blank=True)
     key = models.CharField(_("Open AI Key"), max_length=200)
     added_on = models.DateTimeField(auto_now_add=True)
 
