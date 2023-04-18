@@ -346,4 +346,20 @@ class KeyManagement(models.Model):
         verbose_name_plural = _("Open AI Keys")
 
 
+class RestrictedKeywords(models.Model):
+    community = models.ForeignKey(Community, related_name="keywords", on_delete=models.CASCADE)
+    keyword = models.CharField(_("Keyword"), max_length=200, default="")
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.community.name + " " + self.keyword
+
+    class Meta:
+        verbose_name = _("Keyword")
+        verbose_name_plural = _("Restricted Keywords")
+
+
+
+
+
 

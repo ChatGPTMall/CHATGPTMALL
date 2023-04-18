@@ -2,7 +2,7 @@ import pandas as pd
 from django.contrib import admin
 from engine.models import Items, Category, ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, \
     Jobs, Capabilities, Community, CommunityMembers, CommunityPosts, CouponCode, UploadCoupons, Subscriptions, \
-    UploadTeams, ImageAnalysisDB, VoiceCommands, KeyManagement
+    UploadTeams, ImageAnalysisDB, VoiceCommands, KeyManagement, RestrictedKeywords
 
 
 # Register your models here.
@@ -89,3 +89,4 @@ admin.site.register(VoiceToVoiceRequests, VoiceToVoiceRequestsAdmin)
 admin.site.register(ImageAnalysisDB)
 admin.site.register(VoiceCommands)
 admin.site.register(KeyManagement)
+admin.site.register(RestrictedKeywords)

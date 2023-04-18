@@ -607,6 +607,7 @@ def JoinCommunity(request):
                 # if the page is out of range, deliver the last page
                 page_obj = paginator.page(paginator.num_pages)
             context = {
+                "keywords": community.keywords.all(),
                 "community": community,
                 "total_members": community.members.all().count(),
                 "page_obj": page_obj,
@@ -648,8 +649,18 @@ def SendPostCommunity(request):
                 post.save()
         else:
             for comm in all_comms:
-                CommunityPosts.objects.create(
-                    user=request.user, community=comm.community, question=question, response=response)
+                send = True
+                keywords = list(comm.community.keywords.all().values_list("keyword", flat=True))
+                input_keywords = question.split(" ")
+                print(keywords)
+                print(input_keywords)
+                for key in input_keywords:
+                    if key in keywords:
+                        send = False
+                print(send)
+                if send:
+                    CommunityPosts.objects.create(
+                        user=request.user, community=comm.community, question=question, response=response)
         if page == "text_to_text":
             return redirect("/api/text_to_text/")
         else:
