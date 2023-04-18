@@ -240,9 +240,9 @@ class CommunityPosts(models.Model):
     response = models.TextField(_("AI Response"), null=True, blank=True)
     input_image = models.URLField(null=True, blank=True)
     response_image = models.URLField(null=True, blank=True)
-    image1 = models.URLField(null=True, blank=True)
-    image2 = models.URLField(null=True, blank=True)
-    image3 = models.URLField(null=True, blank=True)
+    image1 = models.TextField(null=True, blank=True)
+    image2 = models.TextField(null=True, blank=True)
+    image3 = models.TextField(null=True, blank=True)
     added_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

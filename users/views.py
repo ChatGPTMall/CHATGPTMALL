@@ -643,6 +643,7 @@ def SendPostCommunity(request):
             for comm in all_comms:
                 post = CommunityPosts.objects.create(
                     user=request.user, community=comm.community, question=question)
+                print(images)
                 post.image1 = images[0]
                 post.image2 = images[2]
                 post.image3 = images[2]
