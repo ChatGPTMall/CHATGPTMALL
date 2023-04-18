@@ -651,13 +651,11 @@ def SendPostCommunity(request):
             for comm in all_comms:
                 send = True
                 keywords = list(comm.community.keywords.all().values_list("keyword", flat=True))
+                keywords = [x.upper() for x in keywords]
                 input_keywords = question.split(" ")
-                print(keywords)
-                print(input_keywords)
                 for key in input_keywords:
-                    if key in keywords:
+                    if key.upper() in keywords:
                         send = False
-                print(send)
                 if send:
                     CommunityPosts.objects.create(
                         user=request.user, community=comm.community, question=question, response=response)
