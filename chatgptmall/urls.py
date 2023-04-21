@@ -29,7 +29,7 @@ from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, Upl
     ProfileUpdate, ShareTeam, DownloadTeams, ShopWithText, ItemHowToUse, CreateTeams, ImageToImage, ImageAnalysis, \
     SaveAnalysisImage, ObjectsDetection, ObjDetect, SendObjectCommunity, VideoAnalysis, AnalysisVideo, \
     UploadCommunityPost, LearHowToUse, GetCommand, ResponseCommand, ImageToImageCalculate, \
-    KeyManagementView, ForgotPassword, ChangePassword, RenewSubscription, deletekey
+    KeyManagementView, ForgotPassword, ChangePassword, RenewSubscription, deletekey, TextToVoice
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -62,7 +62,7 @@ urlpatterns = [
     path('api/update/profile/', ProfileUpdate, name="ProfileUpdate"),
     path('api/convert/voice_to_image/', VoiceToImage, name="VoiceToImage"),
     path('shop/', ShopVoiceToVoice, name="ShopVoiceToVoice"),
-
+    path('api/text_to_voice/', TextToVoice, name="TextToVoice"),
     path('api/show_voice_out_put/', VoiceOutPut, name="VoiceOutPut"),
     path('upload_voice/', UploadVoice, name="UploadVoice"),
     path('voice/command/', GetCommand, name="GetCommand"),

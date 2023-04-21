@@ -131,6 +131,13 @@ def VoiceToImage(request):
     return redirect('/api/renew/subscription/')
 
 
+def TextToVoice(request):
+    if request.user.is_authenticated:
+        if Subscriptions.objects.filter(user=request.user, plan__access="TEXT_TO_VOICE", is_expired=False).exists():
+            return render(request, "text_to_voice.html")
+    return redirect('/api/renew/subscription/')
+
+
 def ShopVoiceToVoice(request):
     shop = ShopAccess.objects.all().first()
     if shop.switch:
@@ -265,11 +272,15 @@ def GetImages(request):
 def get_chatgpt_response(request):
     try:
         words = request.GET.get('words', None)
+        page = request.GET.get('page', None)
+        print(page)
         if words:
             plan__access = "TEXT_TO_TEXT"
         else:
             plan__access = "VOICE_TO_Voice"
             words = 2000
+        if page == "voice_to_text":
+            plan__access = "TEXT_TO_VOICE"
         obj = Subscriptions.objects.get(user=request.user, plan__access=plan__access)
         obj.requests_send += 1
         obj.save()
@@ -279,6 +290,7 @@ def get_chatgpt_response(request):
     except Exception as e:
         words = request.GET.get('words', None)
     prompt = request.GET.get('text', '')
+    print(prompt)
     response = ResponsesDB.objects.filter(question__icontains=prompt)
     if not response:
         key = KeyManagement.objects.all().last()

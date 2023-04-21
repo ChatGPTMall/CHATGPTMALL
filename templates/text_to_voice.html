@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+{% load static %}
+{% load i18n %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Text To Voice</title>
+    <title>WebRTC Audio Recording using MediaStreamRecorder</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css">
+    <link rel="stylesheet" href="https://cdn.webrtc-experiment.com/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <style>
+            #text_div{
+    flex-direction: column !important;
+    align-items: baseline !important;
+    }
+    #text_div .form-control{
+        width: 74% !important;
+    }
+    h1, h2{
+        border-bottom: none !important;
+    }
+     .mic_icon{
+       height: 43px;
+       width: 38px;
+    }
+    button{
+     background: transparent !important;
+    border: none !important;
+    }
+    #card-images{
+    height: 360px;
+    width: 360px;
+    }
+    html {
+    font-size: 10px;
+    -webkit-tap-highlight-color: #fff !important;
+    background: #fff !important;
+}
+
+#voice_text_btn{
+    background-color: hsl(242deg 88% 66%) !important;
+    height: 40px;
+    color: white;
+    cursor: pointer;
+    margin-top: 20px;
+}
+#back{
+    background: #2844FA;
+    color: white;
+    font-size: 15px;
+    border-radius: 13px;
+    margin: 10px;
+}
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-light bg-light">
+  <a class="navbar-brand" id="back" href="{% url 'HomepageView' %}">
+    <i class="fa fa-arrow-left" aria-hidden="true"></i> Back
+  </a>
+</nav>
+    {% if request.user.is_authenticated %}
+        <main role="main" class="container">
+          <div class="">
+            <h2>Text To Voice</h2>
+              <br><br>
+              <section class="experiment">
+                    <div id="audios-container"></div>
+                </section>
+              <div id="text_div" style="display:flex;">
+                    <input type="text" class="form-control" name="voice_text" id="voice_text">
+                    <div>
+                        <button id="voice_text_btn">Generate Response</button>
+                        <button id="speak">Speak</button>
+                        <button id="stop">Stop</button>
+                        <button id="resume">Resume</button>
+                    </div>
+                </div>
+              <br>
+              <p id="response"></p>
+          </div>
+        </main>
+    {% else %}
+        <div class="text-center">
+            <h2 >Please Login To Access Our Voice To Voice Service </h2>
+        </div>
+    {% endif %}
+<script src="{% static 'chat/js/jquery-1.12.3.js' %}"></script>
+<script src="https://cdn.WebRTC-Experiment.com/MediaStreamRecorder.js"></script>
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<script src="{% static 'chat/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'chat/js/text_to_voice.js' %}"></script>
+</body>
+</html>

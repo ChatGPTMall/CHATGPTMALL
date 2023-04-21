@@ -105,6 +105,7 @@ class PlanType(models.TextChoices):
 class AccessTypes(models.TextChoices):
     NO_ACCESS = "NO_ACCESS", _('No Access')
     TEXT_TO_TEXT = "TEXT_TO_TEXT", _('Text To Text')
+    TEXT_TO_VOICE = "TEXT_TO_VOICE", _('Text To Voice')
     VOICE_TO_Voice = "VOICE_TO_Voice", _('Voice To Voice')
     VOICE_TO_IMAGE = "VOICE_TO_IMAGE", _('Voice To Image')
     TEXT_TO_IMAGE = "TEXT_TO_IMAGE", _('Text To Image')
