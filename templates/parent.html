@@ -85,6 +85,15 @@
               <li><a href="{% url 'JoinedCommunities' %}">Joined Communities</a></li>
             </ul>
           </li>
+          {% if request.user.premium == 2 %}
+                <li class="dropdown">
+                  <a href="#">Key Management <i class="bi bi-chevron-down dropdown-indicator"></i></a>
+                  <ul>
+                    <li><a href="{% url 'KeyManagement' %}">Openai</a></li>
+                    <li><a href="{% url 'MicrosoftKeyManagementView' %}">Microsoft</a></li>
+                  </ul>
+                </li>
+                {% endif %}
           {% if request.user.is_authenticated %}
             <li class="dropdown">
               <a href="#">
@@ -95,9 +104,6 @@
               <ul>
                 <li><a href="{% url 'ProfileView' %}">Profile</a></li>
                 <li><a href="{% url 'ApiKeyView' %}">API Key</a></li>
-                {% if request.user.premium == 2 %}
-                <li><a href="{% url 'KeyManagement' %}">Key Management</a></li>
-                {% endif %}
                 <li><hr class="dropdown-divider"></li>
                 <li><a href="{% url 'Logout' %}">Logout</a></li>
               </ul>

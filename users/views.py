@@ -807,9 +807,22 @@ def KeyManagementView(request):
         if request.method == "POST":
             key = request.POST.get("key")
             organization = request.POST.get("organization")
-            KeyManagement.objects.get_or_create(user=request.user, key=key, organization=organization)
-        keys = request.user.keys.all()
+            KeyManagement.objects.get_or_create(user=request.user, key=key, organization=organization, platform="OPENAI")
+        keys = request.user.keys.filter(platform="OPENAI")
         return render(request, "key_management.html", {"keys": keys})
+    return redirect("/api/login/")
+
+
+def MicrosoftKeyManagementView(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            key = request.POST.get("key")
+            endpoint = request.POST.get("endpoint")
+            organization = request.POST.get("organization")
+            KeyManagement.objects.get_or_create(
+                user=request.user, key=key, organization=organization, platform="MICROSOFT", endpoint=endpoint)
+        keys = request.user.keys.filter(platform="MICROSOFT")
+        return render(request, "ms_key_management.html", context={'keys': keys})
     return redirect("/api/login/")
 
 
@@ -847,7 +860,11 @@ def ChangePassword(request):
 def RenewSubscription(request):
     return render(request, "renew.html")
 
+
 def deletekey(request, id):
+    ms = request.GET.get("MS", None)
     KeyManagement.objects.filter(id=id).delete()
+    if ms:
+        return redirect("/api/microsoft/keys/")
     return redirect("/api/key/management/")
 

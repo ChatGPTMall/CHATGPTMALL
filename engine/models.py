@@ -333,10 +333,17 @@ class VoiceCommands(models.Model):
         verbose_name_plural = _("Voice Commands")
 
 
+class PlatformChoices(models.TextChoices):
+    OPENAI = "OPENAI", _('OPENAI')
+    MICROSOFT = "MICROSOFT", _('MICROSOFT')
+
+
 class KeyManagement(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="keys")
     organization = models.CharField(max_length=100, null=True, blank=True)
-    key = models.CharField(_("Open AI Key"), max_length=200)
+    key = models.CharField(_("API Key"), max_length=200)
+    endpoint = models.URLField(null=True, blank=True, max_length=200)
+    platform = models.CharField(choices=PlatformChoices.choices, max_length=30, null=True, blank=True)
     added_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

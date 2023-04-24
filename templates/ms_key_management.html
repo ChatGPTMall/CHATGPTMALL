@@ -1,0 +1,51 @@
+{% extends 'parent.html' %}
+{% block tittle %}Progrow | Microsoft Key Management{% endblock %}
+{% load static %}
+{% block body %}
+
+  <!-- ======= Hero Section ======= -->
+  <section id="hero" class="hero d-flex align-items-center">
+    <div class="container">
+      <div class="row gy-4 d-flex justify-content-between">
+        <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
+          <h2 data-aos="fade-up">Microsoft Key Management</h2>
+          <p data-aos="fade-up" data-aos-delay="100"></p>
+        </div>
+
+        <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
+          <img src="{% static 'shop/vendor/img/hero-img.svg' %}" class="img-fluid mb-3 mb-lg-0" alt="">
+        </div>
+
+      </div>
+    </div>
+  </section><!-- End Hero Section -->
+<div class="container">
+    <br>
+    <h2>Your Microsoft API Keys</h2>
+    <br>
+    {% for key in keys %}
+    <div style="display:flex;"><p>{{key.key}}</p>
+        <a style="margin-left:23px;" href="{% url 'deletekey' key.id %}?platform='MS'">DELETE</a> </div>
+    {% endfor %}
+</div>
+<main class="container">
+    <br>
+      <form method="post" action="{% url 'MicrosoftKeyManagementView' %}">
+          {% csrf_token %}
+      <div class="form-group">
+        <label for="exampleInputPassword1">Enter Your MS Key</label>
+        <input type="text" name="key" class="form-control my-2" id="exampleInputPassword1" placeholder="Microsoft API Key" required>
+      </div>
+          <div class="form-group">
+        <label>Enter Your MS Endpoint</label>
+        <input type="text" name="endpoint" class="form-control my-2" placeholder="Microsoft Endpoint" required>
+      </div>
+          <div class="form-group">
+        <label for="exampleInputPassword1">Enter Organization</label>
+        <input type="text" name="organization" class="form-control my-2"  placeholder="Organization" required>
+      </div>
+          <br>
+      <button type="submit" class="btn btn-primary">Submit Key</button>
+    </form>
+</main>
+{% endblock %}
