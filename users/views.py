@@ -7,6 +7,7 @@ import requests
 from django.conf import settings
 from PIL import Image, ImageDraw, ImageFont
 import openai
+import qrcode
 from django.core.files import File
 from django.core.mail import send_mail
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -273,7 +274,6 @@ def get_chatgpt_response(request):
     try:
         words = request.GET.get('words', None)
         page = request.GET.get('page', None)
-        print(page)
         if words:
             plan__access = "TEXT_TO_TEXT"
         else:
@@ -317,11 +317,12 @@ def get_chatgpt_response(request):
 def TextToText(request):
     if request.user.is_authenticated:
         if Subscriptions.objects.filter(user=request.user, plan__access="TEXT_TO_TEXT", is_expired=False).exists():
+            text = request.GET.get("item", None)
             if CommunityMembers.objects.filter(user=request.user).exists():
                 communities_id = request.user.team.all().values_list("community__community_id", flat=True)
                 communities = Community.objects.filter(community_id__in=communities_id)
-                return render(request, "TextToText.html", context={"communities": communities})
-            return render(request, "TextToText.html")
+                return render(request, "TextToText.html", context={"communities": communities, "text": text})
+            return render(request, "TextToText.html", context={"text": text})
     return redirect("/api/renew/subscription/")
 
 
@@ -626,7 +627,8 @@ def JoinCommunity(request):
                 "members": members,
                 "is_leader": is_leader,
                 "uri": uri,
-                "team_id": community.community_id
+                "team_id": community.community_id,
+                "categories": Category.objects.all(),
             }
             if not created:
                 return render(request, "community_responses.html", context=context)
@@ -705,12 +707,16 @@ def UploadCommunityPost(request):
     video = request.FILES.get("item_video")
     item_desc = request.POST.get("item_desc")
     upload = request.POST.get("upload")
-    if upload == "yes":
-        category, created = Category.objects.get_or_create(title=cat)
-        Items.objects.create(category=category, title=name, description=item_desc, image=image, video=video)
     question = "How to use {}".format(name)
     com = Community.objects.get(community_id=team_id)
-    CommunityPosts.objects.create(user=request.user, question=question, response=item_desc, community=com)
+    post = CommunityPosts.objects.create(user=request.user, question=question, response=item_desc, community=com)
+    if upload == "yes":
+        category, created = Category.objects.get_or_create(title=cat)
+        item = Items.objects.create(
+            category=category, title=name, description=item_desc, image=image, video=video)
+        post.qrcode = item.qr_code.url
+        post.video = item.video.url
+        post.save()
     return redirect("/join/community/?team_id={}".format(team_id))
 
 

@@ -5,7 +5,10 @@ from users.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator
 from django.utils.translation import gettext_lazy as _
-
+import qrcode
+from io import BytesIO
+from django.core.files import File
+from PIL import Image, ImageDraw, ImageFont
 from users.s3_storage import ItemVideosS3Storage
 
 
@@ -27,12 +30,25 @@ class Items(models.Model):
     description = models.TextField()
     image = models.ImageField(upload_to="images/items/", null=True, blank=True)
     video = models.FileField(null=True, blank=True, upload_to="items/videos")
+    qr_code = models.ImageField(upload_to="images/QR/", null=True, blank=True)
     price = models.FloatField(default=0)
     added_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        qr_image = qrcode.QRCode(version=1, box_size=10, border=5)
+        qr_image.add_data(self.video.url)
+        qr_image.make(fit=True)
+        img = qr_image.make_image(fill='black', back_color='white')
+        # qr_offset = Image.new('RGB', (310, 310), 'white')
+        file_name = f'{self.title}-{self.id}qr.png'
+        stream = BytesIO()
+        img.save(stream, 'PNG')
+        self.qr_code.save(file_name, File(stream), save=False)
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = _("Item")
@@ -241,6 +257,8 @@ class CommunityPosts(models.Model):
     response = models.TextField(_("AI Response"), null=True, blank=True)
     input_image = models.URLField(null=True, blank=True)
     response_image = models.URLField(null=True, blank=True)
+    qrcode = models.TextField(null=True, blank=True)
+    video = models.TextField(null=True, blank=True)
     image1 = models.TextField(null=True, blank=True)
     image2 = models.TextField(null=True, blank=True)
     image3 = models.TextField(null=True, blank=True)

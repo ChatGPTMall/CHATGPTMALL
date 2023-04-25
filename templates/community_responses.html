@@ -255,7 +255,16 @@
     {% else %}
         <div class="container cont darker">
           <img src="https://w1.pngwing.com/pngs/278/853/png-transparent-line-art-nose-chatbot-internet-bot-artificial-intelligence-snout-head-smile-black-and-white.png" alt="Avatar" class="right" style="width:27px;">
-          <p>{{post.response}}</p>
+          <p>
+              {% if post.qrcode %}
+              <div style="display: flex;flex-direction: column;">
+                <a href="{{post.video}}">Watch Video>></a><br>
+                <img style="width:200px" src="{{post.qrcode}}">
+            </div>
+              {% else %}
+              {{post.response}}
+              {% endif %}
+          </p>
           <span class="time-left">{{post.added_on}}</span>
         </div>
         {% endif %}
@@ -359,11 +368,17 @@
                 <input type="text" name="item_name" class="form-control" id="inputEmail4" placeholder="item name" required>
               </div>
               <div class="col-md-12">
-                <label for="inputPassword4" class="form-label">Item Category</label>
-                <input type="text" name="item_category" class="form-control" id="inputPassword4" placeholder="item category" required>
+                <label class="form-label">Item Category</label>
+                  <select name="item_category" class="form-select" aria-label="Default select example" required>
+                  <option selected>Choose</option>
+                      {% for cat in categories %}
+                  <option value="{{cat.title}}">{{cat.title}}</option>
+                      {% endfor %}
+                </select>
               </div>
               <div class="col-md-12">
-                <label for="inputAddress" class="form-label">How To Use?</label>
+                <label for="inputAddress" class="form-label">How To Use?
+                    <a href="{% url 'TextToText' %}" style="margin-left:12px;" id="show_ai">Use AI Text Generation</a></label>
                   <textarea class="form-control" name="item_desc" id="inputAddress" placeholder="Item Description" required></textarea>
               </div>
                 <div class="col-md-12">

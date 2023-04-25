@@ -39,6 +39,13 @@ $(document).ready(function(){
         },
       });
    });
+   $("#show_ai").hide();
+   $('#inputEmail4').keypress(function() {
+        var dInput = this.value;
+        $("#show_ai").show();
+
+        $("#show_ai").attr("href", `/api/text_to_text/?item=How to use ${dInput}`)
+   })
 
     $("#redeem_button").on("click", (e)=>{
         var price = $("#total_price").val();

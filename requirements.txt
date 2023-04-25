@@ -72,3 +72,4 @@ urllib3==1.26.14
 XlsxWriter==3.0.9
 yarl==1.8.2
 zipp==3.15.0
+qrcode==7.4.2
