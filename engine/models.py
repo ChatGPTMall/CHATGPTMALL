@@ -269,6 +269,7 @@ class CommunityPosts(models.Model):
     image1 = models.TextField(null=True, blank=True)
     image2 = models.TextField(null=True, blank=True)
     image3 = models.TextField(null=True, blank=True)
+    item_name = models.CharField(max_length=100, null=True, blank=True)
     added_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

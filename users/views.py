@@ -739,6 +739,7 @@ def UploadCommunityPost(request):
         with open(result2[0], 'rb') as fa:
             # Set the image field to the downloaded file
             post.video.save("test.mp4", File(fa))
+        post.item_name = item.title
         post.save()
     return redirect("/join/community/?team_id={}".format(team_id))
 
