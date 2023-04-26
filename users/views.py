@@ -1,5 +1,6 @@
 import os
 import random
+import urllib
 from io import BytesIO
 from io import BytesIO as IO
 from urllib.request import urlopen
@@ -8,6 +9,7 @@ from django.conf import settings
 from PIL import Image, ImageDraw, ImageFont
 import openai
 import qrcode
+from django.core import files
 from django.core.files import File
 from django.core.mail import send_mail
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -290,7 +292,6 @@ def get_chatgpt_response(request):
     except Exception as e:
         words = request.GET.get('words', None)
     prompt = request.GET.get('text', '')
-    print(prompt)
     response = ResponsesDB.objects.filter(question__icontains=prompt)
     if not response:
         key = KeyManagement.objects.all().last()
@@ -312,6 +313,23 @@ def get_chatgpt_response(request):
             return HttpResponse(str(result))
     else:
         return HttpResponse(str(response.last().answer))
+
+
+def get_text(request):
+    prompt = request.GET.get('text', '')
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        max_tokens=int(2000),
+        messages=[
+            {"role": "system", "content": "You are a chatbot"},
+            {"role": "user", "content": "{}?".format(prompt)},
+        ]
+    )
+    result = ''
+    for choice in response.choices:
+        result += choice.message.content
+
+    return HttpResponse(str(result))
 
 
 def TextToText(request):
@@ -609,7 +627,6 @@ def JoinCommunity(request):
                 }))
             posts = community.feed.all().order_by("-added_on")
             page_num = request.GET.get('page', 1)
-
             paginator = Paginator(posts, 4)
             try:
                 page_obj = paginator.page(page_num)
@@ -714,8 +731,14 @@ def UploadCommunityPost(request):
         category, created = Category.objects.get_or_create(title=cat)
         item = Items.objects.create(
             category=category, title=name, description=item_desc, image=image, video=video)
-        post.qrcode = item.qr_code.url
-        post.video = item.video.url
+        result = urllib.request.urlretrieve(item.qr_code.url)
+        result2 = urllib.request.urlretrieve(item.video.url)
+        with open(result[0], 'rb') as f:
+            # Set the image field to the downloaded file
+            post.qrcode.save("test.png", File(f))
+        with open(result2[0], 'rb') as fa:
+            # Set the image field to the downloaded file
+            post.video.save("test.mp4", File(fa))
         post.save()
     return redirect("/join/community/?team_id={}".format(team_id))
 
@@ -873,4 +896,9 @@ def deletekey(request, id):
     if ms:
         return redirect("/api/microsoft/keys/")
     return redirect("/api/key/management/")
+
+
+def WatchVideo(request, item_id):
+    item = Items.objects.get(item_id=item_id)
+    return render(request, "video.html", context={"item":item})
 

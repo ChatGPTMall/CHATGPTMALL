@@ -258,8 +258,10 @@
           <p>
               {% if post.qrcode %}
               <div style="display: flex;flex-direction: column;">
-                <a href="{{post.video}}">Watch Video>></a><br>
-                <img style="width:200px" src="{{post.qrcode}}">
+                {% if post.video %}
+                <a href="{{post.video.url}}" class="btn" style="background-color:#5B61EB !important;color:white;">Watch Video>></a><br>
+                {% endif %}
+                <img style="width:200px" src="{{post.qrcode.url}}">
             </div>
               {% else %}
               {{post.response}}
@@ -377,9 +379,13 @@
                 </select>
               </div>
               <div class="col-md-12">
+
                 <label for="inputAddress" class="form-label">How To Use?
-                    <a href="{% url 'TextToText' %}" style="margin-left:12px;" id="show_ai">Use AI Text Generation</a></label>
-                  <textarea class="form-control" name="item_desc" id="inputAddress" placeholder="Item Description" required></textarea>
+                    <a href="#" style="margin-left:12px;font-size:25px;" id="show_ai">Use AI Text Generation</a></label>
+                  <div style="display: flex;justify-content: center;">
+                  <img src="{% static 'images/loading.svg' %}" style="width:50px;" id="loader">
+                  </div>
+                  <textarea class="form-control" rows="8" name="item_desc" id="inputAddress" placeholder="Item Description" required></textarea>
               </div>
                 <div class="col-md-12">
                     <label for="formFile" class="form-label">Item Image</label>

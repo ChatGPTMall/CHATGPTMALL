@@ -1,5 +1,8 @@
+import os
 import random
 import string
+import uuid
+
 from django.db import models
 from users.models import User
 from django.core.exceptions import ValidationError
@@ -25,6 +28,7 @@ class Category(models.Model):
 
 
 class Items(models.Model):
+    item_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="items")
     title = models.CharField(max_length=200)
     description = models.TextField()
@@ -40,7 +44,12 @@ class Items(models.Model):
 
     def save(self, *args, **kwargs):
         qr_image = qrcode.QRCode(version=1, box_size=10, border=5)
-        qr_image.add_data(self.video.url)
+        DEPLOYED_HOST = os.getenv("DEPLOYED_HOST", None)
+        print(self.item_id)
+        url = DEPLOYED_HOST + "/watch/video/{}".format(self.item_id)
+        print(url)
+        qr_image.add_data(url)
+
         qr_image.make(fit=True)
         img = qr_image.make_image(fill='black', back_color='white')
         # qr_offset = Image.new('RGB', (310, 310), 'white')
@@ -257,8 +266,8 @@ class CommunityPosts(models.Model):
     response = models.TextField(_("AI Response"), null=True, blank=True)
     input_image = models.URLField(null=True, blank=True)
     response_image = models.URLField(null=True, blank=True)
-    qrcode = models.TextField(null=True, blank=True)
-    video = models.TextField(null=True, blank=True)
+    qrcode = models.ImageField(upload_to="community/qr_code", null=True, blank=True)
+    video = models.FileField(upload_to="community/video", null=True, blank=True)
     image1 = models.TextField(null=True, blank=True)
     image2 = models.TextField(null=True, blank=True)
     image3 = models.TextField(null=True, blank=True)

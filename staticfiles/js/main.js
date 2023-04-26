@@ -40,12 +40,28 @@ $(document).ready(function(){
       });
    });
    $("#show_ai").hide();
+   $("#loader").hide();
    $('#inputEmail4').keypress(function() {
         var dInput = this.value;
         $("#show_ai").show();
 
-        $("#show_ai").attr("href", `/api/text_to_text/?item=How to use ${dInput}`)
+//        $("#show_ai").attr("href", `/api/text_to_text/?item=How to use ${dInput}`)
+
    })
+   $("#show_ai").on("click", (e)=>{
+        $("#loader").show();
+        $("#inputAddress").hide();
+        var item_value = $('#inputEmail4').val();
+        $.ajax({
+                type: "GET",
+                url: `/api/get_text/?text=How to use ${item_value}`,
+                success: function (data) {
+                    $("#loader").hide();
+                    $("#inputAddress").show();
+                    $("#inputAddress").text(data);
+                }
+            });
+   });
 
     $("#redeem_button").on("click", (e)=>{
         var price = $("#total_price").val();
