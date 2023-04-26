@@ -45,9 +45,7 @@ class Items(models.Model):
     def save(self, *args, **kwargs):
         qr_image = qrcode.QRCode(version=1, box_size=10, border=5)
         DEPLOYED_HOST = os.getenv("DEPLOYED_HOST", None)
-        print(self.item_id)
         url = DEPLOYED_HOST + "/watch/video/{}".format(self.item_id)
-        print(url)
         qr_image.add_data(url)
 
         qr_image.make(fit=True)
