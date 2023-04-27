@@ -346,12 +346,12 @@ def get_text(request):
         return HttpResponse(str(text))
     else:
         response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        max_tokens=int(2000),
-        messages=[
-            {"role": "system", "content": "You are a chatbot"},
-            {"role": "user", "content": "{}?".format(prompt)},
-            ]
+            model="gpt-3.5-turbo",
+            max_tokens=int(2000),
+            messages=[
+                {"role": "system", "content": "You are a chatbot"},
+                {"role": "user", "content": "{}?".format(prompt)},
+                ]
         )
         result = ''
         for choice in response.choices:
