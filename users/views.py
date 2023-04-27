@@ -297,39 +297,68 @@ def get_chatgpt_response(request):
         key = KeyManagement.objects.all().last()
         if key:
             openai.api_key = key.key
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                max_tokens=int(words),
-                messages=[
-                    {"role": "system", "content": "You are a chatbot"},
-                    {"role": "user", "content": "{}?".format(prompt)},
-                ]
-            )
+            if key.platform == "MICROSOFT":
+                openai.api_base = "{}".format(key.endpoint)
+                openai.api_type = 'azure'
+                openai.api_version = "2023-03-15-preview"
+                model = "davinci"
+                response = openai.Completion.create(
+                    engine=model,
+                    max_tokens=int(words),
+                    prompt=prompt,
+                )
+                text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
+                ResponsesDB.objects.create(question=prompt, answer=text)
+                return HttpResponse(str(text))
+            else:
+                response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    max_tokens=int(words),
+                    messages=[
+                        {"role": "system", "content": "You are a chatbot"},
+                        {"role": "user", "content": "{}?".format(prompt)},
+                    ]
+                )
 
-            result = ''
-            for choice in response.choices:
-                result += choice.message.content
-            ResponsesDB.objects.create(question=prompt, answer=result)
-            return HttpResponse(str(result))
+                result = ''
+                for choice in response.choices:
+                    result += choice.message.content
+                ResponsesDB.objects.create(question=prompt, answer=result)
+                return HttpResponse(str(result))
     else:
         return HttpResponse(str(response.last().answer))
 
 
 def get_text(request):
     prompt = request.GET.get('text', '')
-    response = openai.ChatCompletion.create(
+    key = KeyManagement.objects.all().last()
+    openai.api_key = key.key
+    if key.platform == "MICROSOFT":
+        openai.api_base = "{}".format(key.endpoint)
+        openai.api_type = 'azure'
+        openai.api_version = "2023-03-15-preview"
+        model = "davinci"
+        response = openai.Completion.create(
+            engine=model,
+            max_tokens=int(2000),
+            prompt=prompt,
+        )
+        text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
+        return HttpResponse(str(text))
+    else:
+        response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         max_tokens=int(2000),
         messages=[
             {"role": "system", "content": "You are a chatbot"},
             {"role": "user", "content": "{}?".format(prompt)},
-        ]
-    )
-    result = ''
-    for choice in response.choices:
-        result += choice.message.content
+            ]
+        )
+        result = ''
+        for choice in response.choices:
+            result += choice.message.content
 
-    return HttpResponse(str(result))
+        return HttpResponse(str(result))
 
 
 def TextToText(request):
