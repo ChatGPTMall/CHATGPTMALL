@@ -319,7 +319,6 @@ def get_chatgpt_response(request):
                         {"role": "user", "content": "{}?".format(prompt)},
                     ]
                 )
-
                 result = ''
                 for choice in response.choices:
                     result += choice.message.content
