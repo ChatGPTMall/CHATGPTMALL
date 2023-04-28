@@ -136,6 +136,7 @@ class AccessTypes(models.TextChoices):
     IMAGE_ANALYSIS = "IMAGE_ANALYSIS", _('Image Analysis')
     OBJECTS_DETECTION = "OBJECTS_DETECTION", _('Objects Detection')
     VOICE_TO_COMMAND = "VOICE_TO_COMMAND", _('Voice To Command')
+    TEXT_TO_COMMAND = "TEXT_TO_COMMAND", _('Text To Command')
 
 
 class Plans(models.Model):

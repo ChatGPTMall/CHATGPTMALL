@@ -252,6 +252,14 @@ def GetCommand(request):
     return redirect("/api/renew/subscription/")
 
 
+def TextToCommand(request):
+    if request.user.is_authenticated:
+        print(request.user)
+        if Subscriptions.objects.filter(user=request.user, plan__access="TEXT_TO_COMMAND", is_expired=False).exists():
+            return render(request, "text_to_command.html")
+    return redirect("/api/renew/subscription/")
+
+
 def ResponseCommand(request):
     text = request.GET.get('text', '')
     try:
@@ -358,6 +366,16 @@ def get_text(request):
             result += choice.message.content
 
         return HttpResponse(str(result))
+
+
+def get_image(request):
+    prompt = request.GET.get('text', '')
+    openai.api_key = os.getenv("OPEN_AI_KEY")
+    resp = openai.Image.create(prompt="{}".format(prompt), n=1, size="1024x1024")
+    images = list()
+    for image in resp['data']:
+        images.append(image.url)
+    return HttpResponse(str(images[0]))
 
 
 def TextToText(request):
@@ -749,24 +767,36 @@ def UploadCommunityPost(request):
     name = request.POST.get("item_name")
     cat = request.POST.get("item_category")
     image = request.FILES.get("item_image")
-    video = request.FILES.get("item_video")
+    item_image_url = request.POST.get("item_image_url", None)
+    video = request.FILES.get("item_video", None)
     item_desc = request.POST.get("item_desc")
     upload = request.POST.get("upload")
     question = "How to use {}".format(name)
+    if item_image_url:
+        response1 = urlopen(item_image_url)
+        image = BytesIO(response1.read())
+        # imagedb.image1.save("image_one.jpg", File(io1))
     com = Community.objects.get(community_id=team_id)
     post = CommunityPosts.objects.create(user=request.user, question=question, response=item_desc, community=com)
     if upload == "yes":
         category, created = Category.objects.get_or_create(title=cat)
-        item = Items.objects.create(
-            category=category, title=name, description=item_desc, image=image, video=video)
+        if video:
+            item = Items.objects.create(
+                category=category, title=name, description=item_desc, video=video)
+        else:
+            item = Items.objects.create(
+                category=category, title=name, description=item_desc)
         result = urllib.request.urlretrieve(item.qr_code.url)
-        result2 = urllib.request.urlretrieve(item.video.url)
+        if video:
+            result2 = urllib.request.urlretrieve(item.video.url)
         with open(result[0], 'rb') as f:
             # Set the image field to the downloaded file
             post.qrcode.save("test.png", File(f))
-        with open(result2[0], 'rb') as fa:
-            # Set the image field to the downloaded file
-            post.video.save("test.mp4", File(fa))
+        if video:
+            with open(result2[0], 'rb') as fa:
+                # Set the image field to the downloaded file
+                post.video.save("test.mp4", File(fa))
+        item.image.save("image_one.jpg", File(image))
         post.item_name = item.title
         post.save()
     return redirect("/join/community/?team_id={}".format(team_id))

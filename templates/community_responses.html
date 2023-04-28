@@ -380,17 +380,29 @@
                 </select>
               </div>
               <div class="col-md-12">
-
-                <label for="inputAddress" class="form-label">How To Use?
+                <label for="inputAddress" id="query_label" class="form-label">Item Description
                     <a href="#" style="margin-left:12px;font-size:25px;" id="show_ai">Use AI Text Generation</a></label>
                   <div style="display: flex;justify-content: center;">
                   <img src="{% static 'images/loading.svg' %}" style="width:50px;" id="loader">
                   </div>
+                  <div id="div_query">
+                    <input class="form-control" type="text" id="query" placeholder="Type Your Query">
+                      <a style="margin-top:7px;" class="btn btn-primary" id="btn_query">Generate Text</a>
+                  </div>
                   <textarea class="form-control" rows="8" name="item_desc" id="inputAddress" placeholder="Item Description" required></textarea>
               </div>
                 <div class="col-md-12">
-                    <label for="formFile" class="form-label">Item Image</label>
-                    <input class="form-control" name="item_image" type="file" id="formFile" required>
+                    <label for="formFile" class="form-label" id="img_label">Item Image
+                    <a href="#" style="margin-left:12px;font-size:25px;" id="show_ai_image">Use AI Image Generation</a></label>
+                    <div style="display: flex;justify-content: center;">
+                        <img src="{% static 'images/loading.svg' %}" style="width:50px;" id="img_loader">
+                    </div>
+                  <div id="div_img_query">
+                    <input class="form-control" type="text" id="img_query" placeholder="Type Your Image Query">
+                      <a style="margin-top:7px;" class="btn btn-primary" id="img_btn_query">Generate Image</a>
+                  </div>
+                    <input class="form-control" name="item_image" type="file" id="formFile">
+                    <input class="form-control" name="item_image_url" type="text" id="formFileurl" required>
                 </div>
                 <div class="col-md-12">
                     <label for="formFile" class="form-label">Item Video(Optional)</label>

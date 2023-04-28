@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Chatgptmall | Text To Command{% endblock title %}
+{% load static %}
+{% block content %}
+        <div class="container">
+            <h2>Text To Command</h2><br><br>
+            <div id="text_div" style="display:flex;">
+                <input type="text" class="form-control" name="voice_text" id="voice_text"><br>
+                <button id="submit_command" class="btn btn-primary"
+                        style="background-color:#5B61EB !important;color:white;">Submit Command</button>
+
+                <button id="voice_text_btn" disabled style="display:none;"></button>
+                <button id="start-recording" disabled style="display:none;"></button>
+                <button id="stop-recording" disabled style="display:none;"></button>
+                <button id="pause-recording" disabled style="display:none;"></button>
+                <button id="resume-recording" disabled style="display:none;"></button>
+            </div>
+
+    </div><br>
+    <div class="container">
+        <img id="img_command" src="" style="height: 253px;width: 336px;">
+    </div>
+{% endblock content %}

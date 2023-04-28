@@ -30,7 +30,7 @@ from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, Upl
     SaveAnalysisImage, ObjectsDetection, ObjDetect, SendObjectCommunity, VideoAnalysis, AnalysisVideo, \
     UploadCommunityPost, LearHowToUse, GetCommand, ResponseCommand, ImageToImageCalculate, \
     KeyManagementView, ForgotPassword, ChangePassword, RenewSubscription, deletekey, TextToVoice, \
-    MicrosoftKeyManagementView, get_text, WatchVideo
+    MicrosoftKeyManagementView, get_text, WatchVideo, get_image, TextToCommand
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -67,11 +67,13 @@ urlpatterns = [
     path('api/show_voice_out_put/', VoiceOutPut, name="VoiceOutPut"),
     path('upload_voice/', UploadVoice, name="UploadVoice"),
     path('voice/command/', GetCommand, name="GetCommand"),
+    path('text/command/', TextToCommand, name="TextToCommand"),
     path('response/commands/', ResponseCommand, name="ResponseCommand"),
 
     path('api/voice_to_voice/', VoiceToVoice, name="VoiceToVoice"),
     path('api/get_voice/', get_chatgpt_response, name="get_chatgpt_response"),
     path('api/get_text/', get_text, name="get_text"),
+    path('api/get_image/', get_image, name="get_image"),
 
     path('api/text_to_text/', TextToText, name="TextToText"),
     path('api/text_to_image/', TextToImage, name="TextToImage"),

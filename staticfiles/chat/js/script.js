@@ -42,11 +42,10 @@ $(document).ready(function() {
 
 
     $("#download_btn").hide();
-    $("#text_div").hide();
+//    $("#text_div").hide();
     $("#img_command").hide();
 
     document.querySelector('#submit_command').onclick = function() {
-        $("#loading").hide();
         var text_voice = $("#voice_text").val();
         var xhr = new XMLHttpRequest();
         xhr.open('GET', `/response/commands/?text=${text_voice}`, true);
@@ -60,6 +59,8 @@ $(document).ready(function() {
         }
         xhr.send();
     }
+
+
     document.querySelector('#voice_text_btn').onclick = function() {
         $("#loading").show();
         var text_voice = $("#voice_text").val();

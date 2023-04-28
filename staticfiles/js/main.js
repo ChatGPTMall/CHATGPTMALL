@@ -39,26 +39,63 @@ $(document).ready(function(){
         },
       });
    });
+
+
    $("#show_ai").hide();
+   $("#formFileurl").hide();
+   $("#show_ai_image").hide();
+   $("#div_img_query").hide();
+   $("#div_query").hide();
    $("#loader").hide();
+   $("#img_loader").hide();
    $('#inputEmail4').keypress(function() {
         var dInput = this.value;
         $("#show_ai").show();
-
-//        $("#show_ai").attr("href", `/api/text_to_text/?item=How to use ${dInput}`)
-
+        $("#show_ai_image").show();
    })
+
+
    $("#show_ai").on("click", (e)=>{
-        $("#loader").show();
         $("#inputAddress").hide();
-        var item_value = $('#inputEmail4').val();
+        $("#show_ai").hide();
+        $("#div_query").show();
+   });
+   $("#btn_query").on("click", (e)=>{
+        $("#div_query").hide();
+        $("#loader").show();
+        var item_value = $('#query').val();
         $.ajax({
                 type: "GET",
-                url: `/api/get_text/?text=How to use ${item_value}`,
+                url: `/api/get_text/?text=${item_value}`,
                 success: function (data) {
                     $("#loader").hide();
                     $("#inputAddress").show();
                     $("#inputAddress").text(data);
+                    $("#query_label").text(item_value);
+                }
+            });
+   });
+
+   $("#div_img_query").hide();
+   $("#show_ai_image").on("click", (e)=>{
+        $("#formFile").hide();
+        $("#show_ai_image").hide();
+        $("#div_img_query").show();
+   });
+   $("#img_btn_query").on("click", (e)=>{
+        $("#div_img_query").hide();
+        $("#img_loader").show();
+        var item_value = $('#img_query').val();
+        $.ajax({
+                type: "GET",
+                url: `/api/get_image/?text=${item_value}`,
+                success: function (data) {
+                console.log(data)
+                    $("#img_loader").hide();
+                    $("#formFile").hide();
+                    $("#formFileurl").show();
+                    $("#formFileurl").val(data);
+                    $("#img_label").text(item_value);
                 }
             });
    });
