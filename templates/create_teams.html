@@ -7,7 +7,7 @@
     <div class="container">
       <div class="row gy-4 d-flex justify-content-between">
         <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
-          <h2 data-aos="fade-up">Create Communities</h2>
+          <h2 data-aos="fade-up">Create Virtual Factory</h2>
         </div>
 
         <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
@@ -27,15 +27,15 @@
             <form class="row g-3" method="post" action="{% url 'CreateTeams' %}" enctype="multipart/form-data">
               {% csrf_token %}
                 <div class="col-12">
-                  <label for="inputAddress" class="form-label">Community Name</label>
+                  <label for="inputAddress" class="form-label">Virtual Factory Name</label>
                   <input type="text" name="team_name" class="form-control"  id="inputAddress" placeholder="Community Name">
                 </div>
                 <div class="col-12">
-                  <label for="inputAddress2" class="form-label">Community Profile</label>
+                  <label for="inputAddress2" class="form-label">Virtual Factory Logo</label>
                   <input type="file" name="logo" class="form-control" id="inputAddress2">
                 </div>
                 <div class="col-12">
-                  <button type="submit" class="btn btn-primary">Create Community</button>
+                  <button type="submit" class="btn btn-primary">Create Virtual Factory</button>
                 </div>
               </form>
         </div>

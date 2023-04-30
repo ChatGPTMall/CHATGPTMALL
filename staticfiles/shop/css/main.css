@@ -289,7 +289,6 @@ section {
 }
 
 .header.sticked {
-  background: rgba(14, 29, 52, 0.9);
   padding: 15px 0;
   box-shadow: 0px 2px 20px rgba(14, 29, 52, 0.1);
 }
@@ -337,7 +336,7 @@ max-height: 57px;
     font-family: var(--font-primary);
     font-size: 16px;
     font-weight: 400;
-    color: rgba(255, 255, 255, 0.6);
+    color: #000;
     white-space: nowrap;
     transition: 0.3s;
   }
@@ -353,7 +352,7 @@ max-height: 57px;
   .navbar .active,
   .navbar .active:focus,
   .navbar li:hover>a {
-    color: #fff;
+    color: #000;
   }
 
   .navbar .get-a-quote,
@@ -532,7 +531,7 @@ max-height: 57px;
   }
 
   .mobile-nav-show {
-    color: #fff;
+    color: #000;
     font-size: 28px;
     cursor: pointer;
     line-height: 0;
@@ -1704,8 +1703,8 @@ max-height: 57px;
 .hero {
   width: 100%;
   min-height: 50vh;
-  background-color: var(--color-secondary);
-  background-image: url("../img/header.jpg");
+  background-color: var(--color-secondar);
+  background-image: url("../img/header.jp");
   background-size: cover;
   background-position: center;
   position: relative;
@@ -1718,7 +1717,7 @@ max-height: 57px;
   padding: 0;
   font-size: 48px;
   font-weight: 700;
-  color: #fff;
+  color: #000;
 }
 
 @media (max-width: 575px) {

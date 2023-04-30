@@ -132,7 +132,7 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-             Our Services
+             AI Models
             </a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'VoiceToVoice' %}">Voice To Voice</a></li>
@@ -147,15 +147,15 @@
             </li>
               <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-             Communities
+             Virtual Factory
             </a>
             <ul class="dropdown-menu">
               {% if request.user.is_authenticated %}
-              <li><a class="dropdown-item" href="{% url 'DownloadTeams' %}">Download Communities</a></li>
-              <li><a class="dropdown-item" href="{% url 'CreateTeams' %}">Create Communities</a></li>
+              <li><a class="dropdown-item" href="{% url 'DownloadTeams' %}">Download Virtual Factory</a></li>
+              <li><a class="dropdown-item" href="{% url 'CreateTeams' %}">Create Virtual Factory</a></li>
               {% endif %}
-              <li><a class="dropdown-item" href="{% url 'Communities' %}">All Communities</a></li>
-              <li><a class="dropdown-item" href="{% url 'JoinedCommunities' %}">Joined Communities</a></li>
+              <li><a class="dropdown-item" href="{% url 'Communities' %}">All Virtual Factories</a></li>
+              <li><a class="dropdown-item" href="{% url 'JoinedCommunities' %}">Joined Virtual Factories</a></li>
             </ul>
            </li>
           </ul>
@@ -738,7 +738,7 @@
             document.execCommand("copy");
       }
   </script>
-  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<!--  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>-->
 
 <script type="text/javascript">
    function setCookie(key, value, expiry) {

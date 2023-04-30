@@ -47,8 +47,32 @@
       <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a href="{% url 'HomepageView' %}" class="active">Home</a></li>
-          <li class="dropdown"><a href="#"><span>Services</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
+          <li><a href="{% url 'HomepageView' %}" class="active">Why Chatgptmall</a></li>
+<!--          <li><a href="{% url 'our_plans' %}">Plans</a></li>-->
+<!--          <li class="dropdown"><a href="#"><span>Marketing</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>-->
+<!--            <ul>-->
+<!--              <li><a href="{% url 'IndustriesView' %}">Industries</a></li>-->
+<!--              <li><a href="{% url 'JobsView' %}">Job Roles</a></li>-->
+<!--              <li><a href="{% url 'CapabilitiesView' %}">Capabilities</a></li>-->
+<!--            </ul>-->
+<!--          </li>-->
+<!--          <li class="dropdown"><a href="#"><span>Shop</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>-->
+<!--            <ul>-->
+<!--              <li><a href="{% url 'ShopWithText' %}">Text Based Shop</a></li>-->
+<!--              <li><a href="">Voice Based Shop</a></li>-->
+<!--            </ul>-->
+<!--          </li>-->
+          <li class="dropdown"><a href="#"><span>Virtual Factory</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
+            <ul>
+              {% if request.user.is_authenticated %}
+              <li><a href="{% url 'DownloadTeams' %}">Download Virtual Factory</a></li>
+              <li><a href="{% url 'CreateTeams' %}">Create Virtual Factory</a></li>
+              {% endif %}
+              <li><a href="{% url 'Communities' %}">Virtual Factories</a></li>
+              <li><a href="{% url 'JoinedCommunities' %}">Joined Virtual Factory</a></li>
+            </ul>
+          </li>
+          <li class="dropdown"><a href="#"><span>AI Models</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
             <ul>
               <li><a  href="{% url 'VoiceToVoice' %}">Voice To Voice</a></li>
               <li><a  href="{% url 'VoiceToImage' %}">Voice To Image</a></li>
@@ -60,30 +84,6 @@
               <li><a href="{% url 'ObjectsDetection' %}">Objects Detection</a></li>
               <li><a href="{% url 'GetCommand' %}">Voice To Command</a></li>
               <li><a href="{% url 'TextToCommand' %}">Text To Command</a></li>
-            </ul>
-          </li>
-          <li><a href="{% url 'our_plans' %}">Plans</a></li>
-          <li class="dropdown"><a href="#"><span>Marketing</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
-            <ul>
-              <li><a href="{% url 'IndustriesView' %}">Industries</a></li>
-              <li><a href="{% url 'JobsView' %}">Job Roles</a></li>
-              <li><a href="{% url 'CapabilitiesView' %}">Capabilities</a></li>
-            </ul>
-          </li>
-          <li class="dropdown"><a href="#"><span>Shop</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
-            <ul>
-              <li><a href="{% url 'ShopWithText' %}">Text Based Shop</a></li>
-              <li><a href="">Voice Based Shop</a></li>
-            </ul>
-          </li>
-          <li class="dropdown"><a href="#"><span>Communities</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
-            <ul>
-              {% if request.user.is_authenticated %}
-              <li><a href="{% url 'DownloadTeams' %}">Download Communities</a></li>
-              <li><a href="{% url 'CreateTeams' %}">Create Communities</a></li>
-              {% endif %}
-              <li><a href="{% url 'Communities' %}">Communities</a></li>
-              <li><a href="{% url 'JoinedCommunities' %}">Joined Communities</a></li>
             </ul>
           </li>
           {% if request.user.premium == 2 %}
