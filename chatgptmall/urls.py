@@ -30,7 +30,7 @@ from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, Upl
     SaveAnalysisImage, ObjectsDetection, ObjDetect, SendObjectCommunity, VideoAnalysis, AnalysisVideo, \
     UploadCommunityPost, LearHowToUse, GetCommand, ResponseCommand, ImageToImageCalculate, \
     KeyManagementView, ForgotPassword, ChangePassword, RenewSubscription, deletekey, TextToVoice, \
-    MicrosoftKeyManagementView, get_text, WatchVideo, get_image, TextToCommand
+    MicrosoftKeyManagementView, get_text, WatchVideo, get_image, TextToCommand, AiModels
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -56,6 +56,7 @@ urlpatterns = [
     re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^docs/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('', HomepageView, name="HomepageView"),
+    path('ai/models/', AiModels, name="AiModels"),
     path('api/login/', LoginView, name="LoginView"),
     path('api/logout', Logout, name="Logout"),
     path('api/register/', RegisterView, name="RegisterView"),

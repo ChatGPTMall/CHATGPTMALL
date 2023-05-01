@@ -40,6 +40,14 @@ def HomepageView(request):
     return render(request, "homepage.html", context={"show_logo": show_logo, "key": key})
 
 
+def AiModels(request):
+    show_logo = False
+    DEPLOYED_HOST = os.getenv("DEPLOYED_HOST", None)
+    if DEPLOYED_HOST == "https://madeinthai.org":
+        show_logo = True
+    key = KeyManagement.objects.all().last()
+    return render(request, "homepage2.html", context={"show_logo": show_logo, "key": key})
+
 def Logout(request):
     logout(request)
     return redirect('HomepageView')
