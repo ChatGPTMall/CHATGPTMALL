@@ -30,7 +30,8 @@ from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, Upl
     SaveAnalysisImage, ObjectsDetection, ObjDetect, SendObjectCommunity, VideoAnalysis, AnalysisVideo, \
     UploadCommunityPost, LearHowToUse, GetCommand, ResponseCommand, ImageToImageCalculate, \
     KeyManagementView, ForgotPassword, ChangePassword, RenewSubscription, deletekey, TextToVoice, \
-    MicrosoftKeyManagementView, get_text, WatchVideo, get_image, TextToCommand, AiModels
+    MicrosoftKeyManagementView, get_text, WatchVideo, get_image, TextToCommand, AiModels, VoiceToVoiceDetail, \
+    VoiceToImageDetail, TextToVoiceDetail, TextToTextDetail, TextToImageDetail
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -137,7 +138,13 @@ urlpatterns = [
     path("api/renew/subscription/", RenewSubscription, name="RenewSubscription"),
 
     path("delete/key/<int:id>/", deletekey, name="deletekey"),
-    path("watch/video/<uuid:item_id>/", WatchVideo, name="WatchVideo")
+    path("watch/video/<uuid:item_id>/", WatchVideo, name="WatchVideo"),
+
+    path("models/voice_to_voice/detail/", VoiceToVoiceDetail, name="VoiceToVoiceDetail"),
+    path("models/voice_to_image/detail/", VoiceToImageDetail, name="VoiceToImageDetail"),
+    path("models/Text_to_voice/detail/", TextToVoiceDetail, name="TextToVoiceDetail"),
+    path("models/text_to_text/detail/", TextToTextDetail, name="TextToTextDetail"),
+    path("models/text_to_image/detail/", TextToImageDetail, name="TextToImageDetail"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

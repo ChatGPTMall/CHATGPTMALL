@@ -969,3 +969,54 @@ def WatchVideo(request, item_id):
     item = Items.objects.get(item_id=item_id)
     return render(request, "video.html", context={"item":item})
 
+
+def VoiceToVoiceDetail(request):
+    if request.user.is_authenticated:
+        is_subscribed = False
+        plan = Plans.objects.get(access="VOICE_TO_Voice")
+        if request.user.purchases.filter(plan=plan, is_expired=False).exists():
+            is_subscribed = True
+        return render(request, "voice2voicedetail.html", context={"plan": plan, "is_subscribed": is_subscribed})
+    return redirect("/api/login/")
+
+
+def VoiceToImageDetail(request):
+    if request.user.is_authenticated:
+        is_subscribed = False
+        plan = Plans.objects.get(access="VOICE_TO_IMAGE")
+        if request.user.purchases.filter(plan=plan, is_expired=False).exists():
+            is_subscribed = True
+        return render(request, "voice2imagedetail.html", context={"plan": plan, "is_subscribed": is_subscribed})
+    return redirect("/api/login/")
+
+
+def TextToVoiceDetail(request):
+    if request.user.is_authenticated:
+        is_subscribed = False
+        plan = Plans.objects.get(access="TEXT_TO_VOICE")
+        if request.user.purchases.filter(plan=plan, is_expired=False).exists():
+            is_subscribed = True
+        return render(request, "text2voicedetail.html", context={"plan": plan, "is_subscribed": is_subscribed})
+    return redirect("/api/login/")
+
+
+def TextToTextDetail(request):
+    if request.user.is_authenticated:
+        is_subscribed = False
+        plan = Plans.objects.filter(access="TEXT_TO_TEXT").last()
+        if plan:
+            if request.user.purchases.filter(plan=plan, is_expired=False).exists():
+                is_subscribed = True
+        return render(request, "text2textdetail.html", context={"plan": plan, "is_subscribed": is_subscribed})
+    return redirect("/api/login/")
+
+
+def TextToImageDetail(request):
+    if request.user.is_authenticated:
+        is_subscribed = False
+        plan = Plans.objects.get(access="TEXT_TO_IMAGE")
+        if request.user.purchases.filter(plan=plan, is_expired=False).exists():
+            is_subscribed = True
+        return render(request, "text2imagedetail.html", context={"plan": plan, "is_subscribed": is_subscribed})
+    return redirect("/api/login/")
+
