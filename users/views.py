@@ -86,6 +86,7 @@ def RegisterView(request):
         "last_name": "Marley",
     }
     """
+    page = request.GET.get("page", None)
     if request.method == "POST":
         try:
             fname = request.POST.get("fname")
@@ -99,10 +100,16 @@ def RegisterView(request):
             message = "Congratulations {} you are successfully registered on CHATGPTMALL".format(user.get_full_name())
             send_mail(subject=subject, message=message, from_email=settings.EMAIL_HOST_USER,
                       recipient_list=[email], fail_silently=True)
+            if page and page != "None":
+                user_auth = authenticate(email=email, password=password)
+                if user_auth is not None:
+                    login(request, user)
+                    Token.objects.get_or_create(user=user)
+                return redirect("/" + page)
             return redirect('/api/login/')
         except IntegrityError as e:
             redirect('/api/register/')
-    return render(request, "register.html")
+    return render(request, "register.html", {"page": page})
 
 
 def ProfileView(request):

@@ -37,7 +37,7 @@
 </div>
 <!-- .nk-block-head -->
 
-<form action="{% url 'RegisterView' %}" method="POST">
+<form action="{% url 'RegisterView' %}?page={{page}}" method="POST">
 	{% csrf_token %}
 <div class="form-group">
 	<label class="form-label" for="fname">First Name</label>
