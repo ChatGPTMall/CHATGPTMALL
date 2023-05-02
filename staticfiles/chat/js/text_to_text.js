@@ -1,9 +1,10 @@
 $(document).ready(function() {
+    $("#text_to_text_input").val("");
     $("#post").hide();
     document.querySelector('#text_to_text_btn').onclick = function() {
         var text_to_text = $("#text_to_text_input").val();
         var no_of_words = $("#no_of_words").val();
-        if(no_of_words == ""){
+        if(no_of_words == "" || no_of_words == " "){
             no_of_words = 2000
         }
         if(text_to_text == ""){

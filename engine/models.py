@@ -146,6 +146,7 @@ class Plans(models.Model):
     access = models.CharField(choices=AccessTypes.choices, max_length=30, default="NO_ACCESS")
     description = models.TextField()
     days = models.IntegerField(default=5)
+    free_requests = models.IntegerField(default=10)
     requests = models.IntegerField(default=0)
     added_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
@@ -312,6 +313,21 @@ class Subscriptions(models.Model):
     class Meta:
         verbose_name = _("Subscription")
         verbose_name_plural = _("User Subscriptions")
+
+
+class FreeSubscriptions(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="free_purchases")
+    plan = models.ForeignKey(Plans, models.CASCADE, related_name="free_plan_purchases")
+    is_expired = models.BooleanField(default=False)
+    requests_send = models.IntegerField(default=0)
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.email + " " + str(self.plan)
+
+    class Meta:
+        verbose_name = _("Free Subscription")
+        verbose_name_plural = _("Free User Subscriptions")
 
 
 class UploadCoupons(models.Model):

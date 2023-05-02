@@ -50,11 +50,13 @@
               <li><i class="bi bi-check-circle"></i> <span>Click on microphone to start voice</span></li>
               <li><i class="bi bi-check-circle"></i> <span>Click on stop microphone to stop your voice</span></li>
             </ul>
-          {% if is_subscribed %}
             <div>
-            <a style="width:100%;margin-top:75px;" href="{% url 'TextToText' %}" class="btn btn-primary">Checkout</a>
+              {% if has_expired %}
+                <a style="width:100%;margin-top:75px;" href="{% url 'Checkout' plan.id %}" class="btn btn-primary">Buy Text To Text Plan</a>
+              {% else %}
+                <a style="width:100%;margin-top:75px;" href="{% url 'TextToText' %}" class="btn btn-primary">Try Text To Text Free</a>
+              {% endif %}
             </div>
-          {% endif %}
           </div>
 
         </div>

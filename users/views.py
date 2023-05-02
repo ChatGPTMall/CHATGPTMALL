@@ -14,6 +14,7 @@ from django.core.files import File
 from django.core.mail import send_mail
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib import messages
+from django.urls import reverse
 from django.utils import timezone
 import pandas as pd
 from users.models import User
@@ -26,7 +27,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, Capabilities, \
     Jobs, Community, CommunityMembers, CommunityPosts, CouponCode, Subscriptions, Items, ImageAnalysisDB, Category, \
-    VoiceCommands, KeyManagement
+    VoiceCommands, KeyManagement, FreeSubscriptions
+
 
 # openai.api_key = os.getenv("OPEN_AI_KEY")
 
@@ -54,6 +56,7 @@ def Logout(request):
 
 
 def LoginView(request):
+    page = request.GET.get("page", None)
     if request.method == "POST":
         try:
             email = request.POST.get("email")
@@ -63,13 +66,15 @@ def LoginView(request):
             if user_auth is not None:
                 login(request, user)
                 Token.objects.get_or_create(user=user)
+                if page and page != "None":
+                    return redirect("/" + page)
                 return redirect("/")
             else:
                 redirect('/api/login/')
 
         except User.DoesNotExist:
             redirect('/api/login/')
-    return render(request, "login.html")
+    return render(request, "login.html", {"page": page})
 
 
 def RegisterView(request):
@@ -299,13 +304,24 @@ def get_chatgpt_response(request):
             words = 2000
         if page == "voice_to_text":
             plan__access = "TEXT_TO_VOICE"
-        obj = Subscriptions.objects.get(user=request.user, plan__access=plan__access)
-        obj.requests_send += 1
-        obj.save()
-        if obj.requests_send >= obj.plan.requests:
-            obj.is_expired = True
+        if request.user.premium == 1:
+            plan = Plans.objects.filter(access=plan__access).last()
+            obj, created = Subscriptions.objects.get_or_create(user=request.user, plan=plan)
+            obj.requests_send += 1
             obj.save()
+            if obj.requests_send >= obj.plan.requests:
+                obj.is_expired = True
+                obj.save()
+        if request.user.premium == 0:
+            plan = Plans.objects.filter(access=plan__access).last()
+            obj, create = FreeSubscriptions.objects.get_or_create(user=request.user, plan=plan)
+            obj.requests_send += 1
+            obj.save()
+            if obj.requests_send >= obj.plan.free_requests:
+                obj.is_expired = True
+                obj.save()
     except Exception as e:
+        print(e)
         words = request.GET.get('words', None)
     prompt = request.GET.get('text', '')
     response = ResponsesDB.objects.filter(question__icontains=prompt)
@@ -388,14 +404,16 @@ def get_image(request):
 
 def TextToText(request):
     if request.user.is_authenticated:
-        if Subscriptions.objects.filter(user=request.user, plan__access="TEXT_TO_TEXT", is_expired=False).exists():
-            text = request.GET.get("item", None)
-            if CommunityMembers.objects.filter(user=request.user).exists():
-                communities_id = request.user.team.all().values_list("community__community_id", flat=True)
-                communities = Community.objects.filter(community_id__in=communities_id)
-                return render(request, "TextToText.html", context={"communities": communities, "text": text})
-            return render(request, "TextToText.html", context={"text": text})
-    return redirect("/api/renew/subscription/")
+        text = request.GET.get("item", None)
+        if request.user.premium == 1:
+            if Subscriptions.objects.filter(user=request.user, plan__access="TEXT_TO_TEXT", is_expired=False).exists():
+                if CommunityMembers.objects.filter(user=request.user).exists():
+                    communities_id = request.user.team.all().values_list("community__community_id", flat=True)
+                    communities = Community.objects.filter(community_id__in=communities_id)
+                    return render(request, "TextToText.html", context={"communities": communities, "text": text})
+                return render(request, "TextToText.html", context={"text": text})
+        return render(request, "TextToText.html", context={"text": text})
+    return redirect(reverse("LoginView") + "?page={}".format("models/text_to_text/detail/"))
 
 
 def TextToImage(request):
@@ -819,6 +837,7 @@ def PaymentSuccess(request, plan_id, user_id):
     plan = Plans.objects.get(id=plan_id)
     user = User.objects.get(id=user_id)
     user.access = plan.access
+    user.premium = 2
     user.purchased_on = timezone.now()
     user.save()
     Subscriptions.objects.create(user=user, plan=plan)
@@ -1001,14 +1020,16 @@ def TextToVoiceDetail(request):
 
 
 def TextToTextDetail(request):
+    has_expired = False
+    plan = Plans.objects.filter(access="TEXT_TO_TEXT").last()
     if request.user.is_authenticated:
-        is_subscribed = False
-        plan = Plans.objects.filter(access="TEXT_TO_TEXT").last()
         if plan:
-            if request.user.purchases.filter(plan=plan, is_expired=False).exists():
-                is_subscribed = True
-        return render(request, "text2textdetail.html", context={"plan": plan, "is_subscribed": is_subscribed})
-    return redirect("/api/login/")
+            if request.user.free_purchases.filter(plan=plan).exists():
+                plan_sub = request.user.free_purchases.filter(plan=plan).last()
+                print(plan_sub.requests_send, plan.free_requests)
+                if int(plan_sub.requests_send) >= int(plan.free_requests):
+                    has_expired = True
+    return render(request, "text2textdetail.html", context={"plan": plan, "has_expired": has_expired})
 
 
 def TextToImageDetail(request):

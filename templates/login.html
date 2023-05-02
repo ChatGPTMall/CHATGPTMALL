@@ -51,7 +51,7 @@
 							</div>
 							<!-- .nk-block-head -->
 
-							<form action="{% url 'LoginView' %}" autocomplete="off" class="form-validate is-alter"
+							<form action="{% url 'LoginView' %}?page={{page}}" autocomplete="off" class="form-validate is-alter"
 								method="POST">
 								{% csrf_token %}
 								<div class="form-group">
