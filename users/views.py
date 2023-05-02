@@ -837,7 +837,7 @@ def PaymentSuccess(request, plan_id, user_id):
     plan = Plans.objects.get(id=plan_id)
     user = User.objects.get(id=user_id)
     user.access = plan.access
-    user.premium = 2
+    user.premium = 1
     user.purchased_on = timezone.now()
     user.save()
     Subscriptions.objects.create(user=user, plan=plan)
