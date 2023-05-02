@@ -1026,7 +1026,6 @@ def TextToTextDetail(request):
         if plan:
             if request.user.free_purchases.filter(plan=plan).exists():
                 plan_sub = request.user.free_purchases.filter(plan=plan).last()
-                print(plan_sub.requests_send, plan.free_requests)
                 if int(plan_sub.requests_send) >= int(plan.free_requests):
                     has_expired = True
     return render(request, "text2textdetail.html", context={"plan": plan, "has_expired": has_expired})
