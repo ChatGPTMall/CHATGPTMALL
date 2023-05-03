@@ -1,5 +1,5 @@
 {% extends 'parent.html' %}
-{% block tittle %}Chatgptmall | Homepage{% endblock %}
+{% block tittle %}Why Chatgptmall | Homepage{% endblock %}
 {% load static %}
 {% block body %}
 
@@ -8,7 +8,7 @@
     <div class="container">
       <div class="row gy-4 d-flex justify-content-between">
         <div class="col-lg-8 order-2 order-lg-1 d-flex flex-column justify-content-center">
-          <h2 data-aos="fade-up">Unleash your creativity and build ChatGPT hardware products with our cutting-edge virtual factory and AI platform </h2>
+          <h2 data-aos="fade-up">Create your own AI assistant with ease in ChatGPTmall</h2>
         <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
           <img src="shop/img/hero-img.svg" class="img-fluid mb-3 mb-lg-0" alt="">
         </div>
@@ -19,230 +19,181 @@
   </section><!-- End Hero Section -->
 
 
-    <!-- ======= Featured Services Section ======= -->
-    <section id="featured-services" class="featured-services">
-      <div class="container">
-        <h2 style="font-weight: 700;font-size: 32px;font-family: var(--font-secondary);color: #001f8d;">Why Chat GPTMall</h2><br><br>
-        <div class="row gy-4">
-          <div class="col-lg-3 col-md-6 service-item d-flex" data-aos="fade-up">
-            <div>
-              <h4 class="title">Virtual Factory</h4>
-              <p class="description"></p>
-              <a href="{% url 'JoinedCommunities' %}" class="readmore stretched-link"><span>Learn More</span><i class="bi bi-arrow-right"></i></a>
-            </div>
-          </div>
-          <!-- End Service Item -->
-
-          <div class="col-lg-3 col-md-6 service-item d-flex" data-aos="fade-up" data-aos-delay="100">
-            <div>
-              <h4 class="title">AI Models</h4>
-              <p class="description"></p>
-              <a href="{% url 'AiModels' %}" class="readmore stretched-link"><span>Learn More</span><i class="bi bi-arrow-right"></i></a>
-            </div>
-          </div><!-- End Service Item -->
-
-          <div class="col-lg-3 col-md-6 service-item d-flex" data-aos="fade-up" data-aos-delay="200">
-            <div>
-              <h4 class="title">Co-Creation Market</h4>
-              <p class="description"></p>
-              <a href="http://plm.chatgptmall.tech/zh_CN/shop" class="readmore stretched-link"><span>Learn More</span><i class="bi bi-arrow-right"></i></a>
-            </div>
-          </div><!-- End Service Item -->
-          <div class="col-lg-3 col-md-6 service-item d-flex" data-aos="fade-up" data-aos-delay="200">
-            <div>
-              <h4 class="title">Global Directory</h4>
-              <p class="description"></p>
-              <a href="{% url 'CreateTeams' %}" class="readmore stretched-link"><span>Learn More</span><i class="bi bi-arrow-right"></i></a>
-            </div>
-          </div><!-- End Service Item -->
-
-        </div>
-
-      </div>
-    </section><!-- End Featured Services Section -->
-
-
     <!-- ======= Features Section ======= -->
     <section id="features" class="features">
       <div class="container">
 
         <div class="row gy-4 align-items-center features-item" data-aos="fade-up">
           <div class="col-md-5 order-1 order-md-2">
-            <img src="{% static 'images/create_team.png' %}" class="img-fluid" alt="">
+            <img style="border-radius: 23px;" src="{% static 'images/home.webp' %}" class="img-fluid" alt="">
           </div>
           <div class="col-md-7 order-2 order-md-1">
-            <h3>Global Directory</h3>
             <p class="fst-italic" style="text-align:justify;">
-              On ChatGPTmall, you can build your own virtual factory and turn your ideas into
-              physical products through interaction with ChatGPT technology. Our vision is to
-              make manufacturing accessible to everyone, regardless of age, cultural background,
-              or physical ability, by enabling them to easily create their own virtual factories on our platform.
+              At ChatGPTmall.tech, we provide a virtual factory platform that empowers businesses and individuals
+              to  create, customize, and commercialize their own AI assistants.
             </p>
             <p class="fst-italic" style="text-align:justify;">
-              Our mission is to promote sustainable development by empowering more people with the ability to manufacture
-              their own products from their ideas. We not only provide a virtual factory market but also connect physical
-              devices through Industrial Internet of Things (IIoT) technology to provide users with a real production environment.
+              We understand that developing AI assistants for specific industries or purposes may be challenging for those
+              without technical expertise or resources. That's why we offer a user-friendly platform that makes it easy for
+              anyone to build and deploy their own AI assistant, regardless of their background.
             </p>
             <p class="fst-italic" style="text-align:justify;">
-              As a virtual factory jointly built by numerous companies and individuals worldwide, we are committed to creating an open
-              and inclusive platform where everyone can achieve their dreams. Our business model focuses on social value and sustainability,
-              and we hope to become an entry point for democratizing the manufacturing industry and benefiting more people.
+              Whether you're looking to improve customer service, automate routine tasks, or enhance productivity,
+              ChatGPTmall.tech is here to help you bring your ideas to life.
             </p>
-            <a href="{% url 'CreateTeams' %}" target="_blank">Build your own virtual factory right now</a>
+            <a href="{% url 'AiModels' %}" target="_blank">Buy ChatGPT Ability now</a>
           </div>
         </div><!-- Features Item -->
 
         <div class="row gy-4 align-items-center features-item" data-aos="fade-up">
           <div class="col-md-5 order-1 order-md-2">
-            <img src="{% static 'images/create_team.png' %}" class="img-fluid" alt="">
+            <img style="border-radius: 23px;" src="{% static 'images/home.webp' %}" class="img-fluid" alt="">
           </div>
           <div class="col-md-7 order-2 order-md-1">
-            <h3>全球名录</h3>
+            <h3>在ChatGPTmall轻松打造自己的AI助手 </h3>
             <p class="fst-italic" style="text-align:justify;">
-              在ChatGPTmall平台上，您可以通过与ChatGPT技术的交互构建自己的虚拟工厂，将您的想法变成实际产品。
-              我们的愿景是通过让用户轻松创建自己的虚拟工厂，使制造业对每个人都可达，无论年龄、文化背景或身体能力如何。
+              在ChatGPTmall.tech，我们提供一个虚拟工厂平台，为企业和个人赋能，创造、定制和商业化自己的AI助手。
             </p>
             <p class="fst-italic" style="text-align:justify;">
-              我们的使命是通过授权更多的人能够从他们的想法中制造出自己的产品来促进可持续发展。
-              我们不仅提供虚拟工厂市场，还通过工业物联网（IIoT）技术连接实体设备，为用户提供真实的生产环境。
+              我们深知对于那些缺乏技术专业知识和资源的人来说，为特定行业或目的开发AI助手可能是具有挑战性的。
+              因此，我们提供一个用户友好的平台，让任何人都可以轻松构建和部署自己的AI助手，无论他们的背景如何。
             </p>
             <p class="fst-italic" style="text-align:justify;">
-              作为全球众多公司和个人共同建立的虚拟工厂，我们致力于创建一个开放和包容的平台，让每个人都能实现自己的梦想。
-              我们的业务模型注重社会价值并且可持续发展，我们希望成为制造业民主化的入口，让更多人受益。
+              无论您是想要提高客户服务水平、自动化例行任务，还是提高生产力，ChatGPTmall.tech都在这里帮助您实现您的想法。
             </p>
-            <a href="{% url 'CreateTeams' %}" target="_blank">马上构建自己的虚拟工厂 </a>
+            <a href="{% url 'AiModels' %}" target="_blank">现在就购买 ChatGPT 能力 </a>
           </div>
         </div><!-- Features Item -->
 
-        <div class="row gy-4 align-items-center features-item" data-aos="fade-up">
-          <div class="col-md-5">
-            <img src="{% static 'images/vf3.png' %}" class="img-fluid" alt="">
-          </div>
-          <div class="col-md-7">
-            <h3>Virtual Factory Usage Method</h3>
-            <p class="fst-italic" style="text-align:justify;">
-              Our virtual factory uses ChatGPT technology, and users can create product ideas through language
-              and interaction interfaces. When these ideas are published to their virtual factory or the
-              platform's co-creation market, the platform algorithm calculates the best production route
-              among global production equipment and sends data through a standard API to complete
-              production and deliver it to the user's hands.
-            </p>
-            <a href="#">Use ChatGPT to build your own products right now </a>
-          </div>
-        </div><!-- Features Item -->
+<!--        <div class="row gy-4 align-items-center features-item" data-aos="fade-up">-->
+<!--          <div class="col-md-5">-->
+<!--            <img src="{% static 'images/vf3.png' %}" class="img-fluid" alt="">-->
+<!--          </div>-->
+<!--          <div class="col-md-7">-->
+<!--            <h3>Virtual Factory Usage Method</h3>-->
+<!--            <p class="fst-italic" style="text-align:justify;">-->
+<!--              Our virtual factory uses ChatGPT technology, and users can create product ideas through language-->
+<!--              and interaction interfaces. When these ideas are published to their virtual factory or the-->
+<!--              platform's co-creation market, the platform algorithm calculates the best production route-->
+<!--              among global production equipment and sends data through a standard API to complete-->
+<!--              production and deliver it to the user's hands.-->
+<!--            </p>-->
+<!--            <a href="#">Use ChatGPT to build your own products right now </a>-->
+<!--          </div>-->
+<!--        </div>&lt;!&ndash; Features Item &ndash;&gt;-->
 
 
-        <div class="row gy-4 align-items-center features-item" data-aos="fade-up">
-          <div class="col-md-5">
-            <img src="{% static 'images/vf3.png' %}" class="img-fluid" alt="">
-          </div>
-          <div class="col-md-7">
-            <h3>虚拟工厂使用方法</h3>
-            <p class="fst-italic" style="text-align:justify;">
-              我们的虚拟工厂使用ChatGPT技术，用户可以通过语言和交互界面创建产品想法。当这些想法发布到自己的虚拟工厂或平台的合创市场后，
-              平台的算法会在全球生产设备中计算最佳的生产路线，并通过标准API发送数据以完成生产并交付到用户手上。
-            </p>
-            <a href="#"> 马上使用ChatGPT构建自己的产品</a>
-          </div>
-        </div><!-- Features Item -->
+<!--        <div class="row gy-4 align-items-center features-item" data-aos="fade-up">-->
+<!--          <div class="col-md-5">-->
+<!--            <img src="{% static 'images/vf3.png' %}" class="img-fluid" alt="">-->
+<!--          </div>-->
+<!--          <div class="col-md-7">-->
+<!--            <h3>虚拟工厂使用方法</h3>-->
+<!--            <p class="fst-italic" style="text-align:justify;">-->
+<!--              我们的虚拟工厂使用ChatGPT技术，用户可以通过语言和交互界面创建产品想法。当这些想法发布到自己的虚拟工厂或平台的合创市场后，-->
+<!--              平台的算法会在全球生产设备中计算最佳的生产路线，并通过标准API发送数据以完成生产并交付到用户手上。-->
+<!--            </p>-->
+<!--            <a href="#"> 马上使用ChatGPT构建自己的产品</a>-->
+<!--          </div>-->
+<!--        </div>&lt;!&ndash; Features Item &ndash;&gt;-->
 
-        <div class="row gy-4 align-items-center features-item" data-aos="fade-up">
-          <div class="col-md-5 order-1 order-md-2">
-            <img src="{% static 'images/product.png' %}" class="img-fluid" alt="">
-          </div>
-          <div class="col-md-7 order-2 order-md-1">
-            <h3>Product and Service</h3>
-            <p class="fst-italic" style="text-align:justify;">
-              ChatGPTmall platform provides global access to manufacturing facilities for customers to build
-              virtual factories and complete production. At the same time, we also provide an artificial intelligence
-              model to help users generate product design and production data. Customers can use our artificial intelligence tools to
-              create products, and our virtual factory network is responsible for production and delivery.
-            </p>
-            <a href="http://plm.chatgptmall.tech/zh_CN" target="_blank">Start producing your products with the virtual factory right now</a>
-          </div>
-        </div><!-- Features Item -->
+<!--        <div class="row gy-4 align-items-center features-item" data-aos="fade-up">-->
+<!--          <div class="col-md-5 order-1 order-md-2">-->
+<!--            <img src="{% static 'images/product.png' %}" class="img-fluid" alt="">-->
+<!--          </div>-->
+<!--          <div class="col-md-7 order-2 order-md-1">-->
+<!--            <h3>Product and Service</h3>-->
+<!--            <p class="fst-italic" style="text-align:justify;">-->
+<!--              ChatGPTmall platform provides global access to manufacturing facilities for customers to build-->
+<!--              virtual factories and complete production. At the same time, we also provide an artificial intelligence-->
+<!--              model to help users generate product design and production data. Customers can use our artificial intelligence tools to-->
+<!--              create products, and our virtual factory network is responsible for production and delivery.-->
+<!--            </p>-->
+<!--            <a href="http://plm.chatgptmall.tech/zh_CN" target="_blank">Start producing your products with the virtual factory right now</a>-->
+<!--          </div>-->
+<!--        </div>&lt;!&ndash; Features Item &ndash;&gt;-->
 
-        <div class="row gy-4 align-items-center features-item" data-aos="fade-up">
-          <div class="col-md-5 order-1 order-md-2">
-            <img src="{% static 'images/product.png' %}" class="img-fluid" alt="">
-          </div>
-          <div class="col-md-7 order-2 order-md-1">
-            <h3>产品和服务</h3>
-            <p class="fst-italic" style="text-align:justify;">
-              ChatGPTmall平台为客户提供全球制造业生产设施的全球访问，以便构建虚拟工厂并完成生产。同时，我们还提供人工智能模型，以帮助用户生成产品设计和生产数据
-              。客户可以使用我们的人工智能工具创建产品，而我们的虚拟工厂网络则负责生产和交付。
-            </p>
-            <a href="http://plm.chatgptmall.tech/zh_CN" target="_blank">马上使用虚拟工厂生产产品 </a>
-          </div>
-        </div><!-- Features Item -->
+<!--        <div class="row gy-4 align-items-center features-item" data-aos="fade-up">-->
+<!--          <div class="col-md-5 order-1 order-md-2">-->
+<!--            <img src="{% static 'images/product.png' %}" class="img-fluid" alt="">-->
+<!--          </div>-->
+<!--          <div class="col-md-7 order-2 order-md-1">-->
+<!--            <h3>产品和服务</h3>-->
+<!--            <p class="fst-italic" style="text-align:justify;">-->
+<!--              ChatGPTmall平台为客户提供全球制造业生产设施的全球访问，以便构建虚拟工厂并完成生产。同时，我们还提供人工智能模型，以帮助用户生成产品设计和生产数据-->
+<!--              。客户可以使用我们的人工智能工具创建产品，而我们的虚拟工厂网络则负责生产和交付。-->
+<!--            </p>-->
+<!--            <a href="http://plm.chatgptmall.tech/zh_CN" target="_blank">马上使用虚拟工厂生产产品 </a>-->
+<!--          </div>-->
+<!--        </div>&lt;!&ndash; Features Item &ndash;&gt;-->
 
-        <div class="row gy-4 align-items-center features-item" data-aos="fade-up">
-          <div class="col-md-5">
-            <img src="{% static 'images/plans.png' %}" class="img-fluid" alt="">
-          </div>
-          <div class="col-md-7">
-            <h3>Platform Continuous Development Revenue Model</h3>
-            <p class="fst-italic" style="text-align:justify;">Our platform's main source of revenue is through a commission-based
-              income model, which charges a certain percentage of fees for each transaction
-              on the platform. In addition, we also provide
-              subscription services for the use of artificial intelligence models </p>
-            <a href="{% url 'our_plans' %}">Support the platform's development Subscribe to our intelligent models right now</a>
-          </div>
-        </div><!-- Features Item -->
-
-
-        <div class="row gy-4 align-items-center features-item" data-aos="fade-up">
-          <div class="col-md-5">
-            <img src="{% static 'images/plans.png' %}" class="img-fluid" alt="">
-          </div>
-          <div class="col-md-7">
-            <h3>平台持续发展收入模型</h3>
-            <p class="fst-italic" style="text-align:justify;">
-              我们平台的主要收入来源是通过佣金收入模式，即从平台上每笔交易中收取一定比例的费用。此外，我们还提供人工智能模型的使用订阅服务。
-            </p>
-            <a href="{% url 'our_plans' %}">支持平台发展，马上订阅智能模型</a>
-          </div>
-        </div><!-- Features Item -->
-
-        <div class="row gy-4 align-items-center features-item" data-aos="fade-up">
-          <div class="col-md-12 order-2 order-md-1">
-            <h3 style="text-align:center;">Our Platform's Story</h3>
-            <p style="text-align:justify;">The founder of the ChatGPTmall platform, Benny, has always had a dream of providing
-              product manufacturing capabilities according to customer needs. During the pandemic,
-              the supply chain was disrupted, and his global customers felt helpless as their profitable
-              demands could not be produced or delivered. So he began to think about how to break this
-              predicament and came up with the idea that people can create their own virtual factories
-              and discuss product details with AI and factory members. When more people need it and
-              production capacity is feasible, production will proceed according to plan; otherwise,
-              nothing will be done. This idea had been brewing in his mind for many years, but he had
-              never found like-minded people. </p>
-            <p style="text-align:justify;">Until ChatGPT came into his life, he began to use this technology and continuously explore
-              and communicate his own experience and ideas. With the support of Microsoft, ZkZeco Technology,
-              and Hong Kong Pannex, he worked together with engineers from Ukraine, the United States, and
-              India to finally launch the virtual factory platform for testing in the last few days of April
-              2023. He believes that as resonance continues to amplify, the ChatLiao platform will be able to
-              serve many places around the world, help more people turn their ideas into real products, and
-              promote social sustainable development. </p>
-
-            <a href="https://list.chatgptmall.tech/" target="_blank">Join the platform and become the protagonist of the story</a>
-          </div>
-        </div><!-- Features Item -->
+<!--        <div class="row gy-4 align-items-center features-item" data-aos="fade-up">-->
+<!--          <div class="col-md-5">-->
+<!--            <img src="{% static 'images/plans.png' %}" class="img-fluid" alt="">-->
+<!--          </div>-->
+<!--          <div class="col-md-7">-->
+<!--            <h3>Platform Continuous Development Revenue Model</h3>-->
+<!--            <p class="fst-italic" style="text-align:justify;">Our platform's main source of revenue is through a commission-based-->
+<!--              income model, which charges a certain percentage of fees for each transaction-->
+<!--              on the platform. In addition, we also provide-->
+<!--              subscription services for the use of artificial intelligence models </p>-->
+<!--            <a href="{% url 'our_plans' %}">Support the platform's development Subscribe to our intelligent models right now</a>-->
+<!--          </div>-->
+<!--        </div>&lt;!&ndash; Features Item &ndash;&gt;-->
 
 
-        <div class="row gy-4 align-items-center features-item" data-aos="fade-up">
-          <div class="col-md-12 order-2 order-md-1">
-            <h3 style="text-align:center;">我们的平台故事</h3>
-            <p style="text-align:justify;">
-              ChatGPTmall 平台的创始人 Benny 一直有一个梦想，就是根据客户需求提供产品制造能力。疫情期间，供应链被打乱，他的全球客户感到无助，
-              他们的产品需求无法被生产或交付。于是他开始思考如何打破这个困境，想到了人们可以创建自己的虚拟工厂，并与 AI 和工厂成员讨论产品细节，
-              只有当更多的人需要并且生产能力可行时，生产将按计划进行；否则就不做任何事。这个想法在他心中酝酿了多年，但一直没有找到志同道合的人。
-              直到 ChatGPT 进入他的生活，他开始使用这项技术，不断探索和传达自己的经验和想法。在微软、ZkZeco Technology 和香港 Pannex
-              的支持下，他与来自乌克兰、美国和印度的工程师一起努力，最终在2023年4月的最后几天，推出了虚拟工厂平台进行测试。他相信，随着共鸣不断放大，
-              ChatLiao 平台将能够服务于全球许多地方，帮助更多人将自己的想法变成现实产品，同时推动社会可持续发展。</p>
+<!--        <div class="row gy-4 align-items-center features-item" data-aos="fade-up">-->
+<!--          <div class="col-md-5">-->
+<!--            <img src="{% static 'images/plans.png' %}" class="img-fluid" alt="">-->
+<!--          </div>-->
+<!--          <div class="col-md-7">-->
+<!--            <h3>平台持续发展收入模型</h3>-->
+<!--            <p class="fst-italic" style="text-align:justify;">-->
+<!--              我们平台的主要收入来源是通过佣金收入模式，即从平台上每笔交易中收取一定比例的费用。此外，我们还提供人工智能模型的使用订阅服务。-->
+<!--            </p>-->
+<!--            <a href="{% url 'our_plans' %}">支持平台发展，马上订阅智能模型</a>-->
+<!--          </div>-->
+<!--        </div>&lt;!&ndash; Features Item &ndash;&gt;-->
 
-            <a href="https://list.chatgptmall.tech/" target="_blank">加入平台一起成为故事主人翁 </a>
-          </div>
-        </div><!-- Features Item -->
+<!--        <div class="row gy-4 align-items-center features-item" data-aos="fade-up">-->
+<!--          <div class="col-md-12 order-2 order-md-1">-->
+<!--            <h3 style="text-align:center;">Our Platform's Story</h3>-->
+<!--            <p style="text-align:justify;">The founder of the ChatGPTmall platform, Benny, has always had a dream of providing-->
+<!--              product manufacturing capabilities according to customer needs. During the pandemic,-->
+<!--              the supply chain was disrupted, and his global customers felt helpless as their profitable-->
+<!--              demands could not be produced or delivered. So he began to think about how to break this-->
+<!--              predicament and came up with the idea that people can create their own virtual factories-->
+<!--              and discuss product details with AI and factory members. When more people need it and-->
+<!--              production capacity is feasible, production will proceed according to plan; otherwise,-->
+<!--              nothing will be done. This idea had been brewing in his mind for many years, but he had-->
+<!--              never found like-minded people. </p>-->
+<!--            <p style="text-align:justify;">Until ChatGPT came into his life, he began to use this technology and continuously explore-->
+<!--              and communicate his own experience and ideas. With the support of Microsoft, ZkZeco Technology,-->
+<!--              and Hong Kong Pannex, he worked together with engineers from Ukraine, the United States, and-->
+<!--              India to finally launch the virtual factory platform for testing in the last few days of April-->
+<!--              2023. He believes that as resonance continues to amplify, the ChatLiao platform will be able to-->
+<!--              serve many places around the world, help more people turn their ideas into real products, and-->
+<!--              promote social sustainable development. </p>-->
+
+<!--            <a href="https://list.chatgptmall.tech/" target="_blank">Join the platform and become the protagonist of the story</a>-->
+<!--          </div>-->
+<!--        </div>&lt;!&ndash; Features Item &ndash;&gt;-->
+
+
+<!--        <div class="row gy-4 align-items-center features-item" data-aos="fade-up">-->
+<!--          <div class="col-md-12 order-2 order-md-1">-->
+<!--            <h3 style="text-align:center;">我们的平台故事</h3>-->
+<!--            <p style="text-align:justify;">-->
+<!--              ChatGPTmall 平台的创始人 Benny 一直有一个梦想，就是根据客户需求提供产品制造能力。疫情期间，供应链被打乱，他的全球客户感到无助，-->
+<!--              他们的产品需求无法被生产或交付。于是他开始思考如何打破这个困境，想到了人们可以创建自己的虚拟工厂，并与 AI 和工厂成员讨论产品细节，-->
+<!--              只有当更多的人需要并且生产能力可行时，生产将按计划进行；否则就不做任何事。这个想法在他心中酝酿了多年，但一直没有找到志同道合的人。-->
+<!--              直到 ChatGPT 进入他的生活，他开始使用这项技术，不断探索和传达自己的经验和想法。在微软、ZkZeco Technology 和香港 Pannex-->
+<!--              的支持下，他与来自乌克兰、美国和印度的工程师一起努力，最终在2023年4月的最后几天，推出了虚拟工厂平台进行测试。他相信，随着共鸣不断放大，-->
+<!--              ChatLiao 平台将能够服务于全球许多地方，帮助更多人将自己的想法变成现实产品，同时推动社会可持续发展。</p>-->
+
+<!--            <a href="https://list.chatgptmall.tech/" target="_blank">加入平台一起成为故事主人翁 </a>-->
+<!--          </div>-->
+<!--        </div>&lt;!&ndash; Features Item &ndash;&gt;-->
 
       </div>
     </section><!-- End Features Section -->
