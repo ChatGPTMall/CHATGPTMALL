@@ -9,7 +9,6 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MinLengthValidator
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-
 from users.custom_fields import PhoneNumberField
 
 
@@ -159,6 +158,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         """
         full_name = '%s %s' % (self.first_name, self.last_name)
         return full_name.strip()
+
+    def get_access(self):
+        user = User.objects.get(email=self.email)
+        if user.purchases.filter(user__email=self.email).exists():
+            has_access = True
 
 
 class UploadUsers(models.Model):

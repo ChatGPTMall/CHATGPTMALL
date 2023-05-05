@@ -47,8 +47,9 @@ $(document).ready(function() {
 
     document.querySelector('#submit_command').onclick = function() {
         var text_voice = $("#voice_text").val();
+        var command = $("#command").val();
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', `/response/commands/?text=${text_voice}`, true);
+        xhr.open('GET', `/response/commands/?text=${text_voice}&command=${command}`, true);
         xhr.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 $("#img_command").show();

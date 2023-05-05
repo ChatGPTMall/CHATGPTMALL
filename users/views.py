@@ -142,23 +142,25 @@ def ProfileUpdate(request):
 
 
 def VoiceToImage(request):
-    is_active = True
     if request.user.is_authenticated:
-        if Subscriptions.objects.filter(user=request.user, plan__access="VOICE_TO_IMAGE", is_expired=False).exists():
-            subscription = Subscriptions.objects.filter(
-                user=request.user, plan__access="VOICE_TO_IMAGE").last()
-            if subscription:
-                if subscription.requests_send >= subscription.plan.requests:
-                    is_active = False
-            return render(request, "chat.html", context={"is_active": is_active})
-    return redirect('/api/renew/subscription/')
+        text = request.GET.get("item", None)
+        if request.user.premium == 1:
+            if Subscriptions.objects.filter(user=request.user, plan__access="VOICE_TO_IMAGE", is_expired=False).exists():
+                return render(request, "chat.html", context={"text": text})
+            return redirect('/api/renew/subscription/')
+        return render(request, "chat.html", context={"text": text})
+    return redirect(reverse("LoginView") + "?page={}".format("models/voice_to_image/detail/"))
 
 
 def TextToVoice(request):
     if request.user.is_authenticated:
-        if Subscriptions.objects.filter(user=request.user, plan__access="TEXT_TO_VOICE", is_expired=False).exists():
-            return render(request, "text_to_voice.html")
-    return redirect('/api/renew/subscription/')
+        text = request.GET.get("item", None)
+        if request.user.premium == 1:
+            if Subscriptions.objects.filter(user=request.user, plan__access="TEXT_TO_VOICE", is_expired=False).exists():
+                return render(request, "text_to_voice.html", context={"text": text})
+            return redirect('/api/renew/subscription/')
+        return render(request, "text_to_voice.html", context={"text": text})
+    return redirect(reverse("LoginView") + "?page={}".format("models/Text_to_voice/detail/"))
 
 
 def ShopVoiceToVoice(request):
@@ -171,24 +173,35 @@ def ShopVoiceToVoice(request):
 
 def VoiceToVoice(request):
     if request.user.is_authenticated:
-        if Subscriptions.objects.filter(user=request.user, plan__access="VOICE_TO_Voice", is_expired=False).exists():
-            is_active = True
-            try:
-                obj = Subscriptions.objects.get(user=request.user)
-                if obj.requests_send >= 20:
-                    is_active = False
-                if obj.requests_send >= 100:
-                    is_active = False
-                context = {
-                    "is_active": is_active,
-                }
-                return render(request, "voice_to_voice.html", context=context)
-            except Exception as e:
-                context = {
-                    "is_active": is_active
-                }
-                return render(request, "voice_to_voice.html", context=context)
-    return redirect("/api/renew/subscription/")
+        text = request.GET.get("item", None)
+        if request.user.premium == 1:
+            if Subscriptions.objects.filter(user=request.user, plan__access="VOICE_TO_Voice", is_expired=False).exists():
+                return render(request, "voice_to_voice.html", context={"text": text})
+            return redirect('/api/renew/subscription/')
+        return render(request, "voice_to_voice.html", context={"text": text})
+    return redirect(reverse("LoginView") + "?page={}".format("models/voice_to_voice/detail/"))
+
+
+def GetCommand(request):
+    if request.user.is_authenticated:
+        text = request.GET.get("item", None)
+        if request.user.premium == 1:
+            if Subscriptions.objects.filter(user=request.user, plan__access="VOICE_TO_COMMAND", is_expired=False).exists():
+                return render(request, "voice_to_command.html", context={"text": text})
+            return redirect("/api/renew/subscription/")
+        return render(request, "voice_to_command.html", context={"text": text})
+    return redirect(reverse("LoginView") + "?page={}".format("models/voice_to_command/detail/"))
+
+
+def TextToCommand(request):
+    if request.user.is_authenticated:
+        text = request.GET.get("item", None)
+        if request.user.premium == 1:
+            if Subscriptions.objects.filter(user=request.user, plan__access="TEXT_TO_COMMAND", is_expired=False).exists():
+                return render(request, "text_to_command.html", context={"text": text})
+            return redirect("/api/renew/subscription/")
+        return render(request, "text_to_command.html", context={"text": text})
+    return redirect(reverse("LoginView") + "?page={}".format("models/text_to_command/detail/"))
 
 
 @csrf_exempt
@@ -215,12 +228,22 @@ def UploadVoice(request):
             plan__access = "TEXT_TO_IMAGE"
         else:
             plan__access = "VOICE_TO_IMAGE"
-        obj = Subscriptions.objects.get(user=request.user, plan__access=plan__access)
-        obj.requests_send += 1
-        obj.save()
-        if obj.requests_send >= obj.plan.requests:
-            obj.is_expired = True
+        if request.user.premium == 1:
+            plan = Plans.objects.filter(access=plan__access).last()
+            obj, created = Subscriptions.objects.get_or_create(user=request.user, plan=plan)
+            obj.requests_send += 1
             obj.save()
+            if obj.requests_send >= obj.plan.requests:
+                obj.is_expired = True
+                obj.save()
+        if request.user.premium == 0:
+            plan = Plans.objects.filter(access=plan__access).last()
+            obj, create = FreeSubscriptions.objects.get_or_create(user=request.user, plan=plan)
+            obj.requests_send += 1
+            obj.save()
+            if obj.requests_send >= obj.plan.free_requests:
+                obj.is_expired = True
+                obj.save()
     except Exception as e:
         pass
     text = request.GET.get('text', '')
@@ -265,32 +288,32 @@ def UploadVoice(request):
         return JsonResponse(show_images, safe=False)
 
 
-def GetCommand(request):
-    if request.user.is_authenticated:
-        if Subscriptions.objects.filter(user=request.user, plan__access="VOICE_TO_COMMAND", is_expired=False).exists():
-            return render(request, "voice_to_command.html")
-    return redirect("/api/renew/subscription/")
-
-
-def TextToCommand(request):
-    if request.user.is_authenticated:
-        print(request.user)
-        if Subscriptions.objects.filter(user=request.user, plan__access="TEXT_TO_COMMAND", is_expired=False).exists():
-            return render(request, "text_to_command.html")
-    return redirect("/api/renew/subscription/")
-
-
 def ResponseCommand(request):
     text = request.GET.get('text', '')
     try:
+        command = request.GET.get('command', '')
+        if command == "voice":
+            plan_access = "VOICE_TO_COMMAND"
+        else:
+            plan_access = "TEXT_TO_COMMAND"
+        print(plan_access)
         command = VoiceCommands.objects.get(input=text)
-        subscription = Subscriptions.objects.get(user=request.user, plan__access="VOICE_TO_COMMAND", is_expired=False)
-        subscription.requests_send += 1
-        subscription.save()
-        plan = subscription.plan
-        if subscription.requests_send >= plan.requests:
-            subscription.is_expired = True
-            subscription.save()
+        if request.user.premium == 1:
+            plan = Plans.objects.filter(access=plan_access).last()
+            obj, created = Subscriptions.objects.get_or_create(user=request.user, plan=plan)
+            obj.requests_send += 1
+            obj.save()
+            if obj.requests_send >= obj.plan.requests:
+                obj.is_expired = True
+                obj.save()
+        if request.user.premium == 0:
+            plan = Plans.objects.filter(access=plan_access).last()
+            obj, create = FreeSubscriptions.objects.get_or_create(user=request.user, plan=plan)
+            obj.requests_send += 1
+            obj.save()
+            if obj.requests_send >= obj.plan.free_requests:
+                obj.is_expired = True
+                obj.save()
         return HttpResponse(command.image.url)
     except Exception as e:
         return HttpResponse("invalid")
@@ -352,7 +375,7 @@ def get_chatgpt_response(request):
             else:
                 response = openai.ChatCompletion.create(
                     model="gpt-3.5-turbo",
-                    max_tokens=int(words),
+                    max_tokens=3000,
                     messages=[
                         {"role": "system", "content": "You are a chatbot"},
                         {"role": "user", "content": "{}?".format(prompt)},
@@ -419,37 +442,55 @@ def TextToText(request):
                     communities = Community.objects.filter(community_id__in=communities_id)
                     return render(request, "TextToText.html", context={"communities": communities, "text": text})
                 return render(request, "TextToText.html", context={"text": text})
+            return redirect('/api/renew/subscription/')
         return render(request, "TextToText.html", context={"text": text})
     return redirect(reverse("LoginView") + "?page={}".format("models/text_to_text/detail/"))
 
 
 def TextToImage(request):
     if request.user.is_authenticated:
-        if Subscriptions.objects.filter(user=request.user, plan__access="TEXT_TO_IMAGE", is_expired=False).exists():
-            if CommunityMembers.objects.filter(user=request.user).exists():
-                communities_id = request.user.team.all().values_list("community__community_id", flat=True)
-                communities = Community.objects.filter(community_id__in=communities_id)
-                return render(request, "TextToImage.html", context={"communities": communities})
-            return render(request, "TextToImage.html")
-    return redirect("/api/renew/subscription/")
+        text = request.GET.get("item", None)
+        if request.user.premium == 1:
+            if Subscriptions.objects.filter(user=request.user, plan__access="TEXT_TO_IMAGE", is_expired=False).exists():
+                if CommunityMembers.objects.filter(user=request.user).exists():
+                    communities_id = request.user.team.all().values_list("community__community_id", flat=True)
+                    communities = Community.objects.filter(community_id__in=communities_id)
+                    return render(request, "TextToImage.html", context={"communities": communities, "text": text})
+                return render(request, "TextToImage.html", context={"text": text})
+            return redirect('/api/renew/subscription/')
+        return render(request, "TextToImage.html", context={"text": text})
+    return redirect(reverse("LoginView") + "?page={}".format("models/text_to_image/detail/"))
 
 
 def ImageToImage(request):
     if request.user.is_authenticated:
-        if Subscriptions.objects.filter(user=request.user, plan__access="IMAGE_TO_IMAGE", is_expired=False).exists():
-            return render(request, "imagetoimage.html")
-    return redirect("/api/renew/subscription/")
+        text = request.GET.get("item", None)
+        if request.user.premium == 1:
+            if Subscriptions.objects.filter(user=request.user, plan__access="IMAGE_TO_IMAGE", is_expired=False).exists():
+                return render(request, "imagetoimage.html")
+            return redirect('/api/renew/subscription/', context={"text": text})
+        return render(request, "imagetoimage.html", context={"text": text})
+    return redirect(reverse("LoginView") + "?page={}".format("models/image_to_image/detail/"))
 
 
 def ImageToImageCalculate(request):
     try:
-        subscription = Subscriptions.objects.get(user=request.user, plan__access="IMAGE_TO_IMAGE", is_expired=False)
-        subscription.requests_send += 1
-        subscription.save()
-        plan = subscription.plan
-        if subscription.requests_send >= plan.requests:
-            subscription.is_expired = True
-            subscription.save()
+        if request.user.premium == 1:
+            plan = Plans.objects.filter(access="IMAGE_TO_IMAGE").last()
+            obj, created = Subscriptions.objects.get_or_create(user=request.user, plan=plan)
+            obj.requests_send += 1
+            obj.save()
+            if obj.requests_send >= obj.plan.requests:
+                obj.is_expired = True
+                obj.save()
+        if request.user.premium == 0:
+            plan = Plans.objects.filter(access="IMAGE_TO_IMAGE").last()
+            obj, create = FreeSubscriptions.objects.get_or_create(user=request.user, plan=plan)
+            obj.requests_send += 1
+            obj.save()
+            if obj.requests_send >= obj.plan.free_requests:
+                obj.is_expired = True
+                obj.save()
         return HttpResponse("IMAGE UPDATED")
     except Exception as e:
         return HttpResponse("IMAGE UPDATED")
@@ -457,9 +498,13 @@ def ImageToImageCalculate(request):
 
 def ImageAnalysis(request):
     if request.user.is_authenticated:
-        if Subscriptions.objects.filter(user=request.user, plan__access="IMAGE_ANALYSIS", is_expired=False).exists():
-            return render(request, "imageanalysis.html")
-    return redirect("/api/renew/subscription/")
+        text = request.GET.get("item", None)
+        if request.user.premium == 1:
+            if Subscriptions.objects.filter(user=request.user, plan__access="IMAGE_ANALYSIS", is_expired=False).exists():
+                return render(request, "imageanalysis.html", context={"text": text})
+            return redirect("/api/renew/subscription/")
+        return render(request, "imageanalysis.html", context={"text": text})
+    return redirect(reverse("LoginView") + "?page={}".format("models/text_analysis/detail/"))
 
 
 def VideoAnalysis(request):
@@ -470,26 +515,39 @@ def VideoAnalysis(request):
 
 def ObjectsDetection(request):
     if request.user.is_authenticated:
-        if Subscriptions.objects.filter(user=request.user, plan__access="OBJECTS_DETECTION", is_expired=False).exists():
-            communities = []
-            if CommunityMembers.objects.filter(user=request.user).exists():
-                communities_id = request.user.team.all().values_list("community__community_id", flat=True)
-                communities = Community.objects.filter(community_id__in=communities_id)
-            return render(request, "ObjectsDetection.html", context={"communities": communities})
-    return redirect("/api/renew/subscription/")
+        text = request.GET.get("item", None)
+        if request.user.premium == 1:
+            if Subscriptions.objects.filter(user=request.user, plan__access="OBJECTS_DETECTION", is_expired=False).exists():
+                communities = []
+                if CommunityMembers.objects.filter(user=request.user).exists():
+                    communities_id = request.user.team.all().values_list("community__community_id", flat=True)
+                    communities = Community.objects.filter(community_id__in=communities_id)
+                return render(request, "ObjectsDetection.html", context={"communities": communities, "text": text})
+            return redirect("/api/renew/subscription/")
+        return render(request, "ObjectsDetection.html", context={"text": text})
+    return redirect(reverse("LoginView") + "?page={}".format("models/image_detect/detail/"))
 
 
 @csrf_exempt
 def SaveAnalysisImage(request):
     img = ImageAnalysisDB.objects.create(file=request.FILES.get("image"))
     try:
-        subscription = Subscriptions.objects.get(user=request.user, plan__access="IMAGE_ANALYSIS", is_expired=False)
-        subscription.requests_send += 1
-        subscription.save()
-        plan = subscription.plan
-        if subscription.requests_send >= plan.requests:
-            subscription.is_expired = True
-            subscription.save()
+        if request.user.premium == 1:
+            plan = Plans.objects.filter(access="IMAGE_ANALYSIS").last()
+            obj, created = Subscriptions.objects.get_or_create(user=request.user, plan=plan)
+            obj.requests_send += 1
+            obj.save()
+            if obj.requests_send >= obj.plan.requests:
+                obj.is_expired = True
+                obj.save()
+        if request.user.premium == 0:
+            plan = Plans.objects.filter(access="IMAGE_ANALYSIS").last()
+            obj, create = FreeSubscriptions.objects.get_or_create(user=request.user, plan=plan)
+            obj.requests_send += 1
+            obj.save()
+            if obj.requests_send >= obj.plan.free_requests:
+                obj.is_expired = True
+                obj.save()
     except Exception as e:
         pass
     return HttpResponse(str(img.file.url))
@@ -537,13 +595,22 @@ def ObjDetect(request):
         "results": results
     })
     try:
-        subscription = Subscriptions.objects.get(user=request.user, plan__access="OBJECTS_DETECTION", is_expired=False)
-        subscription.requests_send += 1
-        subscription.save()
-        plan = subscription.plan
-        if subscription.requests_send >= plan.requests:
-            subscription.is_expired = True
-            subscription.save()
+        if request.user.premium == 1:
+            plan = Plans.objects.filter(access="OBJECTS_DETECTION").last()
+            obj, created = Subscriptions.objects.get_or_create(user=request.user, plan=plan)
+            obj.requests_send += 1
+            obj.save()
+            if obj.requests_send >= obj.plan.requests:
+                obj.is_expired = True
+                obj.save()
+        if request.user.premium == 0:
+            plan = Plans.objects.filter(access="OBJECTS_DETECTION").last()
+            obj, create = FreeSubscriptions.objects.get_or_create(user=request.user, plan=plan)
+            obj.requests_send += 1
+            obj.save()
+            if obj.requests_send >= obj.plan.free_requests:
+                obj.is_expired = True
+                obj.save()
     except Exception as e:
         pass
     return JsonResponse(data, safe=False)
@@ -993,37 +1060,7 @@ def deletekey(request, id):
 
 def WatchVideo(request, item_id):
     item = Items.objects.get(item_id=item_id)
-    return render(request, "video.html", context={"item":item})
-
-
-def VoiceToVoiceDetail(request):
-    if request.user.is_authenticated:
-        is_subscribed = False
-        plan = Plans.objects.get(access="VOICE_TO_Voice")
-        if request.user.purchases.filter(plan=plan, is_expired=False).exists():
-            is_subscribed = True
-        return render(request, "voice2voicedetail.html", context={"plan": plan, "is_subscribed": is_subscribed})
-    return redirect("/api/login/")
-
-
-def VoiceToImageDetail(request):
-    if request.user.is_authenticated:
-        is_subscribed = False
-        plan = Plans.objects.get(access="VOICE_TO_IMAGE")
-        if request.user.purchases.filter(plan=plan, is_expired=False).exists():
-            is_subscribed = True
-        return render(request, "voice2imagedetail.html", context={"plan": plan, "is_subscribed": is_subscribed})
-    return redirect("/api/login/")
-
-
-def TextToVoiceDetail(request):
-    if request.user.is_authenticated:
-        is_subscribed = False
-        plan = Plans.objects.get(access="TEXT_TO_VOICE")
-        if request.user.purchases.filter(plan=plan, is_expired=False).exists():
-            is_subscribed = True
-        return render(request, "text2voicedetail.html", context={"plan": plan, "is_subscribed": is_subscribed})
-    return redirect("/api/login/")
+    return render(request, "video.html", context={"item": item})
 
 
 def TextToTextDetail(request):
@@ -1038,12 +1075,117 @@ def TextToTextDetail(request):
     return render(request, "text2textdetail.html", context={"plan": plan, "has_expired": has_expired})
 
 
-def TextToImageDetail(request):
+def VoiceToVoiceDetail(request):
+    has_expired = False
+    plan = Plans.objects.filter(access="VOICE_TO_Voice").last()
     if request.user.is_authenticated:
-        is_subscribed = False
-        plan = Plans.objects.get(access="TEXT_TO_IMAGE")
-        if request.user.purchases.filter(plan=plan, is_expired=False).exists():
-            is_subscribed = True
-        return render(request, "text2imagedetail.html", context={"plan": plan, "is_subscribed": is_subscribed})
-    return redirect("/api/login/")
+        if plan:
+            if request.user.free_purchases.filter(plan=plan).exists():
+                plan_sub = request.user.free_purchases.filter(plan=plan).last()
+                if int(plan_sub.requests_send) >= int(plan.free_requests):
+                    has_expired = True
+    return render(request, "voice2voicedetail.html", context={"plan": plan, "has_expired": has_expired})
+
+
+def VoiceToImageDetail(request):
+    has_expired = False
+    plan = Plans.objects.filter(access="VOICE_TO_IMAGE").last()
+    if request.user.is_authenticated:
+        if plan:
+            if request.user.free_purchases.filter(plan=plan).exists():
+                plan_sub = request.user.free_purchases.filter(plan=plan).last()
+                if int(plan_sub.requests_send) >= int(plan.free_requests):
+                    has_expired = True
+    return render(request, "voice2imagedetail.html", context={"plan": plan, "has_expired": has_expired})
+
+
+def TextToVoiceDetail(request):
+    has_expired = False
+    plan = Plans.objects.filter(access="TEXT_TO_VOICE").last()
+    if request.user.is_authenticated:
+        if plan:
+            if request.user.free_purchases.filter(plan=plan).exists():
+                plan_sub = request.user.free_purchases.filter(plan=plan).last()
+                if int(plan_sub.requests_send) >= int(plan.free_requests):
+                    has_expired = True
+    return render(request, "text2voicedetail.html", context={
+        "plan": plan, "has_expired": has_expired})
+
+
+def TextToImageDetail(request):
+    has_expired = False
+    plan = Plans.objects.filter(access="TEXT_TO_IMAGE").last()
+    if request.user.is_authenticated:
+        if plan:
+            if request.user.free_purchases.filter(plan=plan).exists():
+                plan_sub = request.user.free_purchases.filter(plan=plan).last()
+                if int(plan_sub.requests_send) >= int(plan.free_requests):
+                    has_expired = True
+    return render(request, "text2imagedetail.html", context={
+        "plan": plan, "has_expired": has_expired})
+
+
+def ImageToImageDetail(request):
+    has_expired = False
+    plan = Plans.objects.filter(access="IMAGE_TO_IMAGE").last()
+    if request.user.is_authenticated:
+        if plan:
+            if request.user.free_purchases.filter(plan=plan).exists():
+                plan_sub = request.user.free_purchases.filter(plan=plan).last()
+                if int(plan_sub.requests_send) >= int(plan.free_requests):
+                    has_expired = True
+    return render(request, "image2imagedetail.html", context={
+        "plan": plan, "has_expired": has_expired})
+
+
+def ImageAnalysisDetail(request):
+    has_expired = False
+    plan = Plans.objects.filter(access="IMAGE_ANALYSIS").last()
+    if request.user.is_authenticated:
+        if plan:
+            if request.user.free_purchases.filter(plan=plan).exists():
+                plan_sub = request.user.free_purchases.filter(plan=plan).last()
+                if int(plan_sub.requests_send) >= int(plan.free_requests):
+                    has_expired = True
+    return render(request, "imageanalysisdetail.html", context={
+        "plan": plan, "has_expired": has_expired})
+
+
+def ImageDetectDetail(request):
+    has_expired = False
+    plan = Plans.objects.filter(access="OBJECTS_DETECTION").last()
+    if request.user.is_authenticated:
+        if plan:
+            if request.user.free_purchases.filter(plan=plan).exists():
+                plan_sub = request.user.free_purchases.filter(plan=plan).last()
+                if int(plan_sub.requests_send) >= int(plan.free_requests):
+                    has_expired = True
+    return render(request, "imagedetectdetail.html", context={
+        "plan": plan, "has_expired": has_expired})
+
+
+def VoiceToCommandDetail(request):
+    has_expired = False
+    plan = Plans.objects.filter(access="VOICE_TO_COMMAND").last()
+    if request.user.is_authenticated:
+        if plan:
+            if request.user.free_purchases.filter(plan=plan).exists():
+                plan_sub = request.user.free_purchases.filter(plan=plan).last()
+                if int(plan_sub.requests_send) >= int(plan.free_requests):
+                    has_expired = True
+    return render(request, "voice2commanddetail.html", context={
+        "plan": plan, "has_expired": has_expired})
+
+
+def TextToCommandDetail(request):
+    has_expired = False
+    plan = Plans.objects.filter(access="TEXT_TO_COMMAND").last()
+    if request.user.is_authenticated:
+        if plan:
+            if request.user.free_purchases.filter(plan=plan).exists():
+                plan_sub = request.user.free_purchases.filter(plan=plan).last()
+                if int(plan_sub.requests_send) >= int(plan.free_requests):
+                    has_expired = True
+    return render(request, "text2commanddetail.html", context={
+        "plan": plan, "has_expired": has_expired})
 

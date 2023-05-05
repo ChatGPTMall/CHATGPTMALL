@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
-{% block title %}Progrow | VoiceToImage{% endblock title %}
+{% block title %}Chatgptmall | VoiceToImage{% endblock title %}
 {% load static %}
 {% block content %}
-    {% if is_active %}
           <div class="container">
             <br>
             <h1>Generate your perfect product’s image <br>based on your voice chat</h1><br><br>
@@ -25,22 +24,21 @@
                 <div id="audios-container"></div>
             </section>
             <div>
-            <div id="text_div" style="display:flex;">
-                <input type="text" class="form-control" name="voice_text" id="voice_text">
-                <div>
+
+                <div id="text_div" style="display:flex;">
+                     <input type="text" class="form-control" name="voice_text" id="voice_text">
+                    <div>
                     <button id="voice_text_btn">Generate Images</button>
                 </div>
-            </div>
+                </div>
 
          </div>
         <div class="container" style="margin-top: 67px;">
-        <div class="row" id="openai">
-            <img id="loading" src="{% static 'images/loading.svg' %}">
+           <div class="row" id="openai">
+               <img id="loading" src="{% static 'images/loading.svg' %}">
+           </div>
         </div>
-    </div>
-              {% else %}
-        <div class="text-center"><h2 >Limit Exceeded please buy more requests</h2></div>
-     {% endif %}
+          </div>
     <div>
         <button id="submit_command" style="display:none;"></button>
     </div>

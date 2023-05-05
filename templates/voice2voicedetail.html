@@ -1,5 +1,5 @@
 {% extends 'parent.html' %}
-{% block tittle %}Chatgptmall | Voice To Voice Details{% endblock %}
+{% block tittle %}Chatgptmall | Voice-activated Voice Content Generate{% endblock %}
 {% load static %}
 {% block body %}
 
@@ -11,7 +11,7 @@
         <div class="container position-relative">
           <div class="row d-flex justify-content-center">
             <div class="col-lg-6 text-center">
-              <h2 style="color:black;">Voice To Voice Details</h2>
+              <h2 style="color:black;">Voice-activated Voice Content Generate</h2>
               </div>
           </div>
         </div>
@@ -20,7 +20,7 @@
         <div class="container">
           <ol>
             <li><a href="{% url 'HomepageView' %}">Home</a></li>
-            <li>Service Details</li>
+            <li>VVoiceContenGen Details</li>
           </ol>
         </div>
       </nav>
@@ -31,30 +31,68 @@
       <div class="container" data-aos="fade-up">
 
         <div class="row gy-4">
+          <div class="col-lg-12">
+            <h3>"Voice-activated Voice Content Generate" refers to ChatGPT's ability to generate general content through voice interactions with voice as both
+              the input and output modality. It is one of the capabilities of ChatGPT's natural language processing and generation system.</h3><br><br>
+            <p>
+              <b>Use case:</b>Voice-activated Voice Content Generate can be used to develop voice assistants capable of generating natural-sounding responses to voice commands.
+              For example, a business could use this technology to create an interactive voice assistant that responds
+              to customers' inquiries and completes tasks through natural conversations.<br><br>
+              <b>How it works:</b>Voice-activated Voice Content Generate uses machine learning algorithms to analyze voice inputs and generate relevant and accurate responses.
+              The technology can be trained on specific industries or domains, making it possible to create voice assistants that are tailored to the user's needs. <br><br>
+              <b>Hardware integration:</b>Voice-activated Voice Content Generate can be integrated with a variety of hardware devices, including smart speakers,
+              mobile phones, and computers, equipped with microphones and speakers.
+            </p>
+            <p>
+              Our platform provides an API for businesses and individuals to easily integrate ChatGPT's Voice-activated Voice Content Generate into their existing workflows and devices. With our user-friendly platform and flexible API, users can easily create and customize their own voice assistants for a wide range of applications.
 
-          <div class="col-lg-4">
-            <div class="services-list">
-              <a href="{% url 'our_plans' %}" class="active">Buy Voice To Voice Plan</a>
-            </div>
+            </p>
+            <p>
+              Overall, Voice-activated Voice Content Generate provides businesses and individuals with a powerful tool for developing voice assistants capable of natural-sounding conversations. By integrating with a variety of hardware devices, it enables users to interact with AI assistants using voice inputs on their preferred devices.
 
-            <h4>Plan Details</h4>
-            <p>{{plan.description | safe}}</p>
-             </div>
+            </p><br><br>
 
-          <div class="col-lg-8">
-            <img src="assets/img/service-details.jpg" alt="" class="img-fluid services-img">
-            <h3>How To Use Voice To Voice</h3>
+            <!--chinese content-->
+            <h3>
 
-            <ul>
-              <li><i class="bi bi-check-circle"></i> <span>Buy Voice To Voice Subscription</span></li>
-              <li><i class="bi bi-check-circle"></i> <span>Click on microphone to start voice</span></li>
-              <li><i class="bi bi-check-circle"></i> <span>Click on stop microphone to stop your voice</span></li>
-            </ul>
-          {% if is_subscribed %}
+            </h3><br><br>
+
+            <p>
+              <b>使用场景:</b>
+
+
+              <br><br>
+
+              <b>工作原理:</b>
+
+
+              <br><br>
+
+              <b>硬件集成:</b>
+
+
+            </p>
+
+            <p>
+
+
+            </p>
+
+            <p>
+
+
+            </p>
             <div>
-            <a style="width:100%;margin-top:75px;" href="{% url 'VoiceToVoice' %}" class="btn btn-primary">Checkout</a>
+              {% if request.user.premium == 1 %}
+                  <a style="width:100%;margin-top:75px;" href="{% url 'VoiceToVoice' %}" class="btn btn-primary">Use Voice To Voice</a>
+              {% else %}
+                {% if has_expired %}
+                  <a style="width:100%;margin-top:75px;" href="{% url 'Checkout' plan.id %}" class="btn btn-primary">Buy Voice To Voice Plan</a>
+                {% else %}
+                  <a style="width:100%;margin-top:75px;" href="{% url 'VoiceToVoice' %}" class="btn btn-primary">Try Voice To Voice Free</a>
+                {% endif %}
+              {% endif %}
             </div>
-          {% endif %}
           </div>
 
         </div>

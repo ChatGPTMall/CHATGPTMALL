@@ -69,11 +69,11 @@
               <li><a href="{% url 'TextToVoiceDetail' %}">文本产音频TextGaudio </a></li>
               <li><a href="{% url 'TextToTextDetail' %}">文本产文本TextGText</a></li>
               <li><a href="{% url 'TextToImageDetail' %}">文本产图片TextGImage</a></li>
-              <li><a href="{% url 'ImageToImage' %}">图像产图像ImageGimag</a></li>
-              <li><a href="{% url 'ImageAnalysis' %}">图像分析Imageanaly</a></li>
-              <li><a href="{% url 'ObjectsDetection' %}">图像理解ImageUnderst </a></li>
-              <li><a href="{% url 'GetCommand' %}">音频产指令AudioGcomd</a></li>
-              <li><a href="{% url 'TextToCommand' %}">文本产指令TextGComd</a></li>
+              <li><a href="{% url 'ImageToImageDetail' %}">图像产图像ImageGimag</a></li>
+              <li><a href="{% url 'ImageAnalysisDetail' %}">图像分析Imageanaly</a></li>
+              <li><a href="{% url 'ImageDetectDetail' %}">图像理解ImageUnderst </a></li>
+              <li><a href="{% url 'VoiceToCommandDetail' %}">音频产指令AudioGcomd</a></li>
+              <li><a href="{% url 'TextToCommandDetail' %}">文本产指令TextGComd</a></li>
             </ul>
           </li>
           <li class="dropdown"><a href="#"><span>加入虚拟工厂JoinVirtual factory</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
@@ -104,6 +104,11 @@
                 <i class="bi bi-chevron-down dropdown-indicator"></i>
               </a>
               <ul>
+
+                <li><a href="#">AI硬件市场 HardwareMarkeplace</a></li>
+                <li><a href="#">订阅及接口Subscription and API</a></li>
+                <li><a href="#">集成硬件Integration Hardware</a></li>
+                <li><a href="#">软件及工具Software and Tools</a></li>
                 <li><a href="{% url 'ProfileView' %}">Profile</a></li>
                 <li><a href="{% url 'ApiKeyView' %}">API Key</a></li>
                 <li><hr class="dropdown-divider"></li>
@@ -113,7 +118,11 @@
 <!--          <li><a class="get-a-quote" href="{% url 'Logout' %}">Logout</a></li>-->
           {% else %}
             <li class="dropdown"><a href="#"><span>更多</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
-            <ul style="margin-left: -121px !important; color:white;">
+            <ul style="margin-left: -171px !important; color:white;">
+                <li style="padding: 0px 17px;"><a href="#">AI硬件市场 HardwareMarkeplace</a></li>
+                <li style="padding: 0px 17px;"><a href="#">订阅及接口Subscription and API</a></li>
+                <li style="padding: 0px 17px;"><a href="#">集成硬件Integration Hardware</a></li>
+                <li style="padding: 0px 17px;"><a href="#">软件及工具Software and Tools</a></li>
                 <li style="padding: 0px 17px;"><a style="color:white; !important" class="get-a-quote" href="{% url 'LoginView' %}">登录Signin</a></li>
             </ul>
           </li>

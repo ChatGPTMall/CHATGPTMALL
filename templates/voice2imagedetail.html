@@ -1,5 +1,5 @@
 {% extends 'parent.html' %}
-{% block tittle %}Chatgptmall | Voice To Image Details{% endblock %}
+{% block tittle %}Chatgptmall | Voice-activated Image Content Generate{% endblock %}
 {% load static %}
 {% block body %}
 
@@ -11,7 +11,7 @@
         <div class="container position-relative">
           <div class="row d-flex justify-content-center">
             <div class="col-lg-6 text-center">
-              <h2 style="color:black;">Voice To Image Details</h2>
+              <h2 style="color:black;">Voice-activated Image Content Generate</h2>
               </div>
           </div>
         </div>
@@ -20,7 +20,7 @@
         <div class="container">
           <ol>
             <li><a href="{% url 'HomepageView' %}">Home</a></li>
-            <li>Service Details</li>
+            <li>VImageContentGen  Details</li>
           </ol>
         </div>
       </nav>
@@ -31,30 +31,76 @@
       <div class="container" data-aos="fade-up">
 
         <div class="row gy-4">
+          <div class="col-lg-12">
+            <h3>
+"Voice-activated Image Content Generate" refers to ChatGPT's ability to generate general content through voice interactions with images as the input modality. It is another capability of ChatGPT's natural language processing and generation system.
 
-          <div class="col-lg-4">
-            <div class="services-list">
-              <a href="{% url 'our_plans' %}" class="active">Buy Voice To Image Plan</a>
-            </div>
+            </h3><br><br>
 
-            <h4>Plan Details</h4>
-            <p>{{plan.description | safe}}</p>
-             </div>
+            <p>
+              <b>Use case:</b>
+Voice-activated Image Content Generate can be used in a variety of applications, such as image search, automated captioning, and content creation. For example, a user can use this technology to search for specific images by describing them in natural language or to generate captions for images using voice commands.
+              <br><br>
 
-          <div class="col-lg-8">
-            <img src="assets/img/service-details.jpg" alt="" class="img-fluid services-img">
-            <h3>How To Use Voice To Image</h3>
+              <b>How it works:</b>
+Voice-activated Image Content Generate uses natural language processing (NLP) technology to analyze voice inputs and generate relevant image content. It can identify objects, people, and scenes in images and provide information and descriptions based on the user's commands.
 
-            <ul>
-              <li><i class="bi bi-check-circle"></i> <span>Buy Voice To Image Subscription</span></li>
-              <li><i class="bi bi-check-circle"></i> <span>Click on microphone to start voice</span></li>
-              <li><i class="bi bi-check-circle"></i> <span>Click on stop microphone to stop your voice</span></li>
-            </ul>
-          {% if is_subscribed %}
+              <br><br>
+
+              <b>What Hardware can be integrated:</b>
+Voice-activated Image Content Generate can be integrated with a variety of devices, including smartphones, tablets, and smart speakers with built-in microphones. It also requires a camera or image input device to process the image content.
+
+            </p>
+            <p>
+              Our Platform: Our platform provides an API for businesses and individuals to easily integrate ChatGPT's Voice-activated Image Content Generate into their existing workflows and devices. With our user-friendly platform and flexible API, users can easily create and customize their own AI assistants for a wide range of applications.
+
+            </p>
+            <p>
+Overall, Voice-activated Image Content Generate provides businesses and individuals with a powerful tool for improving image search, generating accurate image captions, and creating engaging content. Whether you're looking to enhance your content marketing strategy or streamline image search, ChatGPT's Voice-activated Image Content Generate can help you achieve your goals with ease.
+
+            </p><br><br>
+
+            <!--chinese content-->
+            <h3>
+
+            </h3><br><br>
+
+            <p>
+              <b>使用场景:</b>
+
+
+              <br><br>
+
+              <b>工作原理:</b>
+
+
+              <br><br>
+
+              <b>硬件集成:</b>
+
+
+            </p>
+
+            <p>
+
+
+            </p>
+
+            <p>
+
+
+            </p>
             <div>
-            <a style="width:100%;margin-top:75px;" href="{% url 'VoiceToImage' %}" class="btn btn-primary">Checkout</a>
+              {% if request.user.premium == 1 %}
+                  <a style="width:100%;margin-top:75px;" href="{% url 'VoiceToImage' %}" class="btn btn-primary">Use Voice To Image</a>
+              {% else %}
+                {% if has_expired %}
+                  <a style="width:100%;margin-top:75px;" href="{% url 'Checkout' plan.id %}" class="btn btn-primary">Buy Voice To Image Plan</a>
+                {% else %}
+                  <a style="width:100%;margin-top:75px;" href="{% url 'VoiceToImage' %}" class="btn btn-primary">Try Voice To Image Free</a>
+                {% endif %}
+              {% endif %}
             </div>
-          {% endif %}
           </div>
 
         </div>

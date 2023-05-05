@@ -1,5 +1,5 @@
 {% extends 'parent.html' %}
-{% block tittle %}Chatgptmall | Text To Image Details{% endblock %}
+{% block tittle %}Chatgptmall | Text-activated Image Content Generate{% endblock %}
 {% load static %}
 {% block body %}
 
@@ -11,7 +11,7 @@
         <div class="container position-relative">
           <div class="row d-flex justify-content-center">
             <div class="col-lg-6 text-center">
-              <h2 style="color:black;">Text To Image Details</h2>
+              <h2 style="color:black;">Text-activated Image Content Generate</h2>
               </div>
           </div>
         </div>
@@ -20,7 +20,7 @@
         <div class="container">
           <ol>
             <li><a href="{% url 'HomepageView' %}">Home</a></li>
-            <li>Service Details</li>
+            <li>TextGimage  Details</li>
           </ol>
         </div>
       </nav>
@@ -31,30 +31,71 @@
       <div class="container" data-aos="fade-up">
 
         <div class="row gy-4">
+          <div class="col-lg-12">
+            <h3>
+"Text-activated Image Content generate" refers to ChatGPT's ability to generate general content related to images through text interactions with images as the input modality.
+            </h3><br><br>
 
-          <div class="col-lg-4">
-            <div class="services-list">
-              <a href="{% url 'our_plans' %}" class="active">Buy Text To Image Plan</a>
-            </div>
+            <p>
+              <b>Use case:</b>
+Text-activated Image Content Generate can be used in various applications such as e-commerce, social media, and image recognition. For example, an e-commerce website can use this technology to generate images of products based on user's text input, or social media platforms can use it to create personalized image content for users.
+              <br><br>
 
-            <h4>Plan Details</h4>
-            <p>{{plan.description | safe}}</p>
-             </div>
+              <b>How it works:</b>
+Text-activated Image Content Generate uses machine learning and computer vision technology to analyze text inputs and generate relevant and accurate images. It can be trained on specific domains or industries to ensure that the generated images are tailored to the user's needs.
+              <br><br>
 
-          <div class="col-lg-8">
-            <img src="assets/img/service-details.jpg" alt="" class="img-fluid services-img">
-            <h3>How To Use Voice To Image</h3>
+              <b>What Hardware can be integrated:</b>
+Text-activated Image Content Generate can be integrated with a wide range of hardware, including computers, mobile devices, cameras, and smart glasses. This enables users to interact with AI assistants using text inputs on their preferred devices.
+            </p>
+            <p>
+       Our platform provides an API for businesses and individuals to easily integrate ChatGPT's Text-activated Image Content Generate into their existing workflows and devices. With our user-friendly platform and flexible API, users can easily create and customize their own AI assistants for a wide range of applications.
+            </p>
+            <p>
+Overall, Text-activated Image Content Generate provides businesses and individuals with a powerful tool for generating personalized and engaging image content, enhancing user experience, and streamlining image recognition tasks. Whether you're looking to improve your e-commerce website, create personalized image content for social media, or enhance your image recognition capabilities, ChatGPT's Text-activated Image Content Generate can help you achieve your goals with ease.
+            </p><br><br>
 
-            <ul>
-              <li><i class="bi bi-check-circle"></i> <span>Buy Text To Image Subscription</span></li>
-              <li><i class="bi bi-check-circle"></i> <span>Click on microphone to start voice</span></li>
-              <li><i class="bi bi-check-circle"></i> <span>Click on stop microphone to stop your voice</span></li>
-            </ul>
-          {% if is_subscribed %}
+            <!--chinese content-->
+            <h3>
+“文本触发图像内容生成”是指ChatGPT使用文本交互作为输入方式，生成与图像相关的通用内容的能力。
+            </h3><br><br>
+
+            <p>
+              <b>使用场景:</b>
+文本触发图像内容生成可应用于电子商务、社交媒体和图像识别等多种应用。例如，电子商务网站可以使用此技术基于用户的文本输入生成产品图像，或社交媒体平台可以使用它创建个性化的图像内容。
+
+              <br><br>
+
+              <b>工作原理:</b>
+文本触发图像内容生成使用机器学习和计算机视觉技术分析文本输入并生成相关准确的图像。它可以针对特定的领域或行业进行训练，以确保生成的图像符合用户的需求。
+
+
+
+              <br><br>
+
+              <b>硬件集成:</b>
+文本触发图像内容生成可与广泛的硬件集成，包括计算机、移动设备、相机和智能眼镜等。这使得用户可以在其首选设备上使用文本输入与AI助手交互。
+              <br><br>
+
+              <b>我们的平台:</b>
+我们的平台为企业和个人提供API，轻松将ChatGPT的文本触发图像内容生成集成到其现有的工作流程和设备中。通过我们用户友好的平台和灵活的API，用户可以轻松地创建和定制自己的AI助手，以满足各种应用需求。
+            </p>
+
+            <p>
+总体而言，文本触发图像内容生成为企业和个人提供了一个强大的工具，用于生成个性化、吸引人的图像内容，增强用户体验和简化图像识别任务。无论您是想改善您的电子商务网站，为社交媒体创建个性化的图像内容，还是增强您的图像识别能力，ChatGPT的文本触发图像内容生成都可以帮助您轻松实现您的目标。
+
+            </p>
             <div>
-            <a style="width:100%;margin-top:75px;" href="{% url 'TextToImage' %}" class="btn btn-primary">Checkout</a>
+              {% if request.user.get_access %}
+                  <a style="width:100%;margin-top:75px;" href="{% url 'TextToImage' %}" class="btn btn-primary">Use Text To Image</a>
+              {% else %}
+                {% if has_expired %}
+                  <a style="width:100%;margin-top:75px;" href="{% url 'Checkout' plan.id %}" class="btn btn-primary">Buy Text To Image Plan</a>
+                {% else %}
+                  <a style="width:100%;margin-top:75px;" href="{% url 'TextToImage' %}" class="btn btn-primary">Try Text To Image Free</a>
+                {% endif %}
+              {% endif %}
             </div>
-          {% endif %}
           </div>
 
         </div>

@@ -1,5 +1,5 @@
 {% extends 'parent.html' %}
-{% block tittle %}Chatgptmall | Text To Voice Details{% endblock %}
+{% block tittle %}Chatgptmall | Text-activated Voice Content Generate{% endblock %}
 {% load static %}
 {% block body %}
 
@@ -11,7 +11,7 @@
         <div class="container position-relative">
           <div class="row d-flex justify-content-center">
             <div class="col-lg-6 text-center">
-              <h2 style="color:black;">Text To Voice Details</h2>
+              <h2 style="color:black;">Text-activated Voice Content Generate</h2>
               </div>
           </div>
         </div>
@@ -20,7 +20,7 @@
         <div class="container">
           <ol>
             <li><a href="{% url 'HomepageView' %}">Home</a></li>
-            <li>Service Details</li>
+            <li>TVoiceContentGen  Details</li>
           </ol>
         </div>
       </nav>
@@ -31,30 +31,75 @@
       <div class="container" data-aos="fade-up">
 
         <div class="row gy-4">
+          <div class="col-lg-12">
+            <h3>
+"Text-activated Voice Content Generate" could refer to ChatGPT's ability to generate general content through text interactions with voice as the output modality.
 
-          <div class="col-lg-4">
-            <div class="services-list">
-              <a href="{% url 'our_plans' %}" class="active">Buy Text To Voice Plan</a>
-            </div>
+            </h3><br><br>
 
-            <h4>Plan Details</h4>
-            <p>{{plan.description | safe}}</p>
-             </div>
+            <p>
+              <b>Use case:</b>
+Text-activated Voice Content Generate can be used in a variety of applications such as voice assistants, speech-to-text software, and audio content creation. For example, a business can use this technology to create personalized audio messages or to generate audio transcripts of customer interactions
 
-          <div class="col-lg-8">
-            <img src="assets/img/service-details.jpg" alt="" class="img-fluid services-img">
-            <h3>How To Use Text To Voice</h3>
+              <br><br>
 
-            <ul>
-              <li><i class="bi bi-check-circle"></i> <span>Buy Text To Voice Subscription</span></li>
-              <li><i class="bi bi-check-circle"></i> <span>Click on microphone to start voice</span></li>
-              <li><i class="bi bi-check-circle"></i> <span>Click on stop microphone to stop your voice</span></li>
-            </ul>
-          {% if is_subscribed %}
+              <b>How it works:</b>
+Text-activated Voice Content Generate uses natural language processing (NLP) technology to analyze text inputs and generate synthesized voices that speak the text. Users can customize the voice's tone, pitch, and other characteristics to create a more personalized experience.
+
+              <br><br>
+
+              <b>What Hardware can be integrated:</b>
+Text-activated Voice Content Generate can be integrated with a wide range of hardware, including computers, mobile devices, and smart speakers, Microphone, Headphone. This enables users to interact with AI assistants using text inputs and voice outputs on their preferred devices.
+
+            </p>
+            <p>
+       Our platform provides an API for businesses and individuals to easily integrate ChatGPT's Text-activated Voice Content Generate into their existing workflows and devices. With our user-friendly platform and flexible API, users can easily create and customize their own AI assistants for a wide range of applications.
+            </p>
+            <p>
+Overall, Text-activated Voice Content Generate provides businesses and individuals with a powerful tool for creating personalized and engaging audio content, improving customer service, and automating routine tasks. Whether you're looking to generate audio transcripts of customer interactions, create personalized audio messages, or build a voice assistant, ChatGPT's text-activated voice content generation can help you achieve your goals with ease.
+            </p><br><br>
+
+            <!--chinese content-->
+            <h3>
+
+            </h3><br><br>
+
+            <p>
+              <b>使用场景:</b>
+
+
+              <br><br>
+
+              <b>工作原理:</b>
+
+
+              <br><br>
+
+              <b>硬件集成:</b>
+
+
+            </p>
+
+            <p>
+
+
+            </p>
+
+            <p>
+
+
+            </p>
             <div>
-            <a style="width:100%;margin-top:75px;" href="{% url 'TextToVoice' %}" class="btn btn-primary">Checkout</a>
+              {% if request.user.get_access %}
+                  <a style="width:100%;margin-top:75px;" href="{% url 'TextToVoice' %}" class="btn btn-primary">Use Text To Voice</a>
+              {% else %}
+                {% if has_expired %}
+                  <a style="width:100%;margin-top:75px;" href="{% url 'Checkout' plan.id %}" class="btn btn-primary">Buy Text To Voice Plan</a>
+                {% else %}
+                  <a style="width:100%;margin-top:75px;" href="{% url 'TextToVoice' %}" class="btn btn-primary">Try Text To Voice Free</a>
+                {% endif %}
+              {% endif %}
             </div>
-          {% endif %}
           </div>
 
         </div>
