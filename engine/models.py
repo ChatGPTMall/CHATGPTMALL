@@ -132,6 +132,7 @@ class AccessTypes(models.TextChoices):
     VOICE_TO_Voice = "VOICE_TO_Voice", _('Voice To Voice')
     VOICE_TO_IMAGE = "VOICE_TO_IMAGE", _('Voice To Image')
     TEXT_TO_IMAGE = "TEXT_TO_IMAGE", _('Text To Image')
+    Image_To_Text = "Image_To_Text", _('Image To Text')
     IMAGE_TO_IMAGE = "IMAGE_TO_IMAGE", _('Image To Image')
     IMAGE_ANALYSIS = "IMAGE_ANALYSIS", _('Image Analysis')
     OBJECTS_DETECTION = "OBJECTS_DETECTION", _('Objects Detection')

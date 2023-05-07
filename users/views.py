@@ -1,3 +1,4 @@
+import json
 import os
 import random
 import urllib
@@ -8,6 +9,15 @@ import requests
 from django.conf import settings
 from PIL import Image, ImageDraw, ImageFont
 import openai
+from azure.cognitiveservices.vision.computervision import ComputerVisionClient
+from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
+from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
+from msrest.authentication import CognitiveServicesCredentials
+from array import array
+import os
+from PIL import Image
+import sys
+import time
 import qrcode
 from django.core import files
 from django.core.files import File
@@ -466,11 +476,22 @@ def ImageToImage(request):
     if request.user.is_authenticated:
         text = request.GET.get("item", None)
         if request.user.premium == 1:
-            if Subscriptions.objects.filter(user=request.user, plan__access="IMAGE_TO_IMAGE", is_expired=False).exists():
+            if Subscriptions.objects.filter(user=request.user, plan__access="Image_To_Text", is_expired=False).exists():
                 return render(request, "imagetoimage.html")
             return redirect('/api/renew/subscription/', context={"text": text})
         return render(request, "imagetoimage.html", context={"text": text})
     return redirect(reverse("LoginView") + "?page={}".format("models/image_to_image/detail/"))
+
+
+def ImageToText(request):
+    if request.user.is_authenticated:
+        text = request.GET.get("item", None)
+        if request.user.premium == 1:
+            if Subscriptions.objects.filter(user=request.user, plan__access="Image_To_Text", is_expired=False).exists():
+                return render(request, "imagetotext.html")
+            return redirect('/api/renew/subscription/', context={"text": text})
+        return render(request, "imagetotext.html", context={"text": text})
+    return redirect(reverse("LoginView") + "?page={}".format("models/image_to_text/detail/"))
 
 
 def ImageToImageCalculate(request):
@@ -551,6 +572,86 @@ def SaveAnalysisImage(request):
     except Exception as e:
         pass
     return HttpResponse(str(img.file.url))
+
+@csrf_exempt
+def GetOcrImage(request):
+    img = ImageAnalysisDB.objects.create(file=request.FILES.get("image"))
+    try:
+        if request.user.premium == 1:
+            plan = Plans.objects.filter(access="Image_To_Text").last()
+            obj, created = Subscriptions.objects.get_or_create(user=request.user, plan=plan)
+            obj.requests_send += 1
+            obj.save()
+            if obj.requests_send >= obj.plan.requests:
+                obj.is_expired = True
+                obj.save()
+        if request.user.premium == 0:
+            plan = Plans.objects.filter(access="Image_To_Text").last()
+            obj, create = FreeSubscriptions.objects.get_or_create(user=request.user, plan=plan)
+            obj.requests_send += 1
+            obj.save()
+            if obj.requests_send >= obj.plan.free_requests:
+                obj.is_expired = True
+                obj.save()
+    except Exception as e:
+        pass
+    subscription_key = "B0faa09900954b4ab9eee55e133399cc"
+    endpoint = "https://bennyocr.cognitiveservices.azure.com/"
+    computervision_client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(subscription_key))
+    read_response = computervision_client.read(str(img.file.url), raw=True)
+    # Get the operation location (URL with an ID at the end) from the response
+    read_operation_location = read_response.headers["Operation-Location"]
+    # Grab the ID from the URL
+    operation_id = read_operation_location.split("/")[-1]
+
+    # Call the "GET" API and wait for it to retrieve the results
+    while True:
+        read_result = computervision_client.get_read_result(operation_id)
+        if read_result.status not in ['notStarted', 'running']:
+            break
+        time.sleep(1)
+    response = ""
+    # Print the detected text, line by line
+    if read_result.status == OperationStatusCodes.succeeded:
+        for text_result in read_result.analyze_result.read_results:
+            for line in text_result.lines:
+                response += line.text + "\n"
+
+    return HttpResponse(str(response))
+
+
+@csrf_exempt
+def OCRContentGenerate(request):
+    user_input = request.POST.get('input', '')
+    data = request.POST.get('data', '')
+    prompt = user_input + data
+    key = KeyManagement.objects.all().last()
+    openai.api_key = key.key
+    if key.platform == "MICROSOFT":
+        openai.api_base = "{}".format(key.endpoint)
+        openai.api_type = 'azure'
+        openai.api_version = "2023-03-15-preview"
+        model = "davinci"
+        response = openai.Completion.create(
+            engine=model,
+            max_tokens=int(10000),
+            prompt=prompt,
+        )
+        text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
+        return HttpResponse(str(text))
+    else:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a chatbot"},
+                {"role": "user", "content": "{}?".format(prompt)},
+                ]
+        )
+        result = ''
+        for choice in response.choices:
+            result += choice.message.content
+
+        return HttpResponse(str(result))
 
 
 @csrf_exempt
@@ -1187,5 +1288,18 @@ def TextToCommandDetail(request):
                 if int(plan_sub.requests_send) >= int(plan.free_requests):
                     has_expired = True
     return render(request, "text2commanddetail.html", context={
+        "plan": plan, "has_expired": has_expired})
+
+
+def ImageToTextDetail(request):
+    has_expired = False
+    plan = Plans.objects.filter(access="Image_To_Text").last()
+    if request.user.is_authenticated:
+        if plan:
+            if request.user.free_purchases.filter(plan=plan).exists():
+                plan_sub = request.user.free_purchases.filter(plan=plan).last()
+                if int(plan_sub.requests_send) >= int(plan.free_requests):
+                    has_expired = True
+    return render(request, "image2textdetail.html", context={
         "plan": plan, "has_expired": has_expired})
 

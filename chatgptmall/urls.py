@@ -32,7 +32,8 @@ from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, Upl
     KeyManagementView, ForgotPassword, ChangePassword, RenewSubscription, deletekey, TextToVoice, \
     MicrosoftKeyManagementView, get_text, WatchVideo, get_image, TextToCommand, AiModels, VoiceToVoiceDetail, \
     VoiceToImageDetail, TextToVoiceDetail, TextToTextDetail, TextToImageDetail, ImageToImageDetail, ImageAnalysisDetail, \
-    ImageDetectDetail, VoiceToCommandDetail, TextToCommandDetail
+    ImageDetectDetail, VoiceToCommandDetail, TextToCommandDetail, ImageToTextDetail, ImageToText, GetOcrImage, \
+    OCRContentGenerate
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -81,6 +82,7 @@ urlpatterns = [
     path('api/text_to_text/', TextToText, name="TextToText"),
     path('api/text_to_image/', TextToImage, name="TextToImage"),
     path('api/image_to_image/', ImageToImage, name="ImageToImage"),
+    path('api/image_to_text/', ImageToText, name="ImageToText"),
     path('api/image_to_image/calculate/', ImageToImageCalculate, name="ImageToImageCalculate"),
     path('api/image/analysis/', ImageAnalysis, name="ImageAnalysis"),
     path('api/v1/video/analysis/', VideoAnalysis, name="VideoAnalysis"),
@@ -151,6 +153,11 @@ urlpatterns = [
     path("models/image_detect/detail/", ImageDetectDetail, name="ImageDetectDetail"),
     path("models/voice_to_command/detail/", VoiceToCommandDetail, name="VoiceToCommandDetail"),
     path("models/text_to_command/detail/", TextToCommandDetail, name="TextToCommandDetail"),
+    path("models/image_to_text/detail/", ImageToTextDetail, name="ImageToTextDetail"),
+
+    # OCR
+    path("json/ocr/image/", GetOcrImage, name="GetOcrImage"),
+    path("ocr/content/generate/", OCRContentGenerate, name="OCRContentGenerate")
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -1,0 +1,107 @@
+{% extends 'parent.html' %}
+{% block tittle %}Chatgptmall | Image-activated Text Content Generate{% endblock %}
+{% load static %}
+{% block body %}
+
+  <main id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <div class="breadcrumbs">
+      <div class="page-header d-flex align-items-center" style="background-image: url('assets/img/page-header.jpg');">
+        <div class="container position-relative">
+          <div class="row d-flex justify-content-center">
+            <div class="col-lg-6 text-center">
+              <h2 style="color:black;">Image-activated Text Content Generate</h2>
+              </div>
+          </div>
+        </div>
+      </div>
+      <nav>
+        <div class="container">
+          <ol>
+            <li><a href="{% url 'HomepageView' %}">Home</a></li>
+            <li>imageGtext  Details</li>
+          </ol>
+        </div>
+      </nav>
+    </div><!-- End Breadcrumbs -->
+
+    <!-- ======= Service Details Section ======= -->
+    <section id="service-details" class="service-details">
+      <div class="container" data-aos="fade-up">
+
+        <div class="row gy-4">
+          <div class="col-lg-12">
+            <h3>
+"Image-activated Text Content Generate" refers to ChatGPT's ability to generate general content through image interactions with images as both the input and output modality.
+            </h3><br><br>
+
+            <p>
+              <b>Use case:</b>
+Image-activated Text Content Generate can be used in a variety of applications such as image search engines, image recognition systems, and automated image processing. For example, businesses can use this technology to identify objects within images for cataloging purposes, or to generate tags and descriptions for images used in marketing and advertising.
+                <br><br>
+
+              <b>How it works:</b>
+Image-activated Text Content Generate uses computer vision technology to analyze image inputs and generate relevant and accurate content. It can recognize and classify objects within images, generate image captions and tags, and even create original content based on the input image.
+                <br><br>
+
+              <b>What Hardware can be integrated:</b>
+Image-activated Text Content Generate can be integrated with a wide range of hardware, including cameras, scanners, and mobile devices. This enables users to capture and process images using a variety of devices, and to access AI-assisted image processing capabilities directly from their devices.
+            </p>
+            <p>
+Our platform provides an API for businesses and individuals to easily integrate ChatGPT's Image-activated Image Content Generate into their existing workflows and devices. With our user-friendly platform and flexible API, users can easily create and customize their own AI assistants for a wide range of applications.
+            </p>
+            <p>
+Overall, Image-activated Text Content Generate provides businesses and individuals with a powerful tool for automating image processing, improving image search and recognition, and enhancing marketing and advertising efforts. Whether you're looking to catalog your image library, improve search functionality, or generate original content, ChatGPT's image-activated image content generation can help you achieve your goals with ease.
+            </p><br><br>
+
+            <!--chinese content-->
+            <h3>
+                “图像触发图像内容生成”是指ChatGPT通过与图像的交互作为输入模态生成通用内容的能力。
+            </h3><br><br>
+
+            <p>
+              <b>使用场景:</b>
+                图像触发图像内容生成可用于各种应用，例如图像搜索引擎、图像识别系统和自动化图像处理。例如，企业可以使用这项技术识别目录中图像内的物体，或为营销和广告使用的图像生成标签和描述。
+
+              <br><br>
+
+              <b>工作原理:</b>
+图像触发图像内容生成使用计算机视觉技术分析图像输入并生成相关准确的内容。它可以识别和分类图像中的物体，生成图像标题和标签，甚至根据输入的图像创建原创内容。
+
+
+              <br><br>
+
+              <b>硬件集成:</b>
+                图像触发图像内容生成可以与各种硬件集成，包括相机、扫描仪和移动设备。这使得用户可以使用各种设备捕获和处理图像，并直接从其设备访问AI辅助的图像处理功能。
+
+
+              <br><br>
+            </p>
+
+            <p>
+我们的平台提供了一个API，让企业和个人可以轻松地将ChatGPT的图像触发图像内容生成集成到其现有的工作流程和设备中。通过我们用户友好的平台和灵活的API，用户可以轻松创建和定制自己的AI助手，用于各种应用。
+            </p>
+              <p>
+                 总体而言，图像触发图像内容生成为企业和个人提供了一个强大的工具，用于自动化图像处理、改善图像搜索和识别以及增强营销和广告。无论您是想目录化图像库、改善搜索功能还是生成原创内容，ChatGPT的图像触发图像内容生成都可以帮助您轻松实现目标。
+              </p>
+            <div>
+              {% if request.user.get_access %}
+                  <a style="width:100%;margin-top:75px;" href="{% url 'ImageToText' %}" class="btn btn-primary">Use Image To Text</a>
+              {% else %}
+                {% if has_expired %}
+                  <a style="width:100%;margin-top:75px;" href="{% url 'Checkout' plan.id %}" class="btn btn-primary">Buy Image To Text Plan</a>
+                {% else %}
+                  <a style="width:100%;margin-top:75px;" href="{% url 'ImageToText' %}" class="btn btn-primary">Try Image To Text Free</a>
+                {% endif %}
+              {% endif %}
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Service Details Section -->
+
+  </main><!-- End #main -->
+{% endblock %}
