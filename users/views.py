@@ -634,7 +634,6 @@ def OCRContentGenerate(request):
         model = "davinci"
         response = openai.Completion.create(
             engine=model,
-            max_tokens=int(10000),
             prompt=prompt,
         )
         text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
