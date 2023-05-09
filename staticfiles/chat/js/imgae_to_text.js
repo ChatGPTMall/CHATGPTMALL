@@ -18,7 +18,6 @@ $(document).ready(function() {
                         $("#myTextarea").show();
                         $("#myTextareainput").show();
                         $("#input_btn").show();
-//                        $("#send_post_community").show();
                         $('#myTextarea').text(text);
                      },
                      error: function (response) {

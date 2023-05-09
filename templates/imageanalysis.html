@@ -50,17 +50,46 @@
                 <input type="file" class="form-control" id="image" name="image">
               </div>
                 <br><br>
+
               <button type="submit" id="btn_analysis" class="btn btn-primary">Generate Image Analysis</button>
+              <a id="captureBtn" class="btn btn-primary">Capture Photo</a>
+              <a id="open_camera" class="btn btn-primary">Open Camera</a>
+              <a id="close_camera" class="btn btn-primary">Close Camera</a>
+                <div>
+                <br>
+                <video id="video" width="400" height="300" autoplay></video>
+                </div>
             </form>
         </div>
     </div>
     <br><br>
     <div class="container">
-            <img id="loading" src="{% static 'images/loading.svg' %}">
+            <img id="loading" style="position: absolute;top: 0;left: -13px;width: 100%;background: white;height: 100vh;display: flex;justify-content: center;" src="{% static 'images/loading.svg' %}">
         </div>
     <div class="container">
-        <div class="row" id="images_row">
-            <textarea name="" class="form-control" id="myTextarea" rows="15"></textarea>
+        <div class="row" id="images_row" style="display:flex;">
+            <div class="col-md-6">
+            <p class="show_json col-md-6">Image Analysis</p>
+            <textarea name="" class="form-control col-md-6" id="myTextarea" rows="15"></textarea>
+            </div>
+            <div class="col-md-6">
+            <p class="show_json">OCR JSON</p>
+            <textarea name="" class="form-control" id="myTextareaOCR" rows="15"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="input_div">
+        <div class="row">
+            <div class="col-md-12" style="margin-top:35px;">
+                <textarea name="" class="form-control col-md-6" id="input_text_area" rows="9"></textarea><br><br>
+                <button style="margin-top:23px;margin-bottom:50px;" id="input_btn" class="btn btn-primary">Generate Content</button>
+            </div>
+
+            <br><br><br>
+            <div class="col-md-12" style="margin: 64px 0px;">
+                <h3 id="result"></h3>
+            </div><br><br>
         </div>
     </div>
 

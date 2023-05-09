@@ -9,9 +9,12 @@
         <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
           <h2 data-aos="fade-up">Learn How To Use {{item.title}}</h2>
         </div>
-
+        <ul>
+          <li>Item Name: {{item.title}}</li>
+          <li>Item Name: {{item.description}}</li>
+        </ul>
         <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
-          <img src="" class="img-fluid mb-3 mb-lg-0" alt="">
+          <img src="{{item.image.url}}" class="img-fluid mb-3 mb-lg-0" alt="">
         </div>
 
       </div>

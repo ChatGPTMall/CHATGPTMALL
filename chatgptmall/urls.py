@@ -33,7 +33,7 @@ from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, Upl
     MicrosoftKeyManagementView, get_text, WatchVideo, get_image, TextToCommand, AiModels, VoiceToVoiceDetail, \
     VoiceToImageDetail, TextToVoiceDetail, TextToTextDetail, TextToImageDetail, ImageToImageDetail, ImageAnalysisDetail, \
     ImageDetectDetail, VoiceToCommandDetail, TextToCommandDetail, ImageToTextDetail, ImageToText, GetOcrImage, \
-    OCRContentGenerate
+    OCRContentGenerate, SaveCapturedPhoto, ImageAnalysisOCR
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -157,7 +157,11 @@ urlpatterns = [
 
     # OCR
     path("json/ocr/image/", GetOcrImage, name="GetOcrImage"),
-    path("ocr/content/generate/", OCRContentGenerate, name="OCRContentGenerate")
+    path("ocr/content/generate/", OCRContentGenerate, name="OCRContentGenerate"),
+
+    # capture video
+    path("capture/save_photo/", SaveCapturedPhoto, name="SaveCapturedPhoto"),
+    path("analysis/ocr/image/", ImageAnalysisOCR, name="ImageAnalysisOCR"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

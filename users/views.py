@@ -1,3 +1,4 @@
+import base64
 import json
 import os
 import random
@@ -12,6 +13,7 @@ import openai
 from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
 from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from msrest.authentication import CognitiveServicesCredentials
 from array import array
 import os
@@ -37,7 +39,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, Capabilities, \
     Jobs, Community, CommunityMembers, CommunityPosts, CouponCode, Subscriptions, Items, ImageAnalysisDB, Category, \
-    VoiceCommands, KeyManagement, FreeSubscriptions
+    VoiceCommands, KeyManagement, FreeSubscriptions, CapturedImages
 
 
 # openai.api_key = os.getenv("OPEN_AI_KEY")
@@ -973,6 +975,7 @@ def UploadCommunityPost(request):
     upload = request.POST.get("upload")
     question = "How to use {}".format(name)
     if item_image_url:
+        print(item_image_url)
         response1 = urlopen(item_image_url)
         image = BytesIO(response1.read())
         # imagedb.image1.save("image_one.jpg", File(io1))
@@ -997,6 +1000,11 @@ def UploadCommunityPost(request):
                 # Set the image field to the downloaded file
                 post.video.save("test.mp4", File(fa))
         item.image.save("image_one.jpg", File(image))
+        if item_image_url:
+            result = urllib.request.urlretrieve(item_image_url)
+            with open(result[0], 'rb') as G:
+                # Set the image field to the downloaded file
+                post.image.save("test.png", File(G))
         post.item_name = item.title
         post.save()
     return redirect("/join/community/?team_id={}".format(team_id))
@@ -1301,4 +1309,73 @@ def ImageToTextDetail(request):
                     has_expired = True
     return render(request, "image2textdetail.html", context={
         "plan": plan, "has_expired": has_expired})
+
+
+@csrf_exempt
+def SaveCapturedPhoto(request):
+    photo_data = request.POST.get("photo")
+    image_data = base64.b64decode(photo_data.split(',')[1])
+
+    # Create an in-memory file-like object
+    image_file = BytesIO(image_data)
+
+    # Create an Image object from the file
+    image = Image.open(image_file)
+
+    # Create an InMemoryUploadedFile object to save to the database
+    image_file = InMemoryUploadedFile(
+        image_file,  # file-like object
+        None,  # field name (unused)
+        'photo.jpg',  # file name
+        'image/jpeg',  # content type
+        image.size,  # size
+        None  # charset (unused)
+    )
+    img = CapturedImages.objects.create(image=image_file)
+    return HttpResponse(str(img.image.url))
+
+
+@csrf_exempt
+def ImageAnalysisOCR(request):
+    photo_data = request.POST.get("image_data")
+    image_data = base64.b64decode(photo_data.split(',')[1])
+
+    # Create an in-memory file-like object
+    image_file = BytesIO(image_data)
+
+    # Create an Image object from the file
+    image = Image.open(image_file)
+
+    # Create an InMemoryUploadedFile object to save to the database
+    image_file = InMemoryUploadedFile(
+        image_file,  # file-like object
+        None,  # field name (unused)
+        'photo.jpg',  # file name
+        'image/jpeg',  # content type
+        image.size,  # size
+        None  # charset (unused)
+    )
+    img = CapturedImages.objects.create(image=image_file)
+    subscription_key = "B0faa09900954b4ab9eee55e133399cc"
+    endpoint = "https://bennyocr.cognitiveservices.azure.com/"
+    computervision_client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(subscription_key))
+    read_response = computervision_client.read(str(img.image.url), raw=True)
+    # Get the operation location (URL with an ID at the end) from the response
+    read_operation_location = read_response.headers["Operation-Location"]
+    # Grab the ID from the URL
+    operation_id = read_operation_location.split("/")[-1]
+
+    # Call the "GET" API and wait for it to retrieve the results
+    while True:
+        read_result = computervision_client.get_read_result(operation_id)
+        if read_result.status not in ['notStarted', 'running']:
+            break
+        time.sleep(1)
+    response = ""
+    # Print the detected text, line by line
+    if read_result.status == OperationStatusCodes.succeeded:
+        for text_result in read_result.analyze_result.read_results:
+            for line in text_result.lines:
+                response += line.text + "\n"
+    return HttpResponse(str(response))
 

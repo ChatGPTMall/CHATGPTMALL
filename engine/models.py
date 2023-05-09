@@ -266,6 +266,7 @@ class CommunityPosts(models.Model):
     question = models.TextField(_("User Question"), null=True, blank=True)
     response = models.TextField(_("AI Response"), null=True, blank=True)
     input_image = models.URLField(null=True, blank=True)
+    image = models.ImageField(upload_to="community/images", null=True, blank=True)
     response_image = models.URLField(null=True, blank=True)
     qrcode = models.ImageField(upload_to="community/qr_code", null=True, blank=True)
     video = models.FileField(upload_to="community/video", null=True, blank=True)
@@ -409,6 +410,10 @@ class RestrictedKeywords(models.Model):
     class Meta:
         verbose_name = _("Keyword")
         verbose_name_plural = _("Restricted Keywords")
+
+
+class CapturedImages(models.Model):
+    image = models.ImageField(upload_to="camera/images")
 
 
 
