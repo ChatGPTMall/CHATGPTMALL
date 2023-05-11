@@ -627,32 +627,18 @@ def OCRContentGenerate(request):
     user_input = request.POST.get('input', '')
     data = request.POST.get('data', '')
     prompt = user_input + data
-    key = KeyManagement.objects.all().last()
-    openai.api_key = key.key
-    if key.platform == "MICROSOFT":
-        openai.api_base = "{}".format(key.endpoint)
-        openai.api_type = 'azure'
-        openai.api_version = "2023-03-15-preview"
-        model = "davinci"
-        response = openai.Completion.create(
-            engine=model,
-            prompt=prompt,
-        )
-        text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
-        return HttpResponse(str(text))
-    else:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a chatbot"},
+    openai.api_key = os.getenv("OPEN_AI_KEY")
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a chatbot"},
                 {"role": "user", "content": "{}?".format(prompt)},
-                ]
-        )
-        result = ''
-        for choice in response.choices:
-            result += choice.message.content
-
-        return HttpResponse(str(result))
+            ]
+    )
+    result = ''
+    for choice in response.choices:
+        result += choice.message.content
+    return HttpResponse(str(result))
 
 
 @csrf_exempt
