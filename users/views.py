@@ -1365,3 +1365,66 @@ def ImageAnalysisOCR(request):
                 response += line.text + "\n"
     return HttpResponse(str(response))
 
+
+def RedirectPlan(request, plan_id):
+    plan = Plans.objects.get(id=plan_id)
+    if plan.access == "VOICE_TO_Voice":
+        return reverse("voice2voicePlanDetail")
+
+
+def voice2voicePlanDetail(request):
+    plan = Plans.objects.get(access="VOICE_TO_Voice")
+    return render(request, "plans/voice2voicedetail.html", context={"plan": plan})
+
+
+def voice2ImagePlanDetail(request):
+    plan = Plans.objects.get(access="VOICE_TO_IMAGE")
+    return render(request, "plans/voice2ImagePlanDetail.html", context={"plan": plan})
+
+
+def text2VoicePlanDetail(request):
+    plan = Plans.objects.get(access="TEXT_TO_VOICE")
+    return render(request, "plans/text2VoicePlanDetail.html", context={"plan": plan})
+
+
+def text2TextPlanDetail(request):
+    plan = Plans.objects.get(access="TEXT_TO_TEXT")
+    return render(request, "plans/text2TextPlanDetail.html", context={"plan": plan})
+
+
+def text2ImagePlanDetail(request):
+    plan = Plans.objects.get(access="TEXT_TO_IMAGE")
+    return render(request, "plans/text2ImagePlanDetail.html", context={"plan": plan})
+
+
+def image2ImagePlanDetail(request):
+    plan = Plans.objects.get(access="IMAGE_TO_IMAGE")
+    return render(request, "plans/image2ImagePlanDetail.html", context={"plan": plan})
+
+
+def object_detectPlanDetail(request):
+    plan = Plans.objects.get(access="OBJECTS_DETECTION")
+    return render(request, "plans/object_detectPlanDetail.html", context={"plan": plan})
+
+
+def voice2commandPlanDetail(request):
+    plan = Plans.objects.get(access="VOICE_TO_COMMAND")
+    return render(request, "plans/voice2commandPlanDetail.html", context={"plan": plan})
+
+
+def text2commandPlanDetail(request):
+    plan = Plans.objects.get(access="TEXT_TO_COMMAND")
+    return render(request, "plans/text2commandPlanDetail.html", context={"plan": plan})
+
+
+def OcrPlanDetail(request):
+    plan = Plans.objects.get(access="Image_To_Text")
+    return render(request, "plans/OcrPlanDetail.html", context={"plan": plan})
+
+
+def imageAnalysisPlanDetail(request):
+    plan = Plans.objects.get(access="IMAGE_ANALYSIS")
+    return render(request, "plans/imageAnalysisPlanDetail.html", context={"plan": plan})
+
+
+

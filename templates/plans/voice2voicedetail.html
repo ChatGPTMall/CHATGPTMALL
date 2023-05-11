@@ -1,0 +1,103 @@
+{% extends 'parent.html' %}
+{% block tittle %}Chatgptmall | Voice To Voice Plan Details{% endblock %}
+{% load static %}
+{% block body %}
+
+  <main id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <div class="breadcrumbs">
+      <div class="page-header d-flex align-items-center" style="background-image: url('assets/img/page-header.jpg');">
+        <div class="container position-relative">
+          <div class="row d-flex justify-content-center">
+            <div class="col-lg-6 text-center">
+              <h2 style="color:black;">Voice-activated Voice Plan Details</h2>
+              </div>
+          </div>
+        </div>
+      </div>
+      <nav>
+        <div class="container">
+          <ol>
+            <li><a href="{% url 'HomepageView' %}">Home</a></li>
+            <li>VVoiceContenGen Details</li>
+          </ol>
+        </div>
+      </nav>
+    </div><!-- End Breadcrumbs -->
+
+    <!-- ======= Service Details Section ======= -->
+    <section id="service-details" class="service-details">
+      <div class="container" data-aos="fade-up">
+
+        <div class="row gy-4">
+          <div class="col-lg-12">
+            <h3>"Voice-activated Voice Content Generate" refers to ChatGPT's ability to generate general content through voice interactions with voice as both
+              the input and output modality. It is one of the capabilities of ChatGPT's natural language processing and generation system.</h3><br><br>
+            <p>
+              <b>Use case:</b>Voice-activated Voice Content Generate can be used to develop voice assistants capable of generating natural-sounding responses to voice commands.
+              For example, a business could use this technology to create an interactive voice assistant that responds
+              to customers' inquiries and completes tasks through natural conversations.<br><br>
+              <b>How it works:</b>Voice-activated Voice Content Generate uses machine learning algorithms to analyze voice inputs and generate relevant and accurate responses.
+              The technology can be trained on specific industries or domains, making it possible to create voice assistants that are tailored to the user's needs. <br><br>
+              <b>Hardware integration:</b>Voice-activated Voice Content Generate can be integrated with a variety of hardware devices, including smart speakers,
+              mobile phones, and computers, equipped with microphones and speakers.
+            </p>
+            <p>
+              Our platform provides an API for businesses and individuals to easily integrate ChatGPT's Voice-activated Voice Content Generate into their existing workflows and devices. With our user-friendly platform and flexible API, users can easily create and customize their own voice assistants for a wide range of applications.
+
+            </p>
+            <p>
+              Overall, Voice-activated Voice Content Generate provides businesses and individuals with a powerful tool for developing voice assistants capable of natural-sounding conversations. By integrating with a variety of hardware devices, it enables users to interact with AI assistants using voice inputs on their preferred devices.
+
+            </p><br><br>
+
+            <!--chinese content-->
+            <h3>
+"语音触发语音内容生成" 指的是 ChatGPT 通过语音交互生成通用内容的能力，使用的输入输出模式均为语音。它是 ChatGPT 自然语言处理和生成系统的一种能力。
+            </h3><br><br>
+
+            <p>
+              <b>使用场景:</b>
+语音触发语音内容生成可用于开发能够通过自然对话回复语音命令的语音助手。例如，企业可以利用这项技术创建交互式语音助手，以响应客户的查询并通过自然对话完成任务。
+
+              <br><br>
+
+              <b>工作原理:</b>
+
+语音触发语音内容生成使用机器学习算法分析语音输入并生成相关且准确的回复。该技术可针对特定行业或领域进行培训，从而创建适合用户需求的语音助手。
+
+
+              <br><br>
+
+              <b>硬件集成:</b>
+语音触发语音内容生成可与各种硬件设备集成，包括配备麦克风和扬声器的智能音箱、手机和计算机等。
+
+
+
+            </p>
+
+            <p>
+我们的平台为企业和个人提供 API，以便将 ChatGPT 的语音触发语音内容生成轻松集成到他们现有的工作流程和设备中。通过我们用户友好的平台和灵活的 API，用户可以轻松创建和定制自己的语音助手，用于各种应用场景。
+
+            </p>
+
+            <p>
+总的来说，语音触发语音内容生成为企业和个人提供了一个强大的工具，用于开发能够进行自然对话的语音助手。通过与各种硬件设备集成，它使用户可以在首选设备上使用语音输入与 AI 助手进行交互。
+
+
+
+            </p>
+            <div>
+                  <a style="width:100%;margin-top:75px;" href="{% url 'Checkout' plan.id %}" class="btn btn-primary">Checkout</a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Service Details Section -->
+
+  </main><!-- End #main -->
+
+{% endblock %}

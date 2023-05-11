@@ -60,7 +60,7 @@
               </li>
             </ul>
             <div style="margin-top:45px;">
-              <a class="btn" style="color: white; background-color: rgb(91, 97, 235)">Plan Details</a>
+              <a class="btn" style="color: white; background-color: rgb(91, 97, 235)" href="{% url 'voice2voicePlanDetail' %}">Plan Details</a>
               <a class="btn" href="{% url 'VoiceToVoice' %}" style="color: white; background-color: rgb(91, 97, 235)">Use VoiceToVoice</a>
             </div>
           </div>
@@ -85,16 +85,13 @@
 
           <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
             <div class="card">
-              <div class="card-img">
-                <img src="shop/img/storage-service.jpg" alt="" class="img-fluid">
-              </div>
-              <h3><a href="service-details.html" class="stretched-link">Text To Voice</a></h3>
+              <h3><a href="{% url 'text2VoicePlanDetail' %}" class="stretched-link">Text To Voice</a></h3>
               <ul>
                 <li style="list-style:none;" ><i class="bi bi-arrow-right" style="margin-right:5px;"></i>30 Requests</li>
                 <li style="list-style:none;"><i class="bi bi-arrow-right" style="margin-right:5px;"></i>Valid for 2 months</li>
               </ul>
               <div style="padding: 14px 23px;">
-              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Plan Details</a>
+              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)" href="{% url 'text2VoicePlanDetail' %}">Plan Details</a>
               <a class="btn" href="{% url 'TextToVoice' %}"
                  style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Use TextToVoice</a>
             </div>
@@ -103,16 +100,13 @@
 
           <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
             <div class="card">
-              <div class="card-img">
-                <img src="shop/img/logistics-service.jpg" alt="" class="img-fluid">
-              </div>
-              <h3><a href="service-details.html" class="stretched-link">Text To Text</a></h3>
+              <h3><a href="{% url 'text2TextPlanDetail' %}" class="stretched-link">Text To Text</a></h3>
               <ul>
                 <li style="list-style:none;" ><i class="bi bi-arrow-right" style="margin-right:5px;"></i>30 Requests</li>
                 <li style="list-style:none;"><i class="bi bi-arrow-right" style="margin-right:5px;"></i>Valid for 2 months</li>
               </ul>
               <div style="padding: 14px 23px;">
-              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Plan Details</a>
+              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)" href="{% url 'text2TextPlanDetail' %}">Plan Details</a>
               <a class="btn" href="{% url 'TextToText' %}"
                  style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Use TextToVoice</a>
             </div>
@@ -121,16 +115,13 @@
 
           <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
             <div class="card">
-              <div class="card-img">
-                <img src="shop/img/cargo-service.jpg" alt="" class="img-fluid">
-              </div>
-              <h3><a href="service-details.html" class="stretched-link">Text To Image</a></h3>
+              <h3><a href="{% url 'text2ImagePlanDetail' %}" class="stretched-link">Text To Image</a></h3>
               <ul>
                 <li style="list-style:none;" ><i class="bi bi-arrow-right" style="margin-right:5px;"></i>30 Requests</li>
                 <li style="list-style:none;"><i class="bi bi-arrow-right" style="margin-right:5px;"></i>Valid for 2 months</li>
               </ul>
               <div style="padding: 14px 23px;">
-              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Plan Details</a>
+              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)" href="{% url 'text2ImagePlanDetail' %}">Plan Details</a>
               <a class="btn" href="{% url 'TextToImage' %}"
                  style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Use TextToVoice</a>
             </div>
@@ -139,16 +130,13 @@
 
           <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
             <div class="card">
-              <div class="card-img">
-                <img src="shop/img/trucking-service.jpg" alt="" class="img-fluid">
-              </div>
-              <h3><a href="service-details.html" class="stretched-link">Image To Image</a></h3>
+              <h3><a href="{% url 'image2ImagePlanDetail' %}" class="stretched-link">Image To Image</a></h3>
               <ul>
                 <li style="list-style:none;" ><i class="bi bi-arrow-right" style="margin-right:5px;"></i>30 Requests</li>
                 <li style="list-style:none;"><i class="bi bi-arrow-right" style="margin-right:5px;"></i>Valid for 2 months</li>
               </ul>
               <div style="padding: 14px 23px;">
-              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Plan Details</a>
+              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)" href="{% url 'image2ImagePlanDetail' %}">Plan Details</a>
               <a class="btn" href="{% url 'ImageToImage' %}"
                  style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Use TextToVoice</a>
             </div>
@@ -157,16 +145,13 @@
 
           <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
             <div class="card">
-              <div class="card-img">
-                <img src="shop/img/packaging-service.jpg" alt="" class="img-fluid">
-              </div>
-              <h3><a href="service-details.html" class="stretched-link">Image Analysis</a></h3>
+              <h3><a href="{% url 'imageAnalysisPlanDetail' %}" class="stretched-link">Image Analysis</a></h3>
               <ul>
                 <li style="list-style:none;" ><i class="bi bi-arrow-right" style="margin-right:5px;"></i>30 Requests</li>
                 <li style="list-style:none;"><i class="bi bi-arrow-right" style="margin-right:5px;"></i>Valid for 2 months</li>
               </ul>
               <div style="padding: 14px 23px;">
-              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Plan Details</a>
+              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)" href="{% url 'imageAnalysisPlanDetail' %}">Plan Details</a>
               <a class="btn" href="{% url 'ImageAnalysis' %}"
                  style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Use TextToVoice</a>
             </div>
@@ -175,16 +160,13 @@
 
           <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
             <div class="card">
-              <div class="card-img">
-                <img src="shop/img/warehousing-service.jpg" alt="" class="img-fluid">
-              </div>
-              <h3><a href="service-details.html" class="stretched-link">Object Detection</a></h3>
+              <h3><a href="{% url 'object_detectPlanDetail' %}" class="stretched-link">Object Detection</a></h3>
               <ul>
                 <li style="list-style:none;" ><i class="bi bi-arrow-right" style="margin-right:5px;"></i>30 Requests</li>
                 <li style="list-style:none;"><i class="bi bi-arrow-right" style="margin-right:5px;"></i>Valid for 2 months</li>
               </ul>
               <div style="padding: 14px 23px;">
-              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Plan Details</a>
+              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)" href="{% url 'object_detectPlanDetail' %}">Plan Details</a>
               <a class="btn" href="{% url 'ObjectsDetection' %}"
                  style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Use TextToVoice</a>
             </div>
@@ -220,7 +202,7 @@
               </li>
             </ul>
             <div style="margin-top:45px;">
-              <a class="btn" style="color: white; background-color: rgb(91, 97, 235)">Plan Details</a>
+              <a class="btn" href="{% url 'voice2ImagePlanDetail' %}" style="color: white; background-color: rgb(91, 97, 235)">Plan Details</a>
               <a class="btn" href="{% url 'VoiceToImage' %}"
                  style="color: white; background-color: rgb(91, 97, 235)">Use VoiceToImage</a>
             </div>

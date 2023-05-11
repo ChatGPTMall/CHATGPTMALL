@@ -49,7 +49,7 @@
                     <span class="currency" style="margin-left:10px;">USD</span></p>
                   {% endif %}
                   <div>{{m_plan.description | safe}}</div>
-                  <a href="{% url 'Checkout' m_plan.id %}" class="btn pricing-plan-purchase-btn">Get started</a>
+                  <a href="{% url 'RedirectPlan' m_plan.id %}" class="btn pricing-plan-purchase-btn">Get started</a>
                 </div>
               </div>
             </div>

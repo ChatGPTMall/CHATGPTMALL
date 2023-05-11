@@ -1,0 +1,109 @@
+{% extends 'parent.html' %}
+{% block tittle %}Chatgptmall | Voice-activated Image Plan Detail{% endblock %}
+{% load static %}
+{% block body %}
+
+  <main id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <div class="breadcrumbs">
+      <div class="page-header d-flex align-items-center" style="background-image: url('assets/img/page-header.jpg');">
+        <div class="container position-relative">
+          <div class="row d-flex justify-content-center">
+            <div class="col-lg-6 text-center">
+              <h2 style="color:black;">Voice-activated Image Plan Detail</h2>
+              </div>
+          </div>
+        </div>
+      </div>
+      <nav>
+        <div class="container">
+          <ol>
+            <li><a href="{% url 'HomepageView' %}">Home</a></li>
+            <li>VImageContentGen  Details</li>
+          </ol>
+        </div>
+      </nav>
+    </div><!-- End Breadcrumbs -->
+
+    <!-- ======= Service Details Section ======= -->
+    <section id="service-details" class="service-details">
+      <div class="container" data-aos="fade-up">
+
+        <div class="row gy-4">
+          <div class="col-lg-12">
+            <h3>
+"Voice-activated Image Content Generate" refers to ChatGPT's ability to generate general content through voice interactions with images as the input modality. It is another capability of ChatGPT's natural language processing and generation system.
+
+            </h3><br><br>
+
+            <p>
+              <b>Use case:</b>
+Voice-activated Image Content Generate can be used in a variety of applications, such as image search, automated captioning, and content creation. For example, a user can use this technology to search for specific images by describing them in natural language or to generate captions for images using voice commands.
+              <br><br>
+
+              <b>How it works:</b>
+Voice-activated Image Content Generate uses natural language processing (NLP) technology to analyze voice inputs and generate relevant image content. It can identify objects, people, and scenes in images and provide information and descriptions based on the user's commands.
+
+              <br><br>
+
+              <b>What Hardware can be integrated:</b>
+Voice-activated Image Content Generate can be integrated with a variety of devices, including smartphones, tablets, and smart speakers with built-in microphones. It also requires a camera or image input device to process the image content.
+
+            </p>
+            <p>
+              Our Platform: Our platform provides an API for businesses and individuals to easily integrate ChatGPT's Voice-activated Image Content Generate into their existing workflows and devices. With our user-friendly platform and flexible API, users can easily create and customize their own AI assistants for a wide range of applications.
+
+            </p>
+            <p>
+Overall, Voice-activated Image Content Generate provides businesses and individuals with a powerful tool for improving image search, generating accurate image captions, and creating engaging content. Whether you're looking to enhance your content marketing strategy or streamline image search, ChatGPT's Voice-activated Image Content Generate can help you achieve your goals with ease.
+
+            </p><br><br>
+
+            <!--chinese content-->
+            <h3>
+“音频触发图像内容生成”是指ChatGPT通过音频交互作为输入方式生成相关内容的能力。这是ChatGPT自然语言处理和生成系统的另一个功能。
+            </h3><br><br>
+
+            <p>
+              <b>使用场景:</b>
+音频触发图像内容生成可用于各种应用，如图像搜索、自动字幕和内容创作。例如，用户可以使用此技术通过自然语言描述来搜索特定的图像，或使用音频指令为图像生成字幕。
+
+              <br><br>
+
+              <b>工作原理:</b>
+音频触发图像内容生成使用自然语言处理（NLP）技术分析音频输入并生成相关的图像内容。它可以识别图像中的对象、人物和场景，并根据用户的指令提供信息和描述。
+
+
+
+              <br><br>
+
+              <b>硬件集成:</b>
+音频触发图像内容生成可以与各种设备集成，包括带有内置麦克风的智能手机、平板电脑和智能音箱。它还需要相机或图像输入设备来处理图像内容。
+
+
+            </p>
+
+            <p>
+我们的平台提供了一个API，让企业和个人可以轻松地将ChatGPT的音频触发图像内容生成集成到其现有的工作流程和设备中。通过我们用户友好的平台和灵活的API，用户可以轻松地创建和定制自己的AI助手，以适用于各种应用。
+
+
+
+            </p>
+
+            <p>
+总体而言，音频触发图像内容生成为企业和个人提供了一个强大的工具，可以改善图像搜索、生成准确的图像字幕和创作引人入胜的内容。无论您是想增强您的内容营销策略还是简化图像搜索，ChatGPT的音频触发图像内容生成都可以帮助您轻松实现您的目标。
+
+            </p>
+            <div>
+                  <a style="width:100%;margin-top:75px;" href="{% url 'Checkout' plan.id %}" class="btn btn-primary">Checkout</a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Service Details Section -->
+
+  </main><!-- End #main -->
+{% endblock %}

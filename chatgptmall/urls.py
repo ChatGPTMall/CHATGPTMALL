@@ -33,7 +33,9 @@ from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, Upl
     MicrosoftKeyManagementView, get_text, WatchVideo, get_image, TextToCommand, AiModels, VoiceToVoiceDetail, \
     VoiceToImageDetail, TextToVoiceDetail, TextToTextDetail, TextToImageDetail, ImageToImageDetail, ImageAnalysisDetail, \
     ImageDetectDetail, VoiceToCommandDetail, TextToCommandDetail, ImageToTextDetail, ImageToText, GetOcrImage, \
-    OCRContentGenerate, SaveCapturedPhoto, ImageAnalysisOCR
+    OCRContentGenerate, SaveCapturedPhoto, ImageAnalysisOCR, voice2voicePlanDetail, RedirectPlan, voice2ImagePlanDetail, \
+    text2VoicePlanDetail, text2TextPlanDetail, text2ImagePlanDetail, image2ImagePlanDetail, \
+    object_detectPlanDetail, voice2commandPlanDetail, text2commandPlanDetail, OcrPlanDetail, imageAnalysisPlanDetail
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -162,6 +164,20 @@ urlpatterns = [
     # capture video
     path("capture/save_photo/", SaveCapturedPhoto, name="SaveCapturedPhoto"),
     path("analysis/ocr/image/", ImageAnalysisOCR, name="ImageAnalysisOCR"),
+
+    # plan details
+    path("redirect/plan/<int:plan_id>/", RedirectPlan, name="RedirectPlan"),
+    path("voice2voice/plan/detail/", voice2voicePlanDetail, name="voice2voicePlanDetail"),
+    path("voice2image/plan/detail/", voice2ImagePlanDetail, name="voice2ImagePlanDetail"),
+    path("text2voice/plan/detail/", text2VoicePlanDetail, name="text2VoicePlanDetail"),
+    path("text2text/plan/detail/", text2TextPlanDetail, name="text2TextPlanDetail"),
+    path("text2image/plan/detail/", text2ImagePlanDetail, name="text2ImagePlanDetail"),
+    path("image2image/plan/detail/", image2ImagePlanDetail, name="image2ImagePlanDetail"),
+    path("image_analysis/plan/detail/", imageAnalysisPlanDetail, name="imageAnalysisPlanDetail"),
+    path("object_detect/plan/detail/", object_detectPlanDetail, name="object_detectPlanDetail"),
+    path("voice2command/plan/detail/", voice2commandPlanDetail, name="voice2commandPlanDetail"),
+    path("text2command/plan/detail/", text2commandPlanDetail, name="text2commandPlanDetail"),
+    path("ocr/plan/detail/", OcrPlanDetail, name="OcrPlanDetail"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
