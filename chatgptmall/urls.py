@@ -35,7 +35,8 @@ from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, Upl
     ImageDetectDetail, VoiceToCommandDetail, TextToCommandDetail, ImageToTextDetail, ImageToText, GetOcrImage, \
     OCRContentGenerate, SaveCapturedPhoto, ImageAnalysisOCR, voice2voicePlanDetail, RedirectPlan, voice2ImagePlanDetail, \
     text2VoicePlanDetail, text2TextPlanDetail, text2ImagePlanDetail, image2ImagePlanDetail, \
-    object_detectPlanDetail, voice2commandPlanDetail, text2commandPlanDetail, OcrPlanDetail, imageAnalysisPlanDetail
+    object_detectPlanDetail, voice2commandPlanDetail, text2commandPlanDetail, OcrPlanDetail, imageAnalysisPlanDetail, \
+    RetailBotsView
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -178,6 +179,9 @@ urlpatterns = [
     path("voice2command/plan/detail/", voice2commandPlanDetail, name="voice2commandPlanDetail"),
     path("text2command/plan/detail/", text2commandPlanDetail, name="text2commandPlanDetail"),
     path("ocr/plan/detail/", OcrPlanDetail, name="OcrPlanDetail"),
+
+    # retail
+    path("api/retail_bots/", RetailBotsView, name="RetailBotsView"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

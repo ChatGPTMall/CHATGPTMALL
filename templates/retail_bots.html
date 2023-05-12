@@ -1,0 +1,221 @@
+{% extends 'parent.html' %}
+{% block tittle %}Chatgptmall | Retail Bots{% endblock %}
+{% load static %}
+{% block body %}
+
+  <!-- ======= Hero Section ======= -->
+  <section id="hero" class="hero d-flex align-items-center">
+    <div class="container">
+      <div class="row gy-4 d-flex justify-content-between">
+        <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
+          <h2 data-aos="fade-up">Transforming Images into Captivating Content: Unleashing the Magic of Image Analysis!</h2>
+            <div><br><br>
+            <a class="btn btn-primary" href="{% url 'imageAnalysisPlanDetail' %}">Use Our Image Analysis Now</a>
+            </div>
+
+         </div>
+          <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
+          <img src="https://www.analyticsinsight.net/wp-content/uploads/2021/11/An-Overview-of-Optical-Character-Recognition-OCR-in-2021-.jpg" class="img-fluid mb-3 mb-lg-0" alt="">
+        </div>
+    </div>
+    </div>
+  </section><!-- End Hero Section -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- ======= About Us Section ======= -->
+    <section id="about" class="about pt-0" style="margin-top:85px !important;">
+      <div class="container" data-aos="fade-up">
+
+        <div class="row gy-4">
+          <div class="col-lg-6 position-relative align-self-start order-lg-last order-first">
+            <img src="{% static 'images/voice2voice.jpg' %}" class="img-fluid" alt="" style="border-radius:93px;">
+          </div>
+          <div class="col-lg-6 content order-last  order-lg-first">
+            <h3>Voice To Voice</h3>
+            <ul>
+              <li data-aos="fade-up" data-aos-delay="100">
+                <i class="bi bi-arrow-right"></i>
+                <div>
+                  <h5>80 Requests</h5>
+                </div>
+              </li>
+              <li data-aos="fade-up" data-aos-delay="200">
+                <i class="bi bi-arrow-right"></i>
+                <div>
+                  <h5>Valid for 3 months</h5>
+                </div>
+              </li>
+            </ul>
+            <div style="margin-top:45px;">
+              <a class="btn" style="color: white; background-color: rgb(91, 97, 235)" href="{% url 'voice2voicePlanDetail' %}">Plan Details</a>
+              <a class="btn" href="{% url 'VoiceToVoice' %}" style="color: white; background-color: rgb(91, 97, 235)">Use VoiceToVoice</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End About Us Section -->
+
+
+
+    <!-- ======= Services Section ======= -->
+    <section id="service" class="services pt-0">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-header">
+          <span>Other Services</span>
+          <h2>Other Services</h2>
+
+        </div>
+
+        <div class="row gy-4">
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="card">
+              <h3><a href="{% url 'text2VoicePlanDetail' %}" class="stretched-link">Text To Voice</a></h3>
+              <ul>
+                <li style="list-style:none;" ><i class="bi bi-arrow-right" style="margin-right:5px;"></i>30 Requests</li>
+                <li style="list-style:none;"><i class="bi bi-arrow-right" style="margin-right:5px;"></i>Valid for 2 months</li>
+              </ul>
+              <div style="padding: 14px 23px;">
+              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)" href="{% url 'text2VoicePlanDetail' %}">Plan Details</a>
+              <a class="btn" href="{% url 'TextToVoice' %}"
+                 style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Use TextToVoice</a>
+            </div>
+            </div>
+          </div><!-- End Card Item -->
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="card">
+              <h3><a href="{% url 'text2TextPlanDetail' %}" class="stretched-link">Text To Text</a></h3>
+              <ul>
+                <li style="list-style:none;" ><i class="bi bi-arrow-right" style="margin-right:5px;"></i>30 Requests</li>
+                <li style="list-style:none;"><i class="bi bi-arrow-right" style="margin-right:5px;"></i>Valid for 2 months</li>
+              </ul>
+              <div style="padding: 14px 23px;">
+              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)" href="{% url 'text2TextPlanDetail' %}">Plan Details</a>
+              <a class="btn" href="{% url 'TextToText' %}"
+                 style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Use TextToVoice</a>
+            </div>
+              </div>
+          </div><!-- End Card Item -->
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="card">
+              <h3><a href="{% url 'text2ImagePlanDetail' %}" class="stretched-link">Text To Image</a></h3>
+              <ul>
+                <li style="list-style:none;" ><i class="bi bi-arrow-right" style="margin-right:5px;"></i>30 Requests</li>
+                <li style="list-style:none;"><i class="bi bi-arrow-right" style="margin-right:5px;"></i>Valid for 2 months</li>
+              </ul>
+              <div style="padding: 14px 23px;">
+              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)" href="{% url 'text2ImagePlanDetail' %}">Plan Details</a>
+              <a class="btn" href="{% url 'TextToImage' %}"
+                 style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Use TextToVoice</a>
+            </div>
+              </div>
+          </div><!-- End Card Item -->
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+            <div class="card">
+              <h3><a href="{% url 'image2ImagePlanDetail' %}" class="stretched-link">Image To Image</a></h3>
+              <ul>
+                <li style="list-style:none;" ><i class="bi bi-arrow-right" style="margin-right:5px;"></i>30 Requests</li>
+                <li style="list-style:none;"><i class="bi bi-arrow-right" style="margin-right:5px;"></i>Valid for 2 months</li>
+              </ul>
+              <div style="padding: 14px 23px;">
+              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)" href="{% url 'image2ImagePlanDetail' %}">Plan Details</a>
+              <a class="btn" href="{% url 'ImageToImage' %}"
+                 style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Use TextToVoice</a>
+            </div>
+              </div>
+          </div><!-- End Card Item -->
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+            <div class="card">
+              <h3><a href="{% url 'ImageToTextDetail' %}" class="stretched-link">OCR</a></h3>
+              <ul>
+                <li style="list-style:none;" ><i class="bi bi-arrow-right" style="margin-right:5px;"></i>30 Requests</li>
+                <li style="list-style:none;"><i class="bi bi-arrow-right" style="margin-right:5px;"></i>Valid for 2 months</li>
+              </ul>
+              <div style="padding: 14px 23px;">
+              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)" href="{% url 'OcrPlanDetail' %}">Plan Details</a>
+              <a class="btn" href="{% url 'ImageToTextDetail' %}"
+                 style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Use TextToVoice</a>
+            </div>
+              </div>
+          </div>
+            <!-- End Card Item -->
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
+            <div class="card">
+              <h3><a href="{% url 'object_detectPlanDetail' %}" class="stretched-link">Object Detection</a></h3>
+              <ul>
+                <li style="list-style:none;" ><i class="bi bi-arrow-right" style="margin-right:5px;"></i>30 Requests</li>
+                <li style="list-style:none;"><i class="bi bi-arrow-right" style="margin-right:5px;"></i>Valid for 2 months</li>
+              </ul>
+              <div style="padding: 14px 23px;">
+              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)" href="{% url 'object_detectPlanDetail' %}">Plan Details</a>
+              <a class="btn" href="{% url 'ObjectsDetection' %}"
+                 style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Use TextToVoice</a>
+            </div>
+              </div>
+          </div><!-- End Card Item -->
+
+        </div>
+
+      </div>
+    </section><!-- End Services Section -->
+
+  <!-- ======= About Us Section ======= -->
+    <section id="about2" class="about pt-0" style="margin-top:85px !important;">
+      <div class="container" data-aos="fade-up">
+
+        <div class="row gy-4">
+          <div class="col-lg-6 content order-last  order-lg-last">
+            <h3>Voice To Image</h3>
+            <ul>
+              <li data-aos="fade-up" data-aos-delay="100">
+                <i class="bi bi-arrow-right"></i>
+                <div>
+                  <h5>80 Requests</h5>
+                  <p>Generate and Post Images to communities & Download Image</p>
+                </div>
+              </li>
+              <li data-aos="fade-up" data-aos-delay="200">
+                <i class="bi bi-arrow-right"></i>
+                <div>
+                  <h5>Valid for 3 months</h5>
+                  <p>Type Manually to get good reponse</p>
+                </div>
+              </li>
+            </ul>
+            <div style="margin-top:45px;">
+              <a class="btn" href="{% url 'voice2ImagePlanDetail' %}" style="color: white; background-color: rgb(91, 97, 235)">Plan Details</a>
+              <a class="btn" href="{% url 'VoiceToImage' %}"
+                 style="color: white; background-color: rgb(91, 97, 235)">Use VoiceToImage</a>
+            </div>
+          </div>
+          <div class="col-lg-6 position-relative align-self-start order-lg-first order-first">
+            <img src="{% static 'images/voice2image.png' %}" class="img-fluid" alt="" style="border-radius:53px;">
+          </div>
+        </div>
+
+      </div>
+</section>
+{% endblock %}

@@ -1427,4 +1427,8 @@ def imageAnalysisPlanDetail(request):
     return render(request, "plans/imageAnalysisPlanDetail.html", context={"plan": plan})
 
 
+def RetailBotsView(request):
+    return render(request, "retail_bots.html")
+
+
 
