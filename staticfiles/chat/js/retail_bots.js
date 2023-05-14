@@ -7,6 +7,7 @@ $(document).ready(function() {
     $("#analysis").hide();
     $("#input_text_area").hide();
     $("#input_btn").hide();
+    $("#post").hide();
 
 
     function start_video(){
@@ -106,10 +107,12 @@ $(document).ready(function() {
                      data: data,
                      success: function (text) {
                         $("#loading").hide();
-                        $("#send_post_community").show();
                         $('#speak').show();
                         $('#stop').show();
                         $('#resume').show();
+                        $('#post').show();
+                        $("#response").val(text);
+                        $("#input").val(input);
                         $('#result').text(text);
                      },
                      error: function (response) {
@@ -138,6 +141,9 @@ $(document).ready(function() {
                         $("#send_post_community").show();
                         $('#speak').show();
                         $('#stop').show();
+                        $('#post').show();
+                        $("#response").val(text);
+                        $("#input").val(input);
                         $('#resume').show();
                         $('#result').text(text);
                      },

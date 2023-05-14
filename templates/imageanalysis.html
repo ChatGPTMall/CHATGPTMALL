@@ -114,7 +114,6 @@
         <div class="modal-body">
           <form method="post" action="{% url 'SendPostCommunity' %}">
             {% csrf_token %}
-              <input type="hidden" id="page" name="page" value="text_to_image">
               <input type="hidden" id="input" name="input">
               <input type="hidden" id="response" name="images">
           <div class="form-group">

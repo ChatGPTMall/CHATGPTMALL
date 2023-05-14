@@ -255,7 +255,9 @@
     {% else %}
         <div class="container cont darker">
           <img src="https://w1.pngwing.com/pngs/278/853/png-transparent-line-art-nose-chatbot-internet-bot-artificial-intelligence-snout-head-smile-black-and-white.png" alt="Avatar" class="right" style="width:27px;">
-          <h2>Item Name: {{post.item_name}}</h2>
+            {% if post.item_name %}
+            <h2>Item Name: {{post.item_name}}</h2>
+            {% endif %}
             <p>
               {% if post.qrcode %}
               <div style="display: flex;flex-direction: column;">

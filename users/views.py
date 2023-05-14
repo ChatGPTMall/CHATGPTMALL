@@ -908,7 +908,6 @@ def SendPostCommunity(request):
             for comm in all_comms:
                 post = CommunityPosts.objects.create(
                     user=request.user, community=comm.community, question=question)
-                print(images)
                 post.image1 = images[0]
                 post.image2 = images[2]
                 post.image3 = images[2]
@@ -927,6 +926,8 @@ def SendPostCommunity(request):
                         user=request.user, community=comm.community, question=question, response=response)
         if page == "text_to_text":
             return redirect("/api/text_to_text/")
+        elif page == "retail_bots":
+            return redirect("/api/retail_bots/")
         else:
             return redirect("/api/text_to_image/")
     except CommunityMembers.DoesNotExist:
@@ -1428,7 +1429,11 @@ def imageAnalysisPlanDetail(request):
 
 
 def RetailBotsView(request):
-    return render(request, "retail_bots.html")
+    communities = []
+    if CommunityMembers.objects.filter(user=request.user).exists():
+        communities_id = request.user.team.all().values_list("community__community_id", flat=True)
+        communities = Community.objects.filter(community_id__in=communities_id)
+    return render(request, "retail_bots.html", {"communities": communities})
 
 
 
