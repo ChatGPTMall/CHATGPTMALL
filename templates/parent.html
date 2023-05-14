@@ -88,15 +88,15 @@
               <li><a href="{% url 'JoinedCommunities' %}">我参与的工厂Joined Factory</a></li>
             </ul>
           </li>
-<!--          {% if request.user.premium == 2 %}-->
-<!--                <li class="dropdown">-->
-<!--                  <a href="#">Key Management <i class="bi bi-chevron-down dropdown-indicator"></i></a>-->
-<!--                  <ul>-->
-<!--                    <li><a href="{% url 'KeyManagement' %}">Openai</a></li>-->
-<!--                    <li><a href="{% url 'MicrosoftKeyManagementView' %}">Microsoft</a></li>-->
-<!--                  </ul>-->
-<!--                </li>-->
-<!--                {% endif %}-->
+          {% if request.user.premium == 2 %}
+                <li class="dropdown">
+                  <a href="#">Key Management <i class="bi bi-chevron-down dropdown-indicator"></i></a>
+                  <ul>
+                    <li><a href="{% url 'KeyManagement' %}">Openai</a></li>
+                    <li><a href="{% url 'MicrosoftKeyManagementView' %}">Microsoft</a></li>
+                  </ul>
+                </li>
+                {% endif %}
 
           {% if request.user.is_authenticated %}
             <li class="dropdown">
@@ -111,6 +111,7 @@
                 <li><a href="#">订阅及接口Subscription and API</a></li>
                 <li><a href="#">集成硬件Integration Hardware</a></li>
                 <li><a href="#">软件及工具Software and Tools</a></li>
+                <li><a href="{% url 'ShopWithText' %}">Shop</a></li>
                 <li><a href="{% url 'ProfileView' %}">Profile</a></li>
                 <li><a href="{% url 'ApiKeyView' %}">API Key</a></li>
                 <li><hr class="dropdown-divider"></li>
