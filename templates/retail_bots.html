@@ -1,7 +1,39 @@
-{% extends 'parent.html' %}
-{% block tittle %}Chatgptmall | Retail Bots{% endblock %}
+<!DOCTYPE html>
 {% load static %}
-{% block body %}
+{% load i18n %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CHATGPTMALL | Retail Bots</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <script src="{% static 'chat/js/multiselect.min.js' %}"></script>
+    <style>
+        .mic_icon{
+            height: 43px;
+            width: 38px;
+        }
+        #back{
+            background: #2844FA;
+            color: white;
+            font-size: 15px;
+            border-radius: 13px;
+            margin: 10px;
+        }
+        .mic_btn{
+
+        }
+
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-light bg-light">
+    <a class="navbar-brand" id="back" href="{% url 'HomepageView' %}">
+    <i class="fa fa-arrow-left" aria-hidden="true"></i> Back
+  </a>
+</nav>
 
   <!-- ======= Hero Section ======= -->
   <section id="hero" class="hero d-flex align-items-center">
@@ -10,212 +42,108 @@
         <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
           <h2 data-aos="fade-up">Transforming Images into Captivating Content: Unleashing the Magic of Image Analysis!</h2>
             <div><br><br>
-            <a class="btn btn-primary" href="{% url 'imageAnalysisPlanDetail' %}">Use Our Image Analysis Now</a>
+            <button class="btn btn-primary" id="open_camera">Open Camera</button>
+            <button class="btn btn-primary" id="open_keyboard">Open Keyboard</button>
+            <button class="btn btn-primary" id="open_microphone">Open Microphone</button>
             </div>
 
          </div>
           <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
-          <img src="https://www.analyticsinsight.net/wp-content/uploads/2021/11/An-Overview-of-Optical-Character-Recognition-OCR-in-2021-.jpg" class="img-fluid mb-3 mb-lg-0" alt="">
+          <img style="width:460px;" src="https://www.analyticsinsight.net/wp-content/uploads/2021/11/An-Overview-of-Optical-Character-Recognition-OCR-in-2021-.jpg" class="img-fluid mb-3 mb-lg-0" alt="">
         </div>
     </div>
     </div>
-  </section><!-- End Hero Section -->
+  </section><!-- End Hero Section --><br><br>
+
+<div class="container" id="key_board_div">
+  <div class="row">
+    <div class="col-md-12">
+      <textarea id="keyboard_input" class="form-control" rows="8"> </textarea><br>
+      <button class="btn btn-primary" id="input_btn_keyboard">Generate Content</button>
+    </div>
+  </div>
+</div><br><br>
+
+<!--<div class="container">-->
+<!--            <div class="experiment row" >-->
+<!--                <br>-->
+<!--                <div>-->
+<!--                    <button id="start-recording"><img class="mic_icon" src="{% static 'images/mic.jpeg' %}"></button>-->
+<!--                    <button id="stop-recording" disabled><img class="mic_icon" src="{% static 'images/stop_mic.png' %}"></button>-->
+<!--                    <button id="pause-recording" disabled></button>-->
+<!--                    <button id="resume-recording" disabled></button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <section class="experiment">-->
+<!--                <div id="audios-container"></div>-->
+<!--            </section>-->
+<!--</div>-->
 
 
+<!--<div class="container" id="microphone_div">-->
+<!--  <div class="row">-->
+<!--    <div class="col-md-12">-->
+<!--      <textarea id="voice_text" class="form-control" rows="8"> </textarea><br>-->
+<!--      <button class="btn btn-primary" id="microphone_btn_keyboard">Generate Content</button>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div><br><br>-->
 
+<div class="container" id="camera_div">
+  <div class="row">
+    <div class="col-md-8">
+      <video id="video" width="800" height="500" autoplay></video>
+    </div>
+      <div class="col-md-4">
+      <button class="btn btn-primary" id="capture_photo">Capture Photo</button>
+        </div>
+  </div><br><br>
+    <div class="col-md-6 json">
+        <textarea name="" class="form-control col-md-6" id="ocr" rows="15"></textarea>
+    </div>
+    <div class="col-md-6 json">
+        <textarea name="" class="form-control col-md-6" id="analysis" rows="15"></textarea>
+    </div>
+    <div class="col-md-12" style="margin-top:35px;">
+        <textarea name="" class="form-control col-md-6" id="input_text_area" rows="9"></textarea><br><br>
+        <button style="margin-top:23px;margin-bottom:50px;" id="input_btn" class="btn btn-primary">Generate Content</button>
+    </div>
+</div>
 
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <p id="result"></p>
+        </div>
+    </div>
+</div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- ======= About Us Section ======= -->
-    <section id="about" class="about pt-0" style="margin-top:85px !important;">
-      <div class="container" data-aos="fade-up">
-
-        <div class="row gy-4">
-          <div class="col-lg-6 position-relative align-self-start order-lg-last order-first">
-            <img src="{% static 'images/voice2voice.jpg' %}" class="img-fluid" alt="" style="border-radius:93px;">
-          </div>
-          <div class="col-lg-6 content order-last  order-lg-first">
-            <h3>Voice To Voice</h3>
-            <ul>
-              <li data-aos="fade-up" data-aos-delay="100">
-                <i class="bi bi-arrow-right"></i>
-                <div>
-                  <h5>80 Requests</h5>
-                </div>
-              </li>
-              <li data-aos="fade-up" data-aos-delay="200">
-                <i class="bi bi-arrow-right"></i>
-                <div>
-                  <h5>Valid for 3 months</h5>
-                </div>
-              </li>
-            </ul>
-            <div style="margin-top:45px;">
-              <a class="btn" style="color: white; background-color: rgb(91, 97, 235)" href="{% url 'voice2voicePlanDetail' %}">Plan Details</a>
-              <a class="btn" href="{% url 'VoiceToVoice' %}" style="color: white; background-color: rgb(91, 97, 235)">Use VoiceToVoice</a>
-            </div>
-          </div>
+<div class="container">
+            <img id="loading" style="position: absolute;top: 0;left: -13px;width: 100%;background: white;height: 100vh;display: flex;justify-content: center;" src="{% static 'images/loading.svg' %}">
         </div>
 
-      </div>
-    </section><!-- End About Us Section -->
+<script src="{% static 'chat/js/jquery-1.12.3.js' %}"></style>
+<script src="https://cdn.WebRTC-Experiment.com/MediaStreamRecorder.js"></script>
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<script src="{% static 'chat/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'chat/js/retail_bots.js' %}"></script>
+<!--<script>-->
+<!--	document.multiselect('#testSelect1')-->
+<!--		.setCheckBoxClick("checkboxAll", function(target, args) {-->
+<!--			console.log("Checkbox 'Select All' was clicked and got value ", args.checked);-->
+<!--		})-->
+<!--		.setCheckBoxClick("1", function(target, args) {-->
+<!--			console.log("Checkbox for item with value '1' was clicked and got value ", args.checked);-->
+<!--		});-->
 
+<!--	function enable() {-->
+<!--		document.multiselect('#testSelect1').setIsEnabled(true);-->
+<!--	}-->
 
+<!--	function disable() {-->
+<!--		document.multiselect('#testSelect1').setIsEnabled(false);-->
+<!--	}-->
+<!--</script>-->
+</body>
+</html>
 
-    <!-- ======= Services Section ======= -->
-    <section id="service" class="services pt-0">
-      <div class="container" data-aos="fade-up">
-
-        <div class="section-header">
-          <span>Other Services</span>
-          <h2>Other Services</h2>
-
-        </div>
-
-        <div class="row gy-4">
-
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-            <div class="card">
-              <h3><a href="{% url 'text2VoicePlanDetail' %}" class="stretched-link">Text To Voice</a></h3>
-              <ul>
-                <li style="list-style:none;" ><i class="bi bi-arrow-right" style="margin-right:5px;"></i>30 Requests</li>
-                <li style="list-style:none;"><i class="bi bi-arrow-right" style="margin-right:5px;"></i>Valid for 2 months</li>
-              </ul>
-              <div style="padding: 14px 23px;">
-              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)" href="{% url 'text2VoicePlanDetail' %}">Plan Details</a>
-              <a class="btn" href="{% url 'TextToVoice' %}"
-                 style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Use TextToVoice</a>
-            </div>
-            </div>
-          </div><!-- End Card Item -->
-
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-            <div class="card">
-              <h3><a href="{% url 'text2TextPlanDetail' %}" class="stretched-link">Text To Text</a></h3>
-              <ul>
-                <li style="list-style:none;" ><i class="bi bi-arrow-right" style="margin-right:5px;"></i>30 Requests</li>
-                <li style="list-style:none;"><i class="bi bi-arrow-right" style="margin-right:5px;"></i>Valid for 2 months</li>
-              </ul>
-              <div style="padding: 14px 23px;">
-              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)" href="{% url 'text2TextPlanDetail' %}">Plan Details</a>
-              <a class="btn" href="{% url 'TextToText' %}"
-                 style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Use TextToVoice</a>
-            </div>
-              </div>
-          </div><!-- End Card Item -->
-
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-            <div class="card">
-              <h3><a href="{% url 'text2ImagePlanDetail' %}" class="stretched-link">Text To Image</a></h3>
-              <ul>
-                <li style="list-style:none;" ><i class="bi bi-arrow-right" style="margin-right:5px;"></i>30 Requests</li>
-                <li style="list-style:none;"><i class="bi bi-arrow-right" style="margin-right:5px;"></i>Valid for 2 months</li>
-              </ul>
-              <div style="padding: 14px 23px;">
-              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)" href="{% url 'text2ImagePlanDetail' %}">Plan Details</a>
-              <a class="btn" href="{% url 'TextToImage' %}"
-                 style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Use TextToVoice</a>
-            </div>
-              </div>
-          </div><!-- End Card Item -->
-
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
-            <div class="card">
-              <h3><a href="{% url 'image2ImagePlanDetail' %}" class="stretched-link">Image To Image</a></h3>
-              <ul>
-                <li style="list-style:none;" ><i class="bi bi-arrow-right" style="margin-right:5px;"></i>30 Requests</li>
-                <li style="list-style:none;"><i class="bi bi-arrow-right" style="margin-right:5px;"></i>Valid for 2 months</li>
-              </ul>
-              <div style="padding: 14px 23px;">
-              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)" href="{% url 'image2ImagePlanDetail' %}">Plan Details</a>
-              <a class="btn" href="{% url 'ImageToImage' %}"
-                 style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Use TextToVoice</a>
-            </div>
-              </div>
-          </div><!-- End Card Item -->
-
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
-            <div class="card">
-              <h3><a href="{% url 'ImageToTextDetail' %}" class="stretched-link">OCR</a></h3>
-              <ul>
-                <li style="list-style:none;" ><i class="bi bi-arrow-right" style="margin-right:5px;"></i>30 Requests</li>
-                <li style="list-style:none;"><i class="bi bi-arrow-right" style="margin-right:5px;"></i>Valid for 2 months</li>
-              </ul>
-              <div style="padding: 14px 23px;">
-              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)" href="{% url 'OcrPlanDetail' %}">Plan Details</a>
-              <a class="btn" href="{% url 'ImageToTextDetail' %}"
-                 style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Use TextToVoice</a>
-            </div>
-              </div>
-          </div>
-            <!-- End Card Item -->
-
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
-            <div class="card">
-              <h3><a href="{% url 'object_detectPlanDetail' %}" class="stretched-link">Object Detection</a></h3>
-              <ul>
-                <li style="list-style:none;" ><i class="bi bi-arrow-right" style="margin-right:5px;"></i>30 Requests</li>
-                <li style="list-style:none;"><i class="bi bi-arrow-right" style="margin-right:5px;"></i>Valid for 2 months</li>
-              </ul>
-              <div style="padding: 14px 23px;">
-              <a class="btn" style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)" href="{% url 'object_detectPlanDetail' %}">Plan Details</a>
-              <a class="btn" href="{% url 'ObjectsDetection' %}"
-                 style="font-size: 9px;color: white; background-color: rgb(91, 97, 235)">Use TextToVoice</a>
-            </div>
-              </div>
-          </div><!-- End Card Item -->
-
-        </div>
-
-      </div>
-    </section><!-- End Services Section -->
-
-  <!-- ======= About Us Section ======= -->
-    <section id="about2" class="about pt-0" style="margin-top:85px !important;">
-      <div class="container" data-aos="fade-up">
-
-        <div class="row gy-4">
-          <div class="col-lg-6 content order-last  order-lg-last">
-            <h3>Voice To Image</h3>
-            <ul>
-              <li data-aos="fade-up" data-aos-delay="100">
-                <i class="bi bi-arrow-right"></i>
-                <div>
-                  <h5>80 Requests</h5>
-                  <p>Generate and Post Images to communities & Download Image</p>
-                </div>
-              </li>
-              <li data-aos="fade-up" data-aos-delay="200">
-                <i class="bi bi-arrow-right"></i>
-                <div>
-                  <h5>Valid for 3 months</h5>
-                  <p>Type Manually to get good reponse</p>
-                </div>
-              </li>
-            </ul>
-            <div style="margin-top:45px;">
-              <a class="btn" href="{% url 'voice2ImagePlanDetail' %}" style="color: white; background-color: rgb(91, 97, 235)">Plan Details</a>
-              <a class="btn" href="{% url 'VoiceToImage' %}"
-                 style="color: white; background-color: rgb(91, 97, 235)">Use VoiceToImage</a>
-            </div>
-          </div>
-          <div class="col-lg-6 position-relative align-self-start order-lg-first order-first">
-            <img src="{% static 'images/voice2image.png' %}" class="img-fluid" alt="" style="border-radius:53px;">
-          </div>
-        </div>
-
-      </div>
-</section>
-{% endblock %}
