@@ -265,6 +265,7 @@ def UploadVoice(request):
         if key:
             openai.api_key = key.key
             resp = openai.Image.create(prompt="{}".format(text), n=3, size="1024x1024")
+            print(resp)
             images = list()
             for image in resp['data']:
                 images.append(image.url)
@@ -272,18 +273,49 @@ def UploadVoice(request):
                 imagedb = ImagesDB.objects.create(question=text, user=request.user)
             else:
                 ImagesDB.objects.create(question=text, images=images)
+            print(images)
+            # response1 = urlopen(images[0])
+            response1 = requests.get(images[0])
+            original_image = Image.open(BytesIO(response1.content))
+            print(original_image)
+            # Resize the image
+            resized_image = original_image.resize((300, 300))  # Specify the desired dimensions
 
-            response1 = urlopen(images[0])
-            io1 = BytesIO(response1.read())
-            imagedb.image1.save("image_one.jpg", File(io1))
+            # Save the resized image to a buffer
+            image_buffer = BytesIO()
+            resized_image.save(image_buffer, format='JPEG')
+            image_buffer.seek(0)
+            print(image_buffer)
 
-            response2 = urlopen(images[1])
-            io2 = BytesIO(response2.read())
-            imagedb.image2.save("image_two.jpg", File(io2))
+            # io1 = BytesIO(response1.read())
+            imagedb.image1.save("image_one.jpg", image_buffer)
+            print("save 1")
 
-            response3 = urlopen(images[2])
-            io3 = BytesIO(response3.read())
-            imagedb.image3.save("image_three.jpg", File(io3))
+            # response2 = urlopen(images[1])
+            # io2 = BytesIO(response2.read())
+            response1 = requests.get(images[0])
+            original_image2 = Image.open(BytesIO(response1.content))
+            # Resize the image
+            resized_image2 = original_image2.resize((300, 300))  # Specify the desired dimensions
+
+            # Save the resized image to a buffer
+            image_buffer2 = BytesIO()
+            resized_image2.save(image_buffer2, format='JPEG')
+            image_buffer2.seek(0)
+            imagedb.image2.save("image_two.jpg", image_buffer2)
+
+            # response3 = urlopen(images[2])
+            # io3 = BytesIO(response3.read())
+            response3 = requests.get(images[0])
+            original_image3 = Image.open(BytesIO(response3.content))
+            # Resize the image
+            resized_image3 = original_image3.resize((300, 300))  # Specify the desired dimensions
+
+            # Save the resized image to a buffer
+            image_buffer3 = BytesIO()
+            resized_image3.save(image_buffer3, format='JPEG')
+            image_buffer3.seek(0)
+            imagedb.image3.save("image_three.jpg", image_buffer3)
 
             show_images = list()
 
@@ -447,30 +479,30 @@ def get_image(request):
 def TextToText(request):
     if request.user.is_authenticated:
         text = request.GET.get("item", None)
+        communities = list()
+        if CommunityMembers.objects.filter(user=request.user).exists():
+            communities_id = request.user.team.all().values_list("community__community_id", flat=True)
+            communities = Community.objects.filter(community_id__in=communities_id)
         if request.user.premium == 1:
             if Subscriptions.objects.filter(user=request.user, plan__access="TEXT_TO_TEXT", is_expired=False).exists():
-                if CommunityMembers.objects.filter(user=request.user).exists():
-                    communities_id = request.user.team.all().values_list("community__community_id", flat=True)
-                    communities = Community.objects.filter(community_id__in=communities_id)
-                    return render(request, "TextToText.html", context={"communities": communities, "text": text})
-                return render(request, "TextToText.html", context={"text": text})
+                return render(request, "TextToText.html", context={"communities": communities, "text": text})
             return redirect('/api/renew/subscription/')
-        return render(request, "TextToText.html", context={"text": text})
+        return render(request, "TextToText.html", context={"text": text, "communities": communities})
     return redirect(reverse("LoginView") + "?page={}".format("models/text_to_text/detail/"))
 
 
 def TextToImage(request):
     if request.user.is_authenticated:
         text = request.GET.get("item", None)
+        communities = list()
+        if CommunityMembers.objects.filter(user=request.user).exists():
+            communities_id = request.user.team.all().values_list("community__community_id", flat=True)
+            communities = Community.objects.filter(community_id__in=communities_id)
         if request.user.premium == 1:
             if Subscriptions.objects.filter(user=request.user, plan__access="TEXT_TO_IMAGE", is_expired=False).exists():
-                if CommunityMembers.objects.filter(user=request.user).exists():
-                    communities_id = request.user.team.all().values_list("community__community_id", flat=True)
-                    communities = Community.objects.filter(community_id__in=communities_id)
-                    return render(request, "TextToImage.html", context={"communities": communities, "text": text})
-                return render(request, "TextToImage.html", context={"text": text})
+                return render(request, "TextToImage.html", context={"communities": communities, "text": text})
             return redirect('/api/renew/subscription/')
-        return render(request, "TextToImage.html", context={"text": text})
+        return render(request, "TextToImage.html", context={"text": text, "communities": communities})
     return redirect(reverse("LoginView") + "?page={}".format("models/text_to_image/detail/"))
 
 

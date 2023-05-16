@@ -28,6 +28,59 @@
 
   <!-- Template Main CSS File -->
   <link href="{% static 'shop/css/main.css' %}" rel="stylesheet">
+  <style>
+    .p-3 p{
+        color:white !important;
+      }
+      .hid{
+        display:none;
+      }
+      .pagination a{
+        font-size: 16px;
+        padding: 0px 4px;
+      }
+      .cont {
+  border: 2px solid #5B61EB;
+  background-color: #efecec42;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 12px;
+}
+
+.darker {
+  border-color: #5B61EB;
+  background-color: #efecec42;
+}
+
+.cont::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.cont .prof {
+  float: left;
+  max-width: 60px;
+  margin-right: 20px;
+  border-radius: 50%;
+}
+
+.cont img.right {
+  float: right;
+  margin-left: 20px;
+  margin-right:0;
+}
+
+.time-right {
+  float: right;
+  color: #aaa;
+}
+
+.time-left {
+  float: left;
+  color: #999;
+}
+  </style>
 
 </head>
 
@@ -75,7 +128,7 @@
               <li><a href="{% url 'VoiceToCommandDetail' %}">音频产指令AudioGcomd</a></li>
               <li><a href="{% url 'TextToCommandDetail' %}">文本产指令TextGComd</a></li>
               <li><a href="{% url 'ImageToTextDetail' %}">Image To Text(OCR)</a></li>
-              <li><a href="{% url 'RetailBotsView' %}">Retail Bots</a></li>
+              <li><a href="{% url 'RetailBotsView' %}">Sales Bot</a></li>
             </ul>
           </li>
           <li class="dropdown"><a href="#"><span>加入虚拟工厂JoinVirtual factory</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
