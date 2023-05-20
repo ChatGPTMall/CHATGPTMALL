@@ -26,7 +26,7 @@ endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
 
 class TextToTexTView(generics.CreateAPIView):
     serializer_class = TextToTexTViewSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
 
     def post(self, request, *args, **kwargs):
         openai.api_key = os.getenv("OPEN_AI_KEY")
