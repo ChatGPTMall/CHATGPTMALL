@@ -20,7 +20,6 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
     ShopCategoriesViewSerializer, GetItemsViewSerializer
 
-openai.api_key = os.getenv("OPEN_AI_KEY")
 stripe.api_key = settings.STRIPE_SECRET_KEY
 endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
 
@@ -30,6 +29,7 @@ class TextToTexTView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
+        openai.api_key = os.getenv("OPEN_AI_KEY")
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         input = request.data["input"]
@@ -48,6 +48,38 @@ class TextToTexTView(generics.CreateAPIView):
             "input": input,
             "response": result
         }), status=status.HTTP_201_CREATED)
+
+
+class TextToTexTOpeniaiView(generics.CreateAPIView):
+    serializer_class = TextToTexTViewSerializer
+    permission_classes = []
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            api_key = request.query_params.get("openai_key", None)
+            if api_key is None:
+                return Response({"error": "openai_key API Key is Required"}, status=status.HTTP_400_BAD_REQUEST)
+            openai.api_key = api_key
+            input_ = request.data["input"]
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are a chatbot"},
+                    {"role": "user", "content": "{}?".format(input_)},
+                ]
+            )
+
+            result = ''
+            for choice in response.choices:
+                result += choice.message.content
+            return Response(dict({
+                "input": input_,
+                "response": result
+            }), status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class TextToImageView(generics.CreateAPIView):

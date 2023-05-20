@@ -21,7 +21,7 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageView, ImageAnalysisView, \
-    ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView
+    ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView, TextToTexTOpeniaiView
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans, \
     IndustriesView, GetIndustriesData, TextToImage, GetImages, JobsView, CapabilitiesView, Communities, JoinCommunity, \
@@ -126,6 +126,7 @@ urlpatterns = [
 
     # API's
     path('api/v1/text_to_text/', TextToTexTView.as_view(), name="TextToTexTView"),
+    path('api/v1/openai/text_to_text/', TextToTexTOpeniaiView.as_view(), name="TextToTexTOpeniaiView"),
     path('api/v1/text_to_image/', TextToImageView.as_view(), name="TextToImagesAPI"),
     path('api/v1/image/analysis/', ImageAnalysisView.as_view(), name="ImageAnalysisView"),
     path('api/v1/objects/detection/', ObjectsDetectionView.as_view(), name="ObjectsDetectionView"),
