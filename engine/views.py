@@ -1,6 +1,5 @@
 import os
 import ast
-import bardapi
 import urllib
 import openai
 import stripe
@@ -34,26 +33,17 @@ class TextToTexTView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         input = request.data["input"]
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a chatbot"},
+                {"role": "user", "content": "{}?".format(input)},
+            ]
+        )
 
-        token = '1320da58-aa14-4f10-898d-55682b4bdd87.'
-        # Send an API request and get a response.
-        # set your __Secure-1PSID value to key
-        token = "Wgj-zA4DqUuQfEtODkcrmJJbzd7mcBZNNb_58T9yBZdtwbS-m4QMMjj-XCNKMhsg2QFi5Q."
-
-
-        # Send an API request and get a response.
-        response = bardapi.core.Bard(token).get_answer(input)["content"]
-        # response = openai.ChatCompletion.create(
-        #     model="gpt-3.5-turbo",
-        #     messages=[
-        #         {"role": "system", "content": "You are a chatbot"},
-        #         {"role": "user", "content": "{}?".format(input)},
-        #     ]
-        # )
-        #
-        # result = ''
-        # for choice in response.choices:
-        #     result += choice.message.content
+        result = ''
+        for choice in response.choices:
+            result += choice.message.content
         return Response(dict({
             "input": input,
             "response": response
