@@ -100,8 +100,7 @@ class TextToTexTMicrosoftView(generics.CreateAPIView):
             response = openai.Completion.create(
                 engine=model,
                 max_tokens=int(3000),
-                prompt=input_,
-            )
+                prompt=input_,)
             text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
             return Response(dict({
                 "input": input_,
