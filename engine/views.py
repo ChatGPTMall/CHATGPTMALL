@@ -46,7 +46,7 @@ class TextToTexTView(generics.CreateAPIView):
             result += choice.message.content
         return Response(dict({
             "input": input,
-            "response": response
+            "response": result
         }), status=status.HTTP_201_CREATED)
 
 
