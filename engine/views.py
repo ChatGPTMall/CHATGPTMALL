@@ -18,7 +18,7 @@ from engine.models import ImagesDB, ImageAnalysisDB, Items, Category
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
-    ShopCategoriesViewSerializer, GetItemsViewSerializer
+    ShopCategoriesViewSerializer, GetItemsViewSerializer, TextToTexTMicrosoftViewSerializer
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
@@ -77,6 +77,35 @@ class TextToTexTOpeniaiView(generics.CreateAPIView):
             return Response(dict({
                 "input": input_,
                 "response": result
+            }), status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TextToTexTMicrosoftView(generics.CreateAPIView):
+    serializer_class = TextToTexTMicrosoftViewSerializer
+    permission_classes = []
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            openai.api_key = self.request.data.get("ms_key")
+            endpoint = self.request.data.get("endpoint")
+            input_ = self.request.data.get("input")
+            openai.api_base = "{}".format(endpoint)
+            openai.api_type = 'azure'
+            openai.api_version = "2023-03-15-preview"
+            model = "davinci"
+            response = openai.Completion.create(
+                engine=model,
+                max_tokens=int(3000),
+                prompt=input_,
+            )
+            text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
+            return Response(dict({
+                "input": input_,
+                "response": text
             }), status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

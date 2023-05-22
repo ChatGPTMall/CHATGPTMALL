@@ -29,3 +29,9 @@ class ShopCategoriesViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = "__all__"
+
+
+class TextToTexTMicrosoftViewSerializer(serializers.Serializer):
+    input = serializers.CharField(required=True)
+    endpoint = serializers.CharField(required=True)
+    ms_key = serializers.CharField(required=True)
