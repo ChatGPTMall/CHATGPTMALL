@@ -18,7 +18,7 @@ from engine.models import ImagesDB, ImageAnalysisDB, Items, Category
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
-    ShopCategoriesViewSerializer, GetItemsViewSerializer, TextToTexTMicrosoftViewSerializer
+    ShopCategoriesViewSerializer, GetItemsViewSerializer, TextToTexTMicrosoftViewSerializer, TranscribeAudioSerializer
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
@@ -108,6 +108,22 @@ class TextToTexTMicrosoftView(generics.CreateAPIView):
             }), status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TranscribeAudio(generics.CreateAPIView):
+    serializer_class = TranscribeAudioSerializer
+    permission_classes = []
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            audio = self.request.data.get("audio")
+            audio_file = open(audio, "rb")
+            transcript = openai.Audio.transcribe("whisper-1", audio_file)
+            return Response(dict({"response": transcript}))
+        except Exception as e:
+            return Response(dict({"error": str(e)}))
 
 
 class TextToImageView(generics.CreateAPIView):

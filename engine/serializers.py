@@ -35,3 +35,7 @@ class TextToTexTMicrosoftViewSerializer(serializers.Serializer):
     input = serializers.CharField(required=True)
     endpoint = serializers.CharField(required=True)
     ms_key = serializers.CharField(required=True)
+
+
+class TranscribeAudioSerializer(serializers.Serializer):
+    audio = serializers.FileField(required=True)
