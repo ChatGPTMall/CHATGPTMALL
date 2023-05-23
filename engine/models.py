@@ -416,6 +416,13 @@ class CapturedImages(models.Model):
     image = models.ImageField(upload_to="camera/images")
 
 
+class CapturedAudio(models.Model):
+    audio = models.FileField(upload_to="skybrain/audios")
+
+
+
+
+
 
 
 

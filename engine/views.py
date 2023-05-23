@@ -115,10 +115,12 @@ class TranscribeAudio(generics.CreateAPIView):
     permission_classes = []
 
     def post(self, request, *args, **kwargs):
+        openai.api_key = os.getenv("OPEN_AI_KEY")
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
-            audio = self.request.data.get("audio")
+            print(self.request.data)
+            audio = self.request.data.get("audio").temporary_file_path()
             audio_file = open(audio, "rb")
             transcript = openai.Audio.transcribe("whisper-1", audio_file)
             return Response(dict({"response": transcript["text"]}))
