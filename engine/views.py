@@ -121,7 +121,7 @@ class TranscribeAudio(generics.CreateAPIView):
             audio = self.request.data.get("audio")
             audio_file = open(audio, "rb")
             transcript = openai.Audio.transcribe("whisper-1", audio_file)
-            return Response(dict({"response": transcript}))
+            return Response(dict({"response": transcript["text"]}))
         except Exception as e:
             return Response(dict({"error": str(e)}))
 
