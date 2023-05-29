@@ -342,3 +342,5 @@ def CreateCheckoutSessionView(request):
         return render(request, "404.html", {"e": e})
 
     return redirect(checkout_session.url, code=303)
+
+

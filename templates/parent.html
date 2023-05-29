@@ -199,6 +199,7 @@
   <div id="preloader"></div>
 
   <!-- Vendor JS Files -->
+  <script src="{% static 'chat/js/jquery-1.12.3.js' %}"></script>
   <script src="{% static 'shop/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
   <script src="{% static 'shop/vendor/purecounter/purecounter_vanilla.js' %}"></script>
   <script src="{% static 'shop/vendor/glightbox/js/glightbox.min.js' %}"></script>
@@ -208,6 +209,9 @@
 
   <!-- Template Main JS File -->
   <script src="{% static 'shop/js/main.js' %}"></script>
+        <script>
+          $("#show_coupon").hide();
+        </script>
 
 <script>
    tinymce.init({

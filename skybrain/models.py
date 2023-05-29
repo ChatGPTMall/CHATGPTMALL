@@ -25,7 +25,7 @@ class Organization(models.Model):
 class LicensesRequests(models.Model):
     organization = models.CharField(max_length=200)
     email = models.CharField(max_length=200)
-    no_of_rooms = models.IntegerField(default=0)
+    no_of_licenses = models.IntegerField(default=0)
     added_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -34,3 +34,16 @@ class LicensesRequests(models.Model):
     class Meta:
         verbose_name = _("Room Request")
         verbose_name_plural = _("Room Requests")
+
+
+class Room(models.Model):
+    organization = models.ForeignKey(Organization, related_name="rooms", on_delete=models.CASCADE)
+    room_id = models.CharField(unique=True)
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.room_id
+
+    class Meta:
+        verbose_name = _("Room")
+        verbose_name_plural = _("Rooms")
