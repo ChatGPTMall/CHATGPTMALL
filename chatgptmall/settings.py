@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'users',
     'engine',
+    'skybrain',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
