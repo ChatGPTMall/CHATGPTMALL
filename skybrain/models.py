@@ -38,7 +38,7 @@ class LicensesRequests(models.Model):
 
 class Room(models.Model):
     organization = models.ForeignKey(Organization, related_name="rooms", on_delete=models.CASCADE)
-    room_id = models.CharField(unique=True)
+    room_id = models.CharField(unique=True, max_length=30)
     added_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
