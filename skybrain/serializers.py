@@ -11,3 +11,9 @@ class LicensesViewSerializer(serializers.ModelSerializer):
         exclude = (
             "added_on",
         )
+
+
+class CreateLicensesViewSerializer(serializers.Serializer):
+    organization = serializers.CharField(required=True)
+    email = serializers.CharField(required=True)
+    csv_file = serializers.FileField(required=True)

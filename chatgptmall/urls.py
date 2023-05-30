@@ -23,7 +23,7 @@ from rest_framework import permissions
 from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageView, ImageAnalysisView, \
     ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView, TextToTexTOpeniaiView, \
     TextToTexTMicrosoftView, TranscribeAudio
-from skybrain.views import LicensesView
+from skybrain.views import LicensesView, CreateLicensesView
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans, \
     IndustriesView, GetIndustriesData, TextToImage, GetImages, JobsView, CapabilitiesView, Communities, JoinCommunity, \
@@ -190,7 +190,8 @@ urlpatterns = [
     path("api/retail_bots/", RetailBotsView, name="RetailBotsView"),
 
     # sky brain APIs
-    path("api/v1/licenses/", LicensesView.as_view(), name="LicensesView")
+    path("api/v1/licenses/", LicensesView.as_view(), name="LicensesView"),
+    path("api/v1/create/licenses/", CreateLicensesView.as_view(), name="CreateLicensesView")
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
