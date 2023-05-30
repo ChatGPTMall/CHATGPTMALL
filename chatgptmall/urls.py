@@ -191,7 +191,7 @@ urlpatterns = [
 
     # sky brain APIs
     path("api/v1/licenses/", LicensesView.as_view(), name="LicensesView"),
-    path("api/v1/create/licenses/", CreateLicensesView.as_view(), name="CreateLicensesView")
+    path("api/v1/create_licenses/", CreateLicensesView.as_view(), name="CreateLicensesView")
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
