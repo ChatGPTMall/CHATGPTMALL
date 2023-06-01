@@ -7,7 +7,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 
 from skybrain.models import LicensesRequests, Organization, Room
-from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSerializer
+from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSerializer, OrganizationRoomsSerializer
 
 
 class LicensesView(generics.CreateAPIView):
@@ -61,3 +61,15 @@ class CreateLicensesView(generics.CreateAPIView):
                 dict({"msg": "Some issue at backend please contact admin!!!"}),
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+
+class OrganizationRooms(generics.ListAPIView):
+    serializer_class = OrganizationRoomsSerializer
+
+    def get_queryset(self):
+        return Room.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.get_serializer(self.get_queryset(), many=True)
+        return Response(serializer.data)
+

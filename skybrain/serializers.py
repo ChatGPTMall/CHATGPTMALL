@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from skybrain.models import LicensesRequests
+from skybrain.models import LicensesRequests, Room
 
 
 class LicensesViewSerializer(serializers.ModelSerializer):
@@ -17,3 +17,22 @@ class CreateLicensesViewSerializer(serializers.Serializer):
     organization = serializers.CharField(required=True)
     email = serializers.CharField(required=True)
     csv_file = serializers.FileField(required=True)
+
+
+class OrganizationRoomsSerializer(serializers.ModelSerializer):
+    organization_name = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Room
+        exclude = (
+            "room_key",
+            "organization",
+            "id",
+            "added_on",
+        )
+        read_only_fields = (
+            "organization_name",
+        )
+
+    def get_organization_name(self, room):
+        return room.organization.name
