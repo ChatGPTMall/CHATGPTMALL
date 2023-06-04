@@ -7,7 +7,8 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 
 from skybrain.models import LicensesRequests, Organization, Room
-from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSerializer, OrganizationRoomsSerializer
+from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSerializer, OrganizationRoomsSerializer, \
+    SkybrainCustomerRoomSerializer
 
 
 class LicensesView(generics.CreateAPIView):
@@ -72,4 +73,22 @@ class OrganizationRooms(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         serializer = self.get_serializer(self.get_queryset(), many=True)
         return Response(serializer.data)
+
+
+class SkybrainCustomerRoom(generics.CreateAPIView):
+    serializer_class = SkybrainCustomerRoomSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            Room.objects.get(
+                organization__name=request.data.get("organization"), room_id=int(request.data.get("room_id")),
+                room_key=request.data.get("room_key"))
+            return Response(
+                dict({"msg": "Entered Room Successfully"}),
+                status=status.HTTP_201_CREATED
+            )
+        except Exception as e:
+            return Response(dict({"error": "Invalid Room Key Found"}), status=status.HTTP_400_BAD_REQUEST)
 

@@ -36,3 +36,9 @@ class OrganizationRoomsSerializer(serializers.ModelSerializer):
 
     def get_organization_name(self, room):
         return room.organization.name
+
+
+class SkybrainCustomerRoomSerializer(serializers.Serializer):
+    organization = serializers.CharField(required=True)
+    room_id = serializers.CharField(required=True)
+    room_key = serializers.CharField(required=True)
