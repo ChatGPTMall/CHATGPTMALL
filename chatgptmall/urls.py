@@ -22,7 +22,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageView, ImageAnalysisView, \
     ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView, TextToTexTOpeniaiView, \
-    TextToTexTMicrosoftView, TranscribeAudio
+    TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans, \
@@ -128,6 +128,7 @@ urlpatterns = [
 
     # API's
     path('api/v1/text_to_text/', TextToTexTView.as_view(), name="TextToTexTView"),
+    path('api/v1/room/text_to_text/', RoomTextToTexTView.as_view(), name="RoomTextToTexTView"),
     path('api/v1/openai/text_to_text/', TextToTexTOpeniaiView.as_view(), name="TextToTexTOpeniaiView"),
     path('api/v1/ms/text_to_text/', TextToTexTMicrosoftView.as_view(), name="chatgptmalldb"),
     path('api/v1/transcribe/audio/', TranscribeAudio.as_view(), name="TranscribeAudio"),

@@ -5,6 +5,8 @@ import openai
 import stripe
 import requests
 from io import BytesIO
+
+from skybrain.models import Room, RoomHistory
 from users.models import User
 from django.urls import reverse
 from django.conf import settings
@@ -67,6 +69,68 @@ class TextToTexTView(generics.CreateAPIView):
                 "response": result
             }), status=status.HTTP_201_CREATED)
         return Response({"error": "Please Enter API Key in KeyManagement on Chatgptmall"}, status=status.HTTP_200_OK)
+
+
+class RoomTextToTexTView(generics.CreateAPIView):
+    serializer_class = TextToTexTViewSerializer
+    permission_classes = []
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        room_id = request.query_params.get("room_id", None)
+        input_ = request.data["input"]
+        ms_key = KeyManagement.objects.filter(platform="MICROSOFT").last()
+        openai_key = KeyManagement.objects.filter(platform="OPENAI").last()
+        if ms_key:
+            openai.api_key = ms_key.key
+            openai.api_base = "{}".format(ms_key.endpoint)
+            openai.api_type = 'azure'
+            openai.api_version = "2023-03-15-preview"
+            model = "davinci"
+            response = openai.Completion.create(
+                engine=model,
+                max_tokens=int(3000),
+                prompt=input_,)
+            text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
+            if room_id:
+                try:
+                    room = Room.objects.get(room_id=int(room_id))
+                    self.create_history(room, input_, text)
+                except Room.DoesNotExist:
+                    return Response({"error": "Invalid room_id provided"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(dict({
+                "input": input_,
+                "response": text
+            }), status=status.HTTP_201_CREATED)
+        if openai_key:
+            openai.api_key = openai_key.key
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are a chatbot"},
+                    {"role": "user", "content": "{}?".format(input_)},
+                ]
+            )
+
+            result = ''
+            for choice in response.choices:
+                result += choice.message.content
+            if room_id:
+                try:
+                    room = Room.objects.get(room_id=int(room_id))
+                    self.create_history(room, input_, result)
+                except Room.DoesNotExist:
+                    return Response({"error": "Invalid room_id provided"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(dict({
+                "input": input_,
+                "response": result
+            }), status=status.HTTP_201_CREATED)
+        return Response({"error": "Please Enter API Key in KeyManagement on Chatgptmall"}, status=status.HTTP_200_OK)
+
+    @staticmethod
+    def create_history(room, input_, response):
+        RoomHistory.objects.create(room=room, user_input=input_, response=response)
 
 
 class TextToTexTOpeniaiView(generics.CreateAPIView):

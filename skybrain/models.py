@@ -49,3 +49,17 @@ class Room(models.Model):
     class Meta:
         verbose_name = _("Room")
         verbose_name_plural = _("Rooms")
+
+
+class RoomHistory(models.Model):
+    room = models.ForeignKey(Room, related_name="history", on_delete=models.CASCADE)
+    user_input = models.TextField()
+    response = models.TextField()
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.room)
+
+    class Meta:
+        verbose_name = _("Room History")
+        verbose_name_plural = _("Room History")
