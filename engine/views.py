@@ -79,7 +79,12 @@ class RoomTextToTexTView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         room_id = request.query_params.get("room_id", None)
+        language = request.query_params.get("language", None)
         input_ = request.data["input"]
+        if language:
+            input_lang = input_ + " " + "in" + language
+        else:
+            input_lang = input_
         ms_key = KeyManagement.objects.filter(platform="MICROSOFT").last()
         openai_key = KeyManagement.objects.filter(platform="OPENAI").last()
         if ms_key:
@@ -91,7 +96,7 @@ class RoomTextToTexTView(generics.CreateAPIView):
             response = openai.Completion.create(
                 engine=model,
                 max_tokens=int(3000),
-                prompt=input_,)
+                prompt=input_lang,)
             text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
             if room_id:
                 try:
@@ -109,7 +114,7 @@ class RoomTextToTexTView(generics.CreateAPIView):
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": "You are a chatbot"},
-                    {"role": "user", "content": "{}?".format(input_)},
+                    {"role": "user", "content": "{}?".format(input_lang)},
                 ]
             )
 
