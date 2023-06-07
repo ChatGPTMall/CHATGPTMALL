@@ -3,12 +3,14 @@ import io
 
 from django.shortcuts import render
 from django.utils import timezone
-from rest_framework import generics, status
+from rest_framework import generics, status, filters
+from rest_framework.exceptions import ValidationError
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
-
+from django_filters.rest_framework import DjangoFilterBackend
 from skybrain.models import LicensesRequests, Organization, Room
 from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSerializer, OrganizationRoomsSerializer, \
-    SkybrainCustomerRoomSerializer
+    SkybrainCustomerRoomSerializer, HistoryRoomSerializer
 
 
 class LicensesView(generics.CreateAPIView):
@@ -91,4 +93,49 @@ class SkybrainCustomerRoom(generics.CreateAPIView):
             )
         except Exception as e:
             return Response(dict({"error": "Invalid Room Key Found"}), status=status.HTTP_400_BAD_REQUEST)
+
+
+class ValidateRoom(generics.ListAPIView):
+
+    def get(self, request, *args, **kwargs):
+        room_id = request.query_params.get("room_id", None)
+        room_key = request.query_params.get("room_key", None)
+        if Room.objects.filter(room_id=int(room_id), room_key=room_key).exists():
+            return Response({"msg": "request validated successfully"}, status=status.HTTP_200_OK)
+        return Response({"error": "Invalid Credentials Provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+
+class HistoryRoom(generics.ListAPIView):
+    serializer_class = HistoryRoomSerializer
+    pagination_class = StandardResultsSetPagination
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['added_on', ]
+
+    def get_queryset(self):
+        try:
+            room_id = self.request.query_params.get("room_id", None)
+            room_key = self.request.query_params.get("room_key", None)
+            room = Room.objects.get(room_id=int(room_id), room_key=room_key)
+            return room.history.all()
+        except Exception as e:
+            raise ValidationError(dict({"error": "invalid room_id provided"}))
+
+    def list(self, request, *args, **kwargs):
+        query_set = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(query_set)
+        serializer = self.get_serializer(page, many=True)
+        if page is not None:
+            return self.get_paginated_response(serializer.data)
+        return Response(serializer.data)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(self, request, *args, **kwargs)
+
+
 

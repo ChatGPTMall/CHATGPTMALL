@@ -282,3 +282,30 @@ $('#loading').fadeOut(2000,function(){
             });
         }
     });
+
+
+function get_data(text){
+  // Create a temporary textarea element
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+
+  // Make the textarea invisible
+  textarea.style.position = 'fixed';
+  textarea.style.top = 0;
+  textarea.style.left = 0;
+  textarea.style.width = '1px';
+  textarea.style.height = '1px';
+  textarea.style.opacity = 0;
+
+  // Append the textarea to the document
+  document.body.appendChild(textarea);
+
+  // Select the text in the textarea
+  textarea.select();
+
+  // Copy the selected text to the clipboard
+  document.execCommand('copy');
+
+  // Remove the textarea from the document
+  document.body.removeChild(textarea);
+}
