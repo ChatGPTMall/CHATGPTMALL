@@ -81,9 +81,12 @@ class RoomTextToTexTView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         room_id = request.query_params.get("room_id", None)
         language = request.query_params.get("language", None)
+        translate = request.query_params.get("translate", None)
         input_ = request.data["input"]
         if language:
             input_lang = input_ + " " + "in" + language
+        elif translate:
+            input_lang = "convert" + " " + '"{}"'.format(input_) + " " + "into" + " " + translate
         else:
             input_lang = input_
         ms_key = KeyManagement.objects.filter(platform="MICROSOFT").last()
@@ -102,7 +105,10 @@ class RoomTextToTexTView(generics.CreateAPIView):
             if room_id:
                 try:
                     room = Room.objects.get(room_id=int(room_id))
-                    self.create_history(room, input_, text)
+                    if translate:
+                        self.create_history(room, input_lang, text)
+                    else:
+                        self.create_history(room, input_, text)
                 except Room.DoesNotExist:
                     return Response({"error": "Invalid room_id provided"}, status=status.HTTP_400_BAD_REQUEST)
             return Response(dict({
@@ -125,7 +131,10 @@ class RoomTextToTexTView(generics.CreateAPIView):
             if room_id:
                 try:
                     room = Room.objects.get(room_id=int(room_id))
-                    self.create_history(room, input_, result)
+                    if translate:
+                        self.create_history(room, input_lang, result)
+                    else:
+                        self.create_history(room, input_, result)
                 except Room.DoesNotExist:
                     return Response({"error": "Invalid room_id provided"}, status=status.HTTP_400_BAD_REQUEST)
             return Response(dict({

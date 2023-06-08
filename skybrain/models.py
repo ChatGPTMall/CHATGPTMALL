@@ -63,3 +63,16 @@ class RoomHistory(models.Model):
     class Meta:
         verbose_name = _("Room History")
         verbose_name_plural = _("Room History")
+
+
+class RoomItems(models.Model):
+    room = models.ForeignKey(Room, related_name="room_items", on_delete=models.CASCADE)
+    room_items = models.JSONField(default=list)
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.room)
+
+    class Meta:
+        verbose_name = _("Room Item")
+        verbose_name_plural = _("Room Items")
