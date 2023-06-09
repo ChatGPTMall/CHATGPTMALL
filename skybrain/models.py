@@ -67,7 +67,8 @@ class RoomHistory(models.Model):
 
 class RoomItems(models.Model):
     room = models.ForeignKey(Room, related_name="room_items", on_delete=models.CASCADE)
-    room_items = models.JSONField(default=list)
+    name = models.CharField(max_length=200, default="ROOM Item")
+    image = models.ImageField(upload_to="Room/Items")
     added_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

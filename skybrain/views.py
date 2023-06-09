@@ -8,9 +8,9 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from skybrain.models import LicensesRequests, Organization, Room
+from skybrain.models import LicensesRequests, Organization, Room, RoomItems
 from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSerializer, OrganizationRoomsSerializer, \
-    SkybrainCustomerRoomSerializer, HistoryRoomSerializer
+    SkybrainCustomerRoomSerializer, HistoryRoomSerializer, ItemsRoomViewSerializer
 
 
 class LicensesView(generics.CreateAPIView):
@@ -123,6 +123,29 @@ class HistoryRoom(generics.ListAPIView):
             room_key = self.request.query_params.get("room_key", None)
             room = Room.objects.get(room_id=int(room_id), room_key=room_key)
             return room.history.all()
+        except Exception as e:
+            raise ValidationError(dict({"error": "invalid room_id provided"}))
+
+    def list(self, request, *args, **kwargs):
+        query_set = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(query_set)
+        serializer = self.get_serializer(page, many=True)
+        if page is not None:
+            return self.get_paginated_response(serializer.data)
+        return Response(serializer.data)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(self, request, *args, **kwargs)
+
+
+class ItemsRoomView(generics.ListAPIView):
+    serializer_class = ItemsRoomViewSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        try:
+            room_id = self.request.query_params.get("room_id", None)
+            return RoomItems.objects.filter(room__room_id=int(room_id))
         except Exception as e:
             raise ValidationError(dict({"error": "invalid room_id provided"}))
 

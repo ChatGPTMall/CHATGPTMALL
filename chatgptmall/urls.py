@@ -24,7 +24,7 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
     ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView, TextToTexTOpeniaiView, \
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
-    HistoryRoom
+    HistoryRoom, ItemsRoomView
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans, \
     IndustriesView, GetIndustriesData, TextToImage, GetImages, JobsView, CapabilitiesView, Communities, JoinCommunity, \
@@ -198,6 +198,8 @@ urlpatterns = [
     path("api/v1/skybrain/customer/", SkybrainCustomerRoom.as_view(), name="SkybrainCustomerRoom"),
     path("api/v1/room/validate/", ValidateRoom.as_view(), name="ValidateRoom"),
     path("api/v1/room/history/", HistoryRoom.as_view(), name="HistoryRoom"),
+    path("api/v1/room/items/", ItemsRoomView.as_view(), name="ItemsRoomView"),
+
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

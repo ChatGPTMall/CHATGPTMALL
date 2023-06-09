@@ -6,8 +6,13 @@ class RoomHistoryAdmin(admin.ModelAdmin):
     list_display = ("room", "user_input", "added_on")
 
 
+class RoomItemsAdmin(admin.ModelAdmin):
+    list_display = ("room", "name", "added_on")
+    list_filter = ("room__organization", )
+
+
 admin.site.register(Organization)
 admin.site.register(LicensesRequests)
 admin.site.register(Room)
-admin.site.register(RoomItems)
+admin.site.register(RoomItems, RoomItemsAdmin)
 admin.site.register(RoomHistory, RoomHistoryAdmin)
