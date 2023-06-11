@@ -55,10 +55,16 @@ class HistoryRoomSerializer(serializers.ModelSerializer):
 
 
 class ItemsRoomViewSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(required=True)
+    video = serializers.FileField(required=True)
+    price = serializers.IntegerField(required=True)
+    description = serializers.CharField(required=True)
+    is_private = serializers.BooleanField(required=True)
+    name = serializers.CharField(required=True)
+
     class Meta:
         model = RoomItems
         exclude = (
             "id",
             "added_on",
-            "room"
         )

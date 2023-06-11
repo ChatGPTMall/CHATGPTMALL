@@ -161,4 +161,39 @@ class ItemsRoomView(generics.ListAPIView):
         return self.list(self, request, *args, **kwargs)
 
 
+class PublicItemsRoomView(generics.ListAPIView):
+    serializer_class = ItemsRoomViewSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        try:
+            room_id = self.request.query_params.get("room_id", None)
+            return RoomItems.objects.filter(room__room_id=int(room_id), is_private=False)
+        except Exception as e:
+            raise ValidationError(dict({"error": "invalid room_id provided"}))
+
+    def list(self, request, *args, **kwargs):
+        query_set = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(query_set)
+        serializer = self.get_serializer(page, many=True)
+        if page is not None:
+            return self.get_paginated_response(serializer.data)
+        return Response(serializer.data)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(self, request, *args, **kwargs)
+
+
+class UploadItemsRoomView(generics.CreateAPIView):
+    serializer_class = ItemsRoomViewSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        # room = Room.objects.get(room_id=int(request.data.get("room_id")))
+        # print(room)
+        serializer.save()
+        return Response(serializer.data)
+
+
 

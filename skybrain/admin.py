@@ -7,7 +7,7 @@ class RoomHistoryAdmin(admin.ModelAdmin):
 
 
 class RoomItemsAdmin(admin.ModelAdmin):
-    list_display = ("room", "name", "added_on")
+    list_display = ("room", "name", "price", "category", "is_private", "added_on")
     list_filter = ("room__organization", )
 
 
