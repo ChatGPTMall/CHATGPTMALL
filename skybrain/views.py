@@ -37,7 +37,7 @@ class LicensesView(generics.CreateAPIView):
                         "No of Licenses Required: {} \n\n" \
                         "Thanks & Regards \n" \
                         "Backend Team".format(email, org, no_of_licenses)
-        recipient_list = ["faisalbashir353@gmail.com", "asianobama@gmail.com"]
+        recipient_list = ["faisalbashir353@gmail.com", "bennyliao@thingsbook.me"]
         send_mail(
             "New Accounts Request from {}".format(org), plain_message, settings.EMAIL_HOST_USER,
             recipient_list, fail_silently=True)
