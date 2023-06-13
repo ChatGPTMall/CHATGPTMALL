@@ -55,11 +55,11 @@ INSTALLED_APPS = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ORIGIN_ALLOW_ALL = True
-#
-# try:
-#     CSRF_TRUSTED_ORIGINS = json.loads(os.getenv("CSRF_TRUSTED_ORIGINS", []))
-# except Exception as e:
-#     CSRF_TRUSTED_ORIGINS = list()
+
+try:
+    CSRF_TRUSTED_ORIGINS = json.loads(os.getenv("CSRF_TRUSTED_ORIGINS", []))
+except Exception as e:
+    CSRF_TRUSTED_ORIGINS = list()
 
 
 MIDDLEWARE = [
