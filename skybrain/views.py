@@ -1,6 +1,8 @@
 import csv
 import io
 
+from django.conf import settings
+from django.core.mail import send_mail
 from django.shortcuts import render
 from django.utils import timezone
 from rest_framework import generics, status, filters
@@ -10,7 +12,7 @@ from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from skybrain.models import LicensesRequests, Organization, Room, RoomItems
 from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSerializer, OrganizationRoomsSerializer, \
-    SkybrainCustomerRoomSerializer, HistoryRoomSerializer, ItemsRoomViewSerializer
+    SkybrainCustomerRoomSerializer, HistoryRoomSerializer, ItemsRoomViewSerializer, OrganizationsviewSerializer
 
 
 class LicensesView(generics.CreateAPIView):
@@ -20,6 +22,9 @@ class LicensesView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         today = timezone.now()
+        org = request.data.get("organization")
+        email = request.data.get("email")
+        no_of_licenses = request.data.get("no_of_licenses")
         if LicensesRequests.objects.filter(
                 organization=request.data.get("organization"), added_on__date=today.date()).exists():
             return Response(
@@ -27,6 +32,22 @@ class LicensesView(generics.CreateAPIView):
                 status=status.HTTP_200_OK
             )
         serializer.save()
+        plain_message = "Hi \n\n " \
+                        "New Account Request from {} for {}\n" \
+                        "No of Licenses Required: {} \n\n" \
+                        "Thanks & Regards \n" \
+                        "Backend Team".format(email, org, no_of_licenses)
+        recipient_list = ["faisalbashir353@gmail.com", "asianobama@gmail.com"]
+        send_mail(
+            "New Accounts Request from {}".format(org), plain_message, settings.EMAIL_HOST_USER,
+            recipient_list, fail_silently=True)
+        plain_txt = "Hi \n\n" \
+                    "Thanks for sending request to skybrain our sales team will be in touch with you shortly \n\n" \
+                    "Regards \n\n" \
+                    "SkyBrain"
+        send_mail(
+            "Accounts Request Submitted", plain_txt, settings.EMAIL_HOST_USER, [email], fail_silently=True
+        )
         return Response(
             dict({"msg": "Your request has been successfully submitted we will shortly get in touch with you"}),
             status=status.HTTP_201_CREATED
@@ -196,4 +217,19 @@ class UploadItemsRoomView(generics.CreateAPIView):
         return Response(serializer.data)
 
 
+class Organizationsview(generics.ListAPIView):
+    serializer_class = OrganizationsviewSerializer
+    pagination_class = StandardResultsSetPagination
+    permission_classes = []
+    authentication_classes = []
 
+    def get_queryset(self):
+        return Organization.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        query_set = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(query_set)
+        serializer = self.get_serializer(page, many=True)
+        if page is not None:
+            return self.get_paginated_response(serializer.data)
+        return Response(serializer.data)
