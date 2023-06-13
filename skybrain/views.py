@@ -43,7 +43,7 @@ class LicensesView(generics.CreateAPIView):
             recipient_list, fail_silently=True)
         plain_txt = "Hi \n\n" \
                     "Thanks for sending request to skybrain our sales team will be in touch with you shortly \n\n" \
-                    "Regards \n\n" \
+                    "Regards \n" \
                     "SkyBrain"
         send_mail(
             "Accounts Request Submitted", plain_txt, settings.EMAIL_HOST_USER, [email], fail_silently=True
