@@ -162,10 +162,18 @@ class HistoryRoom(generics.ListAPIView):
 class ItemsRoomView(generics.ListAPIView):
     serializer_class = ItemsRoomViewSerializer
     pagination_class = StandardResultsSetPagination
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'description', 'added_on', 'category', 'is_private']
 
     def get_queryset(self):
         try:
             room_id = self.request.query_params.get("room_id", None)
+            is_private = self.request.query_params.get("is_private", None)
+            if is_private:
+                if int(is_private) == 1:
+                    return RoomItems.objects.filter(room__room_id=int(room_id), is_private=True)
+                if int(is_private) == 0:
+                    return RoomItems.objects.filter(room__room_id=int(room_id), is_private=False)
             return RoomItems.objects.filter(room__room_id=int(room_id))
         except Exception as e:
             raise ValidationError(dict({"error": "invalid room_id provided"}))
