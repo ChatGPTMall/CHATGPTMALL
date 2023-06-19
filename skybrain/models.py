@@ -82,3 +82,14 @@ class RoomItems(models.Model):
     class Meta:
         verbose_name = _("Room Item")
         verbose_name_plural = _("Room Items")
+
+
+class CustomerSupport(models.Model):
+    room = models.ForeignKey(Room, related_name="history", on_delete=models.CASCADE)
+    user_input = models.TextField()
+    response = models.TextField()
+    added_on = models.DateTimeField(auto_now_add=True)
+    has_replied = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.room)
