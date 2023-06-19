@@ -39,7 +39,7 @@ class LicensesRequests(models.Model):
 
 class Room(models.Model):
     organization = models.ForeignKey(Organization, related_name="rooms", on_delete=models.CASCADE)
-    room_id = models.CharField(unique=True, max_length=30)
+    room_id = models.CharField(max_length=30)
     room_key = models.CharField(unique=True, max_length=200, null=True, blank=True)
     added_on = models.DateTimeField(auto_now_add=True)
 
@@ -49,6 +49,7 @@ class Room(models.Model):
     class Meta:
         verbose_name = _("Room")
         verbose_name_plural = _("Rooms")
+        unique_together = (("organization", "room_id"),)
 
 
 class RoomHistory(models.Model):
@@ -66,7 +67,7 @@ class RoomHistory(models.Model):
 
 
 class RoomItems(models.Model):
-    room = models.ForeignKey(Room, to_field="room_id", related_name="room_items", on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, to_field="id", related_name="room_items", on_delete=models.CASCADE)
     name = models.CharField(max_length=200, default="ROOM Item")
     image = models.ImageField(upload_to="Room/Items", null=True, blank=True)
     video = models.FileField(upload_to="Room/Videos", null=True, blank=True)

@@ -110,10 +110,10 @@ class RoomTextToTexTView(generics.CreateAPIView):
                         self.create_history(room, input_lang, text)
                     else:
                         self.create_history(room, input_, text)
+                    if int(support) == 1:
+                        CustomerSupport.objects.create(user_input=input_, response=text, room=room)
                 except Room.DoesNotExist:
                     return Response({"error": "Invalid room_id provided"}, status=status.HTTP_400_BAD_REQUEST)
-            if int(support) == 1:
-                CustomerSupport.objects.create(user_input=input_, response=text)
             return Response(dict({
                 "input": input_,
                 "response": text
@@ -138,10 +138,10 @@ class RoomTextToTexTView(generics.CreateAPIView):
                         self.create_history(room, input_lang, result)
                     else:
                         self.create_history(room, input_, result)
+                    if int(support) == 1:
+                        CustomerSupport.objects.create(user_input=input_, response=result, room=room)
                 except Room.DoesNotExist:
                     return Response({"error": "Invalid room_id provided"}, status=status.HTTP_400_BAD_REQUEST)
-            if int(support) == 1:
-                CustomerSupport.objects.create(user_input=input_, response=result)
             return Response(dict({
                 "input": input_,
                 "response": result

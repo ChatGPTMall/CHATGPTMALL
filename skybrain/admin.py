@@ -11,9 +11,13 @@ class RoomItemsAdmin(admin.ModelAdmin):
     list_filter = ("room__organization", )
 
 
+class CustomerSupportAdmin(admin.ModelAdmin):
+    list_display = ("room", "user_input", "has_replied", "added_on")
+
+
 admin.site.register(Organization)
 admin.site.register(LicensesRequests)
 admin.site.register(Room)
-admin.site.register(CustomerSupport)
+admin.site.register(CustomerSupport, CustomerSupportAdmin)
 admin.site.register(RoomItems, RoomItemsAdmin)
 admin.site.register(RoomHistory, RoomHistoryAdmin)
