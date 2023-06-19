@@ -6,7 +6,7 @@ import stripe
 import requests
 from io import BytesIO
 
-from skybrain.models import Room, RoomHistory
+from skybrain.models import Room, RoomHistory, CustomerSupport
 from users.models import User
 from django.urls import reverse
 from django.conf import settings
@@ -83,6 +83,7 @@ class RoomTextToTexTView(generics.CreateAPIView):
         language = request.query_params.get("language", None)
         translate = request.query_params.get("translate", None)
         input_ = request.data["input"]
+        support = request.data["customer_support"]
         if language:
             input_lang = input_ + " " + "in" + language
         elif translate:
@@ -111,6 +112,8 @@ class RoomTextToTexTView(generics.CreateAPIView):
                         self.create_history(room, input_, text)
                 except Room.DoesNotExist:
                     return Response({"error": "Invalid room_id provided"}, status=status.HTTP_400_BAD_REQUEST)
+            if int(support) == 1:
+                CustomerSupport.objects.create(user_input=input_, response=text)
             return Response(dict({
                 "input": input_,
                 "response": text
@@ -137,6 +140,8 @@ class RoomTextToTexTView(generics.CreateAPIView):
                         self.create_history(room, input_, result)
                 except Room.DoesNotExist:
                     return Response({"error": "Invalid room_id provided"}, status=status.HTTP_400_BAD_REQUEST)
+            if int(support) == 1:
+                CustomerSupport.objects.create(user_input=input_, response=result)
             return Response(dict({
                 "input": input_,
                 "response": result
