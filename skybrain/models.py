@@ -85,7 +85,7 @@ class RoomItems(models.Model):
 
 
 class CustomerSupport(models.Model):
-    room = models.ForeignKey(Room, related_name="history", on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, related_name="room_support", on_delete=models.CASCADE)
     user_input = models.TextField()
     response = models.TextField()
     added_on = models.DateTimeField(auto_now_add=True)
