@@ -6,7 +6,7 @@ import stripe
 import requests
 from io import BytesIO
 
-# from skybrain.models import Room, RoomHistory, CustomerSupport
+from skybrain.models import Room, RoomHistory, CustomerSupport
 from users.models import User
 from django.urls import reverse
 from django.conf import settings
