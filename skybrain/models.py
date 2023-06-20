@@ -67,7 +67,7 @@ class RoomHistory(models.Model):
 
 
 class RoomItems(models.Model):
-    room = models.ForeignKey(Room, to_field="id", related_name="room_items", on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, related_name="room_items", on_delete=models.CASCADE)
     name = models.CharField(max_length=200, default="ROOM Item")
     image = models.ImageField(upload_to="Room/Items", null=True, blank=True)
     video = models.FileField(upload_to="Room/Videos", null=True, blank=True)
