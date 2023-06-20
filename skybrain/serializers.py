@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from skybrain.models import LicensesRequests, Room, RoomHistory, RoomItems, Organization
+from skybrain.models import LicensesRequests, Room, RoomHistory, RoomItems, Organization, CustomerSupport
 
 
 class LicensesViewSerializer(serializers.ModelSerializer):
@@ -76,4 +76,12 @@ class OrganizationsviewSerializer(serializers.ModelSerializer):
         exclude = (
             "id",
             "added_on"
+        )
+
+
+class CSQueriesViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomerSupport
+        exclude = (
+            "room",
         )

@@ -89,6 +89,7 @@ class CustomerSupport(models.Model):
     room = models.ForeignKey(Room, related_name="room_support", on_delete=models.CASCADE)
     user_input = models.TextField()
     response = models.TextField()
+    cs_response = models.TextField(null=True, blank=True)
     added_on = models.DateTimeField(auto_now_add=True)
     has_replied = models.BooleanField(default=False)
 
