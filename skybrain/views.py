@@ -13,7 +13,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from skybrain.models import LicensesRequests, Organization, Room, RoomItems, CustomerSupport
 from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSerializer, OrganizationRoomsSerializer, \
     SkybrainCustomerRoomSerializer, HistoryRoomSerializer, ItemsRoomViewSerializer, OrganizationsviewSerializer, \
-    CSQueriesViewSerializer
+    CSQueriesViewSerializer, CSQueriesUpdateViewSerializer
 
 
 class LicensesView(generics.CreateAPIView):
@@ -107,7 +107,7 @@ class SkybrainCustomerRoom(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         try:
             Room.objects.get(
-                organization__name=request.data.get("organization"), room_id=int(request.data.get("room_id")),
+                organization__name=request.data.get("organization"), room_id=request.data.get("room_id"),
                 room_key=request.data.get("room_key"))
             return Response(
                 dict({"msg": "Entered Room Successfully"}),
@@ -122,7 +122,7 @@ class ValidateRoom(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         room_id = request.query_params.get("room_id", None)
         room_key = request.query_params.get("room_key", None)
-        if Room.objects.filter(room_id=int(room_id), room_key=room_key).exists():
+        if Room.objects.filter(room_id=room_id, room_key=room_key).exists():
             return Response({"msg": "request validated successfully"}, status=status.HTTP_200_OK)
         return Response({"error": "Invalid Credentials Provided"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -143,7 +143,7 @@ class HistoryRoom(generics.ListAPIView):
         try:
             room_id = self.request.query_params.get("room_id", None)
             room_key = self.request.query_params.get("room_key", None)
-            room = Room.objects.get(room_id=int(room_id), room_key=room_key)
+            room = Room.objects.get(room_id=room_id, room_key=room_key)
             return room.history.all()
         except Exception as e:
             raise ValidationError(dict({"error": "invalid room_id provided"}))
@@ -172,10 +172,10 @@ class ItemsRoomView(generics.ListAPIView):
             is_private = self.request.query_params.get("is_private", None)
             if is_private:
                 if int(is_private) == 1:
-                    return RoomItems.objects.filter(room__room_id=int(room_id), is_private=True)
+                    return RoomItems.objects.filter(room__room_id=room_id, is_private=True)
                 if int(is_private) == 0:
-                    return RoomItems.objects.filter(room__room_id=int(room_id), is_private=False)
-            return RoomItems.objects.filter(room__room_id=int(room_id))
+                    return RoomItems.objects.filter(room__room_id=room_id, is_private=False)
+            return RoomItems.objects.filter(room__room_id=room_id)
         except Exception as e:
             raise ValidationError(dict({"error": "invalid room_id provided"}))
 
@@ -198,7 +198,7 @@ class PublicItemsRoomView(generics.ListAPIView):
     def get_queryset(self):
         try:
             room_id = self.request.query_params.get("room_id", None)
-            return RoomItems.objects.filter(room__room_id=int(room_id), is_private=False)
+            return RoomItems.objects.filter(room__room_id=room_id, is_private=False)
         except Exception as e:
             raise ValidationError(dict({"error": "invalid room_id provided"}))
 
@@ -220,7 +220,7 @@ class UploadItemsRoomView(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        # room = Room.objects.get(room_id=int(request.data.get("room_id")))
+        # room = Room.objects.get(room_id=request.data.get("room_id"))
         # print(room)
         serializer.save()
         return Response(serializer.data)
@@ -254,6 +254,12 @@ class CSQueriesView(generics.ListAPIView):
         try:
             room_key = self.request.query_params.get("room_key", None)
             room = Room.objects.get(room_key=room_key)
+            has_replied = self.request.query_params.get("has_replied", None)
+            if has_replied:
+                if int(has_replied) == 1:
+                    return room.room_support.filter(has_replied=True)
+                if int(has_replied) == 0:
+                    return room.room_support.filter(has_replied=False)
             return room.room_support.all()
         except Exception as e:
             raise ValidationError(dict({"error": "invalid room_key provided"}))
@@ -265,3 +271,21 @@ class CSQueriesView(generics.ListAPIView):
         if page is not None:
             return self.get_paginated_response(serializer.data)
         return Response(serializer.data)
+
+
+class CSQueriesUpdateView(generics.CreateAPIView):
+    serializer_class = CSQueriesUpdateViewSerializer
+    permission_classes = []
+    authentication_classes = []
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            support = CustomerSupport.objects.get(id=int(request.data.get("query_id")))
+            support.cs_response = request.data.get("reply")
+            support.has_replied = True
+            support.save()
+            return Response({"msg": "Query updated successfully"}, status=status.HTTP_201_CREATED)
+        except CustomerSupport.DoesNotExist:
+            return Response({"error": "invalid query_id found"}, status=status.HTTP_400_BAD_REQUEST)

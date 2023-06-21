@@ -85,3 +85,8 @@ class CSQueriesViewSerializer(serializers.ModelSerializer):
         exclude = (
             "room",
         )
+
+
+class CSQueriesUpdateViewSerializer(serializers.Serializer):
+    reply = serializers.CharField(required=True)
+    query_id = serializers.IntegerField(required=True)

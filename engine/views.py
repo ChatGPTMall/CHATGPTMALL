@@ -105,7 +105,7 @@ class RoomTextToTexTView(generics.CreateAPIView):
             text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
             if room_id:
                 try:
-                    room = Room.objects.get(room_id=int(room_id))
+                    room = Room.objects.get(room_id=room_id)
                     if translate:
                         self.create_history(room, input_lang, text)
                     else:
@@ -133,7 +133,7 @@ class RoomTextToTexTView(generics.CreateAPIView):
                 result += choice.message.content
             if room_id:
                 try:
-                    room = Room.objects.get(room_id=int(room_id))
+                    room = Room.objects.get(room_id=room_id)
                     if translate:
                         self.create_history(room, input_lang, result)
                     else:
