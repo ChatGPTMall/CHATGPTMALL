@@ -65,7 +65,8 @@ class CreateLicensesView(generics.CreateAPIView):
             csv_file = request.data.get("csv_file", None)
             email = request.data.get("email", None)
             organization = request.data.get("organization", None)
-            org, created = Organization.objects.get_or_create(name=organization)
+            image = request.data.get("image", None)
+            org, created = Organization.objects.get_or_create(name=organization, defaults={"image": image})
             LicensesRequests.objects.get(organization=organization, email=email, is_approved=True)
             csv_file_text = io.TextIOWrapper(csv_file.file, encoding='utf-8')
             reader = csv.DictReader(csv_file_text)
@@ -82,6 +83,7 @@ class CreateLicensesView(generics.CreateAPIView):
                 status=status.HTTP_200_OK
             )
         except Exception as e:
+            print(e)
             return Response(
                 dict({"msg": "Some issue at backend please contact admin!!!"}),
                 status=status.HTTP_400_BAD_REQUEST

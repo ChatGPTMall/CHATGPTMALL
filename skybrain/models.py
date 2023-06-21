@@ -11,6 +11,7 @@ class CategoryChoices(models.TextChoices):
 
 class Organization(models.Model):
     name = models.CharField(unique=True, max_length=200)
+    image = models.ImageField(null=True, blank=True, upload_to="Organizations/Logo")
     category = models.CharField(choices=CategoryChoices.choices, default="HOTEL", max_length=20)
     added_on = models.DateTimeField(auto_now_add=True)
 
