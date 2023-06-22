@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from skybrain.models import LicensesRequests, Room, RoomHistory, RoomItems, Organization, CustomerSupport
+from skybrain.models import LicensesRequests, Room, RoomHistory, RoomItems, Organization, CustomerSupport, Favourites
 
 
 class LicensesViewSerializer(serializers.ModelSerializer):
@@ -90,3 +90,15 @@ class CSQueriesViewSerializer(serializers.ModelSerializer):
 class CSQueriesUpdateViewSerializer(serializers.Serializer):
     reply = serializers.CharField(required=True)
     query_id = serializers.IntegerField(required=True)
+
+
+class FavouritesViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favourites
+        exclude = (
+            "updated_on",
+            "room"
+        )
+        read_only_fields = (
+            "room_key",
+        )

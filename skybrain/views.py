@@ -10,10 +10,10 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from skybrain.models import LicensesRequests, Organization, Room, RoomItems, CustomerSupport
+from skybrain.models import LicensesRequests, Organization, Room, RoomItems, CustomerSupport, Favourites
 from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSerializer, OrganizationRoomsSerializer, \
     SkybrainCustomerRoomSerializer, HistoryRoomSerializer, ItemsRoomViewSerializer, OrganizationsviewSerializer, \
-    CSQueriesViewSerializer, CSQueriesUpdateViewSerializer
+    CSQueriesViewSerializer, CSQueriesUpdateViewSerializer, FavouritesViewSerializer
 
 
 class LicensesView(generics.CreateAPIView):
@@ -259,10 +259,10 @@ class CSQueriesView(generics.ListAPIView):
             has_replied = self.request.query_params.get("has_replied", None)
             if has_replied:
                 if int(has_replied) == 1:
-                    return room.room_support.filter(has_replied=True)
+                    return room.room_support.filter(has_replied=True).order_by("-added_on")
                 if int(has_replied) == 0:
-                    return room.room_support.filter(has_replied=False)
-            return room.room_support.all()
+                    return room.room_support.filter(has_replied=False).order_by("-added_on")
+            return room.room_support.all().order_by("-added_on")
         except Exception as e:
             raise ValidationError(dict({"error": "invalid room_key provided"}))
 
@@ -291,3 +291,48 @@ class CSQueriesUpdateView(generics.CreateAPIView):
             return Response({"msg": "Query updated successfully"}, status=status.HTTP_201_CREATED)
         except CustomerSupport.DoesNotExist:
             return Response({"error": "invalid query_id found"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FavouritesView(generics.ListCreateAPIView, generics.DestroyAPIView):
+    serializer_class = FavouritesViewSerializer
+    permission_classes = []
+    authentication_classes = []
+
+    def get_object(self):
+        try:
+            favourite_id = self.request.query_params.get("favourite_id", None)
+            return Favourites.objects.get(id=int(favourite_id))
+        except Favourites.DoesNotExist:
+            return None
+
+    def get_queryset(self):
+        try:
+            room_key = self.request.query_params.get("room_key", None)
+            room = Room.objects.get(room_key=room_key)
+            return room.favourites.all().order_by("-added_on")
+        except Exception as e:
+            raise ValidationError(dict({"error": "invalid room_key provided"}))
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.get_serializer(self.get_queryset(), many=True)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            room = Room.objects.get(room_key=str(request.data.get("room_key", None)))
+            Favourites.objects.create(
+                room=room, user_input=request.data.get("user_input"), response=request.data.get("response"))
+            return Response({"msg": "added to favourites"}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error": "invalid room_key found"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance:
+            instance.delete()
+            return Response({"msg": "Removed from favourites successfully"})
+        return Response({"error": "invalid favourite_id found"}, status=status.HTTP_400_BAD_REQUEST)
+
+

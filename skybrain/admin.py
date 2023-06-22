@@ -1,5 +1,5 @@
 from django.contrib import admin
-from skybrain.models import Organization, LicensesRequests, Room, RoomHistory, RoomItems, CustomerSupport
+from skybrain.models import Organization, LicensesRequests, Room, RoomHistory, RoomItems, CustomerSupport, Favourites
 
 
 class RoomHistoryAdmin(admin.ModelAdmin):
@@ -18,6 +18,7 @@ class CustomerSupportAdmin(admin.ModelAdmin):
 admin.site.register(Organization)
 admin.site.register(LicensesRequests)
 admin.site.register(Room)
+admin.site.register(Favourites)
 admin.site.register(CustomerSupport, CustomerSupportAdmin)
 admin.site.register(RoomItems, RoomItemsAdmin)
 admin.site.register(RoomHistory, RoomHistoryAdmin)

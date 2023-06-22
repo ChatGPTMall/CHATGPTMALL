@@ -96,3 +96,18 @@ class CustomerSupport(models.Model):
 
     def __str__(self):
         return str(self.room)
+
+
+class Favourites(models.Model):
+    room = models.ForeignKey(Room, related_name="favourites", on_delete=models.CASCADE)
+    user_input = models.TextField()
+    response = models.TextField()
+    added_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return str(self.user_input)
+
+    class Meta:
+        verbose_name = _("Favourite")
+        verbose_name_plural = _("Favourites")
