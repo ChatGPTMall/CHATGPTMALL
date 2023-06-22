@@ -323,7 +323,8 @@ class FavouritesView(generics.ListCreateAPIView, generics.DestroyAPIView):
         try:
             room = Room.objects.get(room_key=str(request.data.get("room_key", None)))
             Favourites.objects.create(
-                room=room, user_input=request.data.get("user_input"), response=request.data.get("response"))
+                room=room, user_input=request.data.get("user_input"), response=request.data.get("response"),
+                history_id=int(request.data.get("history")))
             return Response({"msg": "added to favourites"}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({"error": "invalid room_key found"}, status=status.HTTP_400_BAD_REQUEST)

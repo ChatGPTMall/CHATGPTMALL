@@ -107,16 +107,17 @@ class RoomTextToTexTView(generics.CreateAPIView):
                 try:
                     room = Room.objects.get(room_id=room_id)
                     if translate:
-                        self.create_history(room, input_lang, text)
+                        history = self.create_history(room, input_lang, text)
                     else:
-                        self.create_history(room, input_, text)
+                        history = self.create_history(room, input_, text)
                     if int(support) == 1:
                         CustomerSupport.objects.create(user_input=input_, response=text, room=room)
                 except Room.DoesNotExist:
                     return Response({"error": "Invalid room_id provided"}, status=status.HTTP_400_BAD_REQUEST)
             return Response(dict({
                 "input": input_,
-                "response": text
+                "response": text,
+                "history": history,
             }), status=status.HTTP_201_CREATED)
         if openai_key:
             openai.api_key = openai_key.key
@@ -135,23 +136,24 @@ class RoomTextToTexTView(generics.CreateAPIView):
                 try:
                     room = Room.objects.get(room_id=room_id)
                     if translate:
-                        self.create_history(room, input_lang, result)
+                        history = self.create_history(room, input_lang, result)
                     else:
-                        self.create_history(room, input_, result)
+                        history = self.create_history(room, input_, result)
                     if int(support) == 1:
                         CustomerSupport.objects.create(user_input=input_, response=result, room=room)
                 except Room.DoesNotExist:
                     return Response({"error": "Invalid room_id provided"}, status=status.HTTP_400_BAD_REQUEST)
             return Response(dict({
                 "input": input_,
-                "response": result
+                "response": result,
+                "history": history
             }), status=status.HTTP_201_CREATED)
         return Response({"error": "Please Enter API Key in KeyManagement on Chatgptmall"}, status=status.HTTP_200_OK)
 
     @staticmethod
     def create_history(room, input_, response):
-        RoomHistory.objects.create(room=room, user_input=input_, response=response)
-
+        history = RoomHistory.objects.create(room=room, user_input=input_, response=response)
+        return history.id
 
 class TextToTexTOpeniaiView(generics.CreateAPIView):
     serializer_class = TextToTexTViewSerializer

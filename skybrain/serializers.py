@@ -45,6 +45,7 @@ class SkybrainCustomerRoomSerializer(serializers.Serializer):
 
 
 class HistoryRoomSerializer(serializers.ModelSerializer):
+    is_favourite = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = RoomHistory
@@ -52,6 +53,14 @@ class HistoryRoomSerializer(serializers.ModelSerializer):
             "id",
             "room"
         )
+        read_only_fields = (
+            "is_favourite",
+        )
+
+    def get_is_favourite(self, history):
+        if Favourites.objects.filter(history_id=history.id).exists():
+            return True
+        return False
 
 
 class ItemsRoomViewSerializer(serializers.ModelSerializer):

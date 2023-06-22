@@ -100,6 +100,7 @@ class CustomerSupport(models.Model):
 
 class Favourites(models.Model):
     room = models.ForeignKey(Room, related_name="favourites", on_delete=models.CASCADE)
+    history_id = models.IntegerField(default=0)
     user_input = models.TextField()
     response = models.TextField()
     added_on = models.DateTimeField(auto_now_add=True)
