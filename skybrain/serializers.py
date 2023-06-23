@@ -50,8 +50,7 @@ class HistoryRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = RoomHistory
         exclude = (
-            "id",
-            "room"
+            "room",
         )
         read_only_fields = (
             "is_favourite",
