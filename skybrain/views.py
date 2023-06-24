@@ -356,6 +356,7 @@ class ItemsSendEmailView(generics.CreateAPIView):
             message_plain = "Discover {}: Elevate Your {} Experience Today!".format(item.name, item.category)
             send_mail('Checkout Our Latest Item', message_plain, settings.EMAIL_HOST_USER, [email],
                       fail_silently=False, html_message=message)
+            return Response({"msg": "Email Sent Successfully"}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({"error": "invalid item_id found"}, status=status.HTTP_400_BAD_REQUEST)
 
