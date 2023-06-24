@@ -240,7 +240,7 @@ class Organizationsview(generics.ListAPIView):
     authentication_classes = []
 
     def get_queryset(self):
-        return Organization.objects.all()
+        return Organization.objects.all()[0:8]
 
     def list(self, request, *args, **kwargs):
         query_set = self.filter_queryset(self.get_queryset())
