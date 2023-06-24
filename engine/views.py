@@ -79,7 +79,7 @@ class RoomTextToTexTView(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        room_id = request.query_params.get("room_id", None)
+        room_id = request.query_params.get("room_key", None)
         language = request.query_params.get("language", None)
         translate = request.query_params.get("translate", None)
         input_ = request.data["input"]
@@ -109,7 +109,7 @@ class RoomTextToTexTView(generics.CreateAPIView):
             text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
             if room_id:
                 try:
-                    room = Room.objects.get(room_id=room_id)
+                    room = Room.objects.get(room_key=room_id)
                     if translate:
                         history = self.create_history(room, input_lang, text)
                     else:
@@ -138,7 +138,7 @@ class RoomTextToTexTView(generics.CreateAPIView):
                 result += choice.message.content
             if room_id:
                 try:
-                    room = Room.objects.get(room_id=room_id)
+                    room = Room.objects.get(room_key=room_id)
                     if translate:
                         history = self.create_history(room, input_lang, result)
                     else:
