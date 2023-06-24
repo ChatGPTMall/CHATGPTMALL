@@ -75,6 +75,7 @@ class ItemsRoomViewSerializer(serializers.ModelSerializer):
         exclude = (
             "id",
             "added_on",
+            "room",
         )
 
 
@@ -110,3 +111,8 @@ class FavouritesViewSerializer(serializers.ModelSerializer):
         read_only_fields = (
             "room_key",
         )
+
+
+class ItemsSendEmailViewSerializer(serializers.Serializer):
+    item_id = serializers.IntegerField(required=True)
+    email = serializers.EmailField(required=True)

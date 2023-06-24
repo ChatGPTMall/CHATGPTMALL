@@ -13,7 +13,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from skybrain.models import LicensesRequests, Organization, Room, RoomItems, CustomerSupport, Favourites
 from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSerializer, OrganizationRoomsSerializer, \
     SkybrainCustomerRoomSerializer, HistoryRoomSerializer, ItemsRoomViewSerializer, OrganizationsviewSerializer, \
-    CSQueriesViewSerializer, CSQueriesUpdateViewSerializer, FavouritesViewSerializer
+    CSQueriesViewSerializer, CSQueriesUpdateViewSerializer, FavouritesViewSerializer, ItemsSendEmailViewSerializer
 
 
 class LicensesView(generics.CreateAPIView):
@@ -170,14 +170,14 @@ class ItemsRoomView(generics.ListAPIView):
 
     def get_queryset(self):
         try:
-            room_id = self.request.query_params.get("room_id", None)
+            room_key = self.request.query_params.get("room_key", None)
             is_private = self.request.query_params.get("is_private", None)
             if is_private:
                 if int(is_private) == 1:
-                    return RoomItems.objects.filter(room__room_id=room_id, is_private=True)
+                    return RoomItems.objects.filter(room__room_key=room_key, is_private=True)
                 if int(is_private) == 0:
-                    return RoomItems.objects.filter(room__room_id=room_id, is_private=False)
-            return RoomItems.objects.filter(room__room_id=room_id)
+                    return RoomItems.objects.filter(room__room_key=room_key, is_private=False)
+            return RoomItems.objects.filter(room__room_key=room_key)
         except Exception as e:
             raise ValidationError(dict({"error": "invalid room_id provided"}))
 
@@ -199,10 +199,11 @@ class PublicItemsRoomView(generics.ListAPIView):
 
     def get_queryset(self):
         try:
-            room_id = self.request.query_params.get("room_id", None)
-            return RoomItems.objects.filter(room__room_id=room_id, is_private=False)
+            room_id = self.request.query_params.get("room_key", None)
+            print(room_id)
+            return RoomItems.objects.filter(room__room_key=room_id, is_private=False)
         except Exception as e:
-            raise ValidationError(dict({"error": "invalid room_id provided"}))
+            raise ValidationError(dict({"error": "invalid room_key provided"}))
 
     def list(self, request, *args, **kwargs):
         query_set = self.filter_queryset(self.get_queryset())
@@ -222,10 +223,13 @@ class UploadItemsRoomView(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        # room = Room.objects.get(room_id=request.data.get("room_id"))
-        # print(room)
-        serializer.save()
-        return Response(serializer.data)
+        try:
+            room_key = request.data.get("room_key")
+            room = Room.objects.get(room_key=room_key)
+            serializer.save(room=room)
+            return Response(serializer.data)
+        except Room.DoesNotExist:
+            raise ValidationError(dict({"error": "invalid room_key provided"}))
 
 
 class Organizationsview(generics.ListAPIView):
@@ -335,5 +339,16 @@ class FavouritesView(generics.ListCreateAPIView, generics.DestroyAPIView):
             instance.delete()
             return Response({"msg": "Removed from favourites successfully"})
         return Response({"error": "invalid favourite_id found"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ItemsSendEmailView(generics.CreateAPIView):
+    serializer_class = ItemsSendEmailViewSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        item_id = request.data.get("item_id")
+        email = request.data.get("email")
+
 
 
