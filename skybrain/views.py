@@ -354,7 +354,7 @@ class ItemsSendEmailView(generics.CreateAPIView):
             item = RoomItems.objects.get(id=int(item_id))
             message = render_to_string('itememail.html', {'item': item, "email": email})
             message_plain = "Discover {}: Elevate Your {} Experience Today!".format(item.name, item.category)
-            send_mail('Checkout Our Latest Item', message_plain, settings.EMAIL_HOST_USER, [email],
+            send_mail('Check Our Latest Item', message_plain, settings.EMAIL_HOST_USER, [email],
                       fail_silently=False, html_message=message)
             return Response({"msg": "Email Sent Successfully"}, status=status.HTTP_201_CREATED)
         except Exception as e:
