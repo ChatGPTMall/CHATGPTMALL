@@ -93,6 +93,7 @@ class RoomTextToTexTView(generics.CreateAPIView):
             input_lang = "convert" + " " + '"{}"'.format(input_) + " " + "into" + " " + translate
         else:
             input_lang = input_
+        history = None
         ms_key = KeyManagement.objects.filter(platform="MICROSOFT").last()
         openai_key = KeyManagement.objects.filter(platform="OPENAI").last()
         if ms_key:
