@@ -25,7 +25,7 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
-    CSQueriesUpdateView, FavouritesView, ItemsSendEmailView
+    CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans, \
     IndustriesView, GetIndustriesData, TextToImage, GetImages, JobsView, CapabilitiesView, Communities, JoinCommunity, \
@@ -206,7 +206,8 @@ urlpatterns = [
     path("api/v1/room/CS/queries/", CSQueriesView.as_view(), name="CSQueriesView"),
     path("api/v1/room/queries/update/", CSQueriesUpdateView.as_view(), name="CSQueriesUpdateView"),
     path("api/v1/favourites/room/", FavouritesView.as_view(), name="FavouritesView"),
-    path("api/v1/room/items/email/", ItemsSendEmailView.as_view(), name="ItemsSendEmailView")
+    path("api/v1/room/items/email/", ItemsSendEmailView.as_view(), name="ItemsSendEmailView"),
+    path("unsubscribe/", UnsubscribeView, name="UnsubscribeView")
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

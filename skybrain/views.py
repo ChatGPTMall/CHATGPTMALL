@@ -1,6 +1,6 @@
 import csv
 import io
-
+from django.http import HttpResponse
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render
@@ -11,7 +11,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from skybrain.models import LicensesRequests, Organization, Room, RoomItems, CustomerSupport, Favourites
+from skybrain.models import LicensesRequests, Organization, Room, RoomItems, CustomerSupport, Favourites, Unsubscribe
 from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSerializer, OrganizationRoomsSerializer, \
     SkybrainCustomerRoomSerializer, HistoryRoomSerializer, ItemsRoomViewSerializer, OrganizationsviewSerializer, \
     CSQueriesViewSerializer, CSQueriesUpdateViewSerializer, FavouritesViewSerializer, ItemsSendEmailViewSerializer
@@ -351,15 +351,23 @@ class ItemsSendEmailView(generics.CreateAPIView):
         try:
             item_id = request.data.get("item_id")
             email = request.data.get("email")
-            item = RoomItems.objects.get(id=int(item_id))
-            message = render_to_string('itememail.html', {'item': item, "email": email})
-            message_plain = "Discover {}: Elevate Your {} Experience Today!".format(item.name, item.category)
-            send_mail('Check Our Latest Item', message_plain, settings.EMAIL_HOST_USER, [email],
-                      fail_silently=False, html_message=message)
+            if not Unsubscribe.objects.filter(email=email).exists():
+                item = RoomItems.objects.get(id=int(item_id))
+                message = render_to_string('itememail.html', {'item': item, "email": email})
+                message_plain = "Discover {}: Elevate Your {} Experience Today!".format(item.name, item.category)
+                send_mail('Check Our Latest Item', message_plain, settings.EMAIL_HOST_USER, [email],
+                          fail_silently=False, html_message=message)
             return Response({"msg": "Email Sent Successfully"}, status=status.HTTP_201_CREATED)
         except Exception as e:
             print(e)
             return Response({"error": "invalid item_id found"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+def UnsubscribeView(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        Unsubscribe.objects.create(email=email)
+        return HttpResponse("{} have been unsubscribed".format(email))
 
 
 

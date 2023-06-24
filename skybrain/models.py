@@ -112,3 +112,15 @@ class Favourites(models.Model):
     class Meta:
         verbose_name = _("Favourite")
         verbose_name_plural = _("Favourites")
+
+
+class Unsubscribe(models.Model):
+    email = models.CharField(unique=True, max_length=100)
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.email)
+
+    class Meta:
+        verbose_name = _("Unsubscribe")
+        verbose_name_plural = _("Unsubscribed")

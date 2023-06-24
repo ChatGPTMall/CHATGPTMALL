@@ -242,9 +242,31 @@
 
                                         </p>
                                         <p style="line-height: 24px;margin-bottom:15px;">
-                                            Great news, you will now be the first to see exclusive previews of our latest collections, hear about news from the Skybrain!
+                                            Great news, you will now be the first to see exclusive previews of our latest Item, hear about news from the Skybrain!
                                             community and get the most up to date news in the world of AI.
                                         </p>
+
+                                            <!-- main section -->
+                                            <div class="item">
+                                                <div>
+                                                    <img style="width: 260px;" height="260px;" src="{{item.image.url}}">
+                                                </div>
+
+                                            </div>
+                                            <div>
+                                                 {% if item.video %}
+                                                  <video width="320" height="500" controls>
+                                                      <source src="{{item.video.url}}" type="video/mp4">
+                                                      <source src="{{item.video.url}}" type="video/ogg">
+                                                  </video>
+                                                  {% else %}
+                                                  {% endif %}
+                                                </div>
+                                            <div>
+                                                <p><b>Item Description: </b> {{item.description}}</p>
+                                                <p><b>Item Price: </b> {{item.price}}</p>
+                                                <p><b>Item Category: </b> {{item.category}}</p>
+                                            </div>
 
                                     </td>
                                 </tr>
@@ -265,26 +287,6 @@
     <!-- end section -->
 
 
-    <!-- main section -->
-    <div class="item">
-        <div>
-            <img style="width: 260px;" height="260px;" src="{{item.image.url}}">
-        </div>
-        <div>
-         {% if item.video %}
-          <video width="320" height="500" controls>
-              <source src="{{item.video.url}}" type="video/mp4">
-              <source src="{{item.video.url}}" type="video/ogg">
-          </video>
-          {% else %}
-          {% endif %}
-        </div>
-        <div>
-            <p><b>Item Description: </b> {{item.description}}</p>
-            <p><b>Item Price: </b> {{item.price}}</p>
-            <p><b>Item Category: </b> {{item.category}}</p>
-        </div>
-    </div>
 
     <!-- end section -->
 
@@ -431,8 +433,12 @@
                                         <table align="center" border="0" cellpadding="0" cellspacing="0">
                                             <tr>
                                                 <td align="center">
-                                                    <a style="font-size: 14px; font-family: 'Work Sans', Calibri, sans-serif; line-height: 24px;color: #5caad2; text-decoration: none;font-weight:bold;"
-                                                        href="{{UnsubscribeURL}}">UNSUBSCRIBE</a>
+                                                    <form method="post" action="{% url 'UnsubscribeView' %}">
+                                                        <input type="hidden" value="{{email}}" name="email">
+                                                        <button style="font-size: 14px; font-family: 'Work Sans', Calibri, sans-serif; line-height: 24px;color: #5caad2; text-decoration: none;font-weight:bold;"
+                                                        type="submit">UNSUBSCRIBE</button>
+                                                    </form>
+
                                                 </td>
                                             </tr>
                                         </table>
