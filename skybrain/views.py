@@ -4,6 +4,7 @@ import io
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render
+from django.template.loader import render_to_string
 from django.utils import timezone
 from rest_framework import generics, status, filters
 from rest_framework.exceptions import ValidationError
@@ -347,8 +348,16 @@ class ItemsSendEmailView(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        item_id = request.data.get("item_id")
-        email = request.data.get("email")
+        try:
+            item_id = request.data.get("item_id")
+            email = request.data.get("email")
+            item = RoomItems.objects.get(id=int(item_id))
+            message = render_to_string('itememail.html', {'item': item, "email": email})
+            message_plain = "Discover {}: Elevate Your {} Experience Today!".format(item.name, item.category)
+            send_mail('Checkout Our Latest Item', message_plain, settings.EMAIL_HOST_USER, [email],
+                      fail_silently=False, html_message=message)
+        except Exception as e:
+            return Response({"error": "invalid item_id found"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
