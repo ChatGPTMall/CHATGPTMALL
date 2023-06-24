@@ -73,7 +73,6 @@ class ItemsRoomViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = RoomItems
         exclude = (
-            "id",
             "added_on",
             "room",
         )
