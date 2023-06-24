@@ -83,7 +83,10 @@ class RoomTextToTexTView(generics.CreateAPIView):
         language = request.query_params.get("language", None)
         translate = request.query_params.get("translate", None)
         input_ = request.data["input"]
-        support = request.data["customer_support"]
+        try:
+            support = request.data["customer_support"]
+        except KeyError:
+            support = 0
         if language:
             input_lang = input_ + " " + "in" + language
         elif translate:
