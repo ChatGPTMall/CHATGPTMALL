@@ -358,6 +358,7 @@ class ItemsSendEmailView(generics.CreateAPIView):
                       fail_silently=False, html_message=message)
             return Response({"msg": "Email Sent Successfully"}, status=status.HTTP_201_CREATED)
         except Exception as e:
+            print(e)
             return Response({"error": "invalid item_id found"}, status=status.HTTP_400_BAD_REQUEST)
 
 
