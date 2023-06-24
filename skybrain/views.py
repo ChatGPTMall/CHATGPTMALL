@@ -363,11 +363,9 @@ class ItemsSendEmailView(generics.CreateAPIView):
             return Response({"error": "invalid item_id found"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-def UnsubscribeView(request):
-    if request.method == "POST":
-        email = request.POST.get("email")
-        Unsubscribe.objects.create(email=email)
-        return HttpResponse("{} have been unsubscribed".format(email))
+def UnsubscribeView(request, email):
+    Unsubscribe.objects.create(email=email)
+    return HttpResponse("{} have been unsubscribed".format(email))
 
 
 

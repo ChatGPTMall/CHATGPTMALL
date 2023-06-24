@@ -207,7 +207,7 @@ urlpatterns = [
     path("api/v1/room/queries/update/", CSQueriesUpdateView.as_view(), name="CSQueriesUpdateView"),
     path("api/v1/favourites/room/", FavouritesView.as_view(), name="FavouritesView"),
     path("api/v1/room/items/email/", ItemsSendEmailView.as_view(), name="ItemsSendEmailView"),
-    path("unsubscribe/", UnsubscribeView, name="UnsubscribeView")
+    path("unsubscribe/<str:email>/", UnsubscribeView, name="UnsubscribeView")
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

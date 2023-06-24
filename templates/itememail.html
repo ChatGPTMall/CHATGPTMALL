@@ -436,8 +436,10 @@
                                                     <form method="post" action="https://chatgptmall.tech/unsubscribe/">
                                                         {% csrf_token %}
                                                         <input type="hidden" value="{{email}}" name="email">
-                                                        <button style="font-size: 14px; font-family: 'Work Sans', Calibri, sans-serif; line-height: 24px;color: #5caad2; text-decoration: none;font-weight:bold;"
-                                                        type="submit">UNSUBSCRIBE</button>
+                                                        <a href="https://chatgptmall.tech/unsubscribe/{{email}}/"
+                                                           style="font-size: 14px; font-family: 'Work Sans', Calibri, sans-serif;
+                                                            line-height: 24px;color: #5caad2; text-decoration: none;font-weight:bold;"
+                                                        type="submit">UNSUBSCRIBE</a>
                                                     </form>
 
                                                 </td>
