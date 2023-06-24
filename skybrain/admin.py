@@ -1,5 +1,6 @@
 from django.contrib import admin
-from skybrain.models import Organization, LicensesRequests, Room, RoomHistory, RoomItems, CustomerSupport, Favourites
+from skybrain.models import Organization, LicensesRequests, Room, RoomHistory, RoomItems, CustomerSupport, Favourites, \
+    Unsubscribe
 
 
 class RoomHistoryAdmin(admin.ModelAdmin):
