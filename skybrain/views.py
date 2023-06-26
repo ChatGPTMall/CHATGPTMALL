@@ -195,6 +195,24 @@ class ItemsRoomView(generics.ListAPIView):
         return self.list(self, request, *args, **kwargs)
 
 
+class ItemsRoomDetailView(generics.ListAPIView):
+    def get_object(self):
+        item_id = self.request.query_params.get("item_id", None)
+        if item_id:
+            try:
+                return RoomItems.objects.get(id=int(item_id))
+            except Exception as e:
+                return None
+        return None
+
+    def list(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance:
+            serializer = ItemsRoomViewSerializer(instance).data
+            return Response(serializer)
+        return Response({"error": "invalid item_id passed"}, status=status.HTTP_400_BAD_REQUEST)
+
+
 class PublicItemsRoomView(generics.ListAPIView):
     serializer_class = ItemsRoomViewSerializer
     pagination_class = StandardResultsSetPagination

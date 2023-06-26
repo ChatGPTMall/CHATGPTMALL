@@ -25,7 +25,8 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
-    CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations
+    CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \
+    ItemsRoomDetailView
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans, \
     IndustriesView, GetIndustriesData, TextToImage, GetImages, JobsView, CapabilitiesView, Communities, JoinCommunity, \
@@ -200,6 +201,7 @@ urlpatterns = [
     path("api/v1/room/validate/", ValidateRoom.as_view(), name="ValidateRoom"),
     path("api/v1/room/history/", HistoryRoom.as_view(), name="HistoryRoom"),
     path("api/v1/room/items/", ItemsRoomView.as_view(), name="ItemsRoomView"),
+    path("api/v1/room/items/detail/", ItemsRoomDetailView.as_view(), name="ItemsRoomDetailView"),
     path("api/v1/room/items/public/", PublicItemsRoomView.as_view(), name="PublicItemsRoomView"),
     path("api/v1/room/items/upload/", UploadItemsRoomView.as_view(), name="UploadItemsRoomView"),
     path("api/v1/organizations/", Organizationsview.as_view(), name="Organizationsview"),
