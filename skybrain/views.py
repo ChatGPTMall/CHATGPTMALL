@@ -1,9 +1,10 @@
 import csv
 import io
+from django.contrib import messages
 from django.http import HttpResponse
 from django.conf import settings
 from django.core.mail import send_mail
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.utils import timezone
 from rest_framework import generics, status, filters
@@ -28,7 +29,7 @@ class LicensesView(generics.CreateAPIView):
         email = request.data.get("email")
         no_of_licenses = request.data.get("no_of_licenses")
         if LicensesRequests.objects.filter(
-                organization=request.data.get("organization"), added_on__date=today.date()).exists():
+                organization=request.data.get("organization"), added_on__date=today.date()).count() > 5:
             return Response(
                 dict({"msg": "You already have requested for licenses please wait till we approve your previous request"}),
                 status=status.HTTP_200_OK
@@ -366,6 +367,36 @@ class ItemsSendEmailView(generics.CreateAPIView):
 def UnsubscribeView(request, email):
     Unsubscribe.objects.create(email=email)
     return HttpResponse("{} have been unsubscribed".format(email))
+
+
+def CreateOrganizations(request):
+    if request.method == "POST":
+        csv_file = request.FILES['csv_file']
+        decoded_file = csv_file.read().decode('utf-8').splitlines()
+        reader = csv.DictReader(decoded_file)
+        for row in reader:
+            Organization.objects.get_or_create(name=row['name'])
+        messages.success(request, "Rooms Created Successfully")
+        return redirect("/create/organizations/")
+    return render(request, "create_organizations.html")
+
+
+def CreateRooms(request):
+    organizations = Organization.objects.all()
+    if request.method == "POST":
+        try:
+            organization = Organization.objects.get(name=request.POST.get("organization"))
+            csv_file = request.FILES['csv_file']
+            decoded_file = csv_file.read().decode('utf-8').splitlines()
+            reader = csv.DictReader(decoded_file)
+            for row in reader:
+                Room.objects.get_or_create(
+                    room_key=row['room_key'], organization=organization, defaults={"room_id": row['room_id']})
+            messages.success(request, "Rooms Created Successfully")
+            return render(request, "create_rooms.html", {"organizations": organizations})
+        except Exception as e:
+            return render(request, "create_rooms.html", {"organizations": organizations})
+    return render(request, "create_rooms.html", {"organizations": organizations})
 
 
 
