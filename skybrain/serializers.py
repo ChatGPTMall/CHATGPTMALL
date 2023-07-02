@@ -115,3 +115,9 @@ class FavouritesViewSerializer(serializers.ModelSerializer):
 class ItemsSendEmailViewSerializer(serializers.Serializer):
     item_id = serializers.IntegerField(required=True)
     email = serializers.EmailField(required=True)
+
+
+class ShareRoomItemsSerializer(serializers.Serializer):
+    rooms = serializers.JSONField(required=True)
+    item_id = serializers.IntegerField(required=True)
+    organization = serializers.CharField(required=True)

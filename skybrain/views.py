@@ -15,7 +15,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from skybrain.models import LicensesRequests, Organization, Room, RoomItems, CustomerSupport, Favourites, Unsubscribe
 from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSerializer, OrganizationRoomsSerializer, \
     SkybrainCustomerRoomSerializer, HistoryRoomSerializer, ItemsRoomViewSerializer, OrganizationsviewSerializer, \
-    CSQueriesViewSerializer, CSQueriesUpdateViewSerializer, FavouritesViewSerializer, ItemsSendEmailViewSerializer
+    CSQueriesViewSerializer, CSQueriesUpdateViewSerializer, FavouritesViewSerializer, ItemsSendEmailViewSerializer, \
+    ShareRoomItemsSerializer
 
 
 class LicensesView(generics.CreateAPIView):
@@ -416,5 +417,40 @@ def CreateRooms(request):
             return render(request, "create_rooms.html", {"organizations": organizations})
     return render(request, "create_rooms.html", {"organizations": organizations})
 
+
+class ShareRoomItems(generics.CreateAPIView):
+    serializer_class = ShareRoomItemsSerializer
+    permission_classes = []
+    authentication_classes = []
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            rooms = request.data.get("rooms")
+            item_id = request.data.get("item_id")
+            organization = request.data.get("organization")
+            original_item = RoomItems.objects.get(id=int(item_id))
+            for room in rooms:
+                try:
+                    organization = Organization.objects.get(name=organization)
+                    room_obj = Room.objects.get(room_id=room, organization=organization)
+                    new_item = RoomItems(
+                        room=room_obj,
+                        name=original_item.name,
+                        image=original_item.image,
+                        video=original_item.video,
+                        description=original_item.description,
+                        price=original_item.price,
+                        is_private=original_item.is_private,
+                        category=original_item.category,
+                        added_on=original_item.added_on
+                    )
+                    new_item.save()
+                except Exception as e:
+                    pass
+            return Response({"msg": "Item shared successfully"}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
