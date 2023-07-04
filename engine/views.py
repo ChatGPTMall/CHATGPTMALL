@@ -96,17 +96,21 @@ class RoomTextToTexTView(generics.CreateAPIView):
         history = None
         ms_key = KeyManagement.objects.filter(platform="MICROSOFT").last()
         openai_key = KeyManagement.objects.filter(platform="OPENAI").last()
+        room_history = RoomHistory.objects.filter(user_input=input_)
         if ms_key:
-            openai.api_key = ms_key.key
-            openai.api_base = "{}".format(ms_key.endpoint)
-            openai.api_type = 'azure'
-            openai.api_version = "2023-03-15-preview"
-            model = "davinci"
-            response = openai.Completion.create(
-                engine=model,
-                max_tokens=int(3000),
-                prompt=input_lang,)
-            text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
+            if not room_history.exists():
+                openai.api_key = ms_key.key
+                openai.api_base = "{}".format(ms_key.endpoint)
+                openai.api_type = 'azure'
+                openai.api_version = "2023-03-15-preview"
+                model = "davinci"
+                response = openai.Completion.create(
+                    engine=model,
+                    max_tokens=int(3000),
+                    prompt=input_lang,)
+                text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
+            else:
+                text = room_history.last().response
             if room_id:
                 try:
                     room = Room.objects.get(room_key=room_id)
@@ -124,18 +128,21 @@ class RoomTextToTexTView(generics.CreateAPIView):
                 "history": history,
             }), status=status.HTTP_201_CREATED)
         if openai_key:
-            openai.api_key = openai_key.key
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "You are a chatbot"},
-                    {"role": "user", "content": "{}?".format(input_lang)},
-                ]
-            )
+            if not room_history.exists():
+                openai.api_key = openai_key.key
+                response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "You are a chatbot"},
+                        {"role": "user", "content": "{}?".format(input_lang)},
+                    ]
+                )
 
-            result = ''
-            for choice in response.choices:
-                result += choice.message.content
+                result = ''
+                for choice in response.choices:
+                    result += choice.message.content
+            else:
+                result = room_history.last().response
             if room_id:
                 try:
                     room = Room.objects.get(room_key=room_id)
