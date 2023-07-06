@@ -26,7 +26,7 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
     CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \
-    ItemsRoomDetailView, ShareRoomItems
+    ItemsRoomDetailView, ShareRoomItems, RoomHistoryDetailView, ShareRoomResponse
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans, \
     IndustriesView, GetIndustriesData, TextToImage, GetImages, JobsView, CapabilitiesView, Communities, JoinCommunity, \
@@ -202,6 +202,7 @@ urlpatterns = [
     path("api/v1/room/history/", HistoryRoom.as_view(), name="HistoryRoom"),
     path("api/v1/room/items/", ItemsRoomView.as_view(), name="ItemsRoomView"),
     path("api/v1/room/items/detail/", ItemsRoomDetailView.as_view(), name="ItemsRoomDetailView"),
+    path("api/v1/room/history/detail/", RoomHistoryDetailView.as_view(), name="RoomHistoryDetailView"),
     path("api/v1/room/items/public/", PublicItemsRoomView.as_view(), name="PublicItemsRoomView"),
     path("api/v1/room/items/upload/", UploadItemsRoomView.as_view(), name="UploadItemsRoomView"),
     path("api/v1/organizations/", Organizationsview.as_view(), name="Organizationsview"),
@@ -212,7 +213,8 @@ urlpatterns = [
     path("unsubscribe/<str:email>/", UnsubscribeView, name="UnsubscribeView"),
     path("create/organizations/", CreateOrganizations, name="CreateOrganizations"),
     path("create/org/rooms/", CreateRooms, name="CreateRoomsView"),
-    path("api/v1/room/items/share/", ShareRoomItems.as_view(), name="ShareRoomItems")
+    path("api/v1/room/items/share/", ShareRoomItems.as_view(), name="ShareRoomItems"),
+    path("api/v1/room/response/share/", ShareRoomResponse.as_view(), name="ShareRoomResponse")
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

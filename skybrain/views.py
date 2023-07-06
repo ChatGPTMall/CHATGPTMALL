@@ -12,11 +12,12 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from skybrain.models import LicensesRequests, Organization, Room, RoomItems, CustomerSupport, Favourites, Unsubscribe
+from skybrain.models import LicensesRequests, Organization, Room, RoomItems, CustomerSupport, Favourites, Unsubscribe, \
+    RoomHistory
 from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSerializer, OrganizationRoomsSerializer, \
     SkybrainCustomerRoomSerializer, HistoryRoomSerializer, ItemsRoomViewSerializer, OrganizationsviewSerializer, \
     CSQueriesViewSerializer, CSQueriesUpdateViewSerializer, FavouritesViewSerializer, ItemsSendEmailViewSerializer, \
-    ShareRoomItemsSerializer
+    ShareRoomItemsSerializer, ShareRoomResponseSerializer
 
 
 class LicensesView(generics.CreateAPIView):
@@ -212,6 +213,24 @@ class ItemsRoomDetailView(generics.ListAPIView):
             serializer = ItemsRoomViewSerializer(instance).data
             return Response(serializer)
         return Response({"error": "invalid item_id passed"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RoomHistoryDetailView(generics.ListAPIView):
+    def get_object(self):
+        history_id = self.request.query_params.get("history_id", None)
+        if history_id:
+            try:
+                return RoomHistory.objects.get(id=int(history_id))
+            except Exception as e:
+                return None
+        return None
+
+    def list(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance:
+            serializer = HistoryRoomSerializer(instance).data
+            return Response(serializer)
+        return Response({"error": "invalid history_id passed"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PublicItemsRoomView(generics.ListAPIView):
@@ -453,4 +472,33 @@ class ShareRoomItems(generics.CreateAPIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class ShareRoomResponse(generics.CreateAPIView):
+    serializer_class = ShareRoomResponseSerializer
+    permission_classes = []
+    authentication_classes = []
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            rooms = request.data.get("rooms")
+            history_id = request.data.get("history_id")
+            organization = request.data.get("organization")
+            original_item = RoomHistory.objects.get(id=int(history_id))
+            for room in rooms:
+                try:
+                    organization = Organization.objects.get(name=organization)
+                    room_obj = Room.objects.get(room_id=room, organization=organization)
+                    new_item = RoomHistory(
+                        room=room_obj,
+                        user_input=original_item.user_input,
+                        response=original_item.response,
+                    )
+                    new_item.save()
+                except Exception as e:
+                    pass
+            return Response({"msg": "Data shared successfully"}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 

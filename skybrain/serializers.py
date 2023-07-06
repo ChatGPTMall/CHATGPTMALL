@@ -121,3 +121,9 @@ class ShareRoomItemsSerializer(serializers.Serializer):
     rooms = serializers.JSONField(required=True)
     item_id = serializers.IntegerField(required=True)
     organization = serializers.CharField(required=True)
+
+
+class ShareRoomResponseSerializer(serializers.Serializer):
+    rooms = serializers.JSONField(required=True)
+    history_id = serializers.IntegerField(required=True)
+    organization = serializers.CharField(required=True)
