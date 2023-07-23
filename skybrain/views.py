@@ -1,5 +1,9 @@
 import csv
 import io
+import time
+
+from azure.cognitiveservices.vision.computervision import ComputerVisionClient
+from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
 from django.contrib import messages
 from django.http import HttpResponse
 from django.conf import settings
@@ -7,17 +11,20 @@ from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.utils import timezone
+from msrest.authentication import CognitiveServicesCredentials
 from rest_framework import generics, status, filters
 from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
+
+from engine.models import ImageAnalysisDB
 from skybrain.models import LicensesRequests, Organization, Room, RoomItems, CustomerSupport, Favourites, Unsubscribe, \
     RoomHistory
 from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSerializer, OrganizationRoomsSerializer, \
     SkybrainCustomerRoomSerializer, HistoryRoomSerializer, ItemsRoomViewSerializer, OrganizationsviewSerializer, \
     CSQueriesViewSerializer, CSQueriesUpdateViewSerializer, FavouritesViewSerializer, ItemsSendEmailViewSerializer, \
-    ShareRoomItemsSerializer, ShareRoomResponseSerializer
+    ShareRoomItemsSerializer, ShareRoomResponseSerializer, OCRImageUploadViewSerializer
 
 
 class LicensesView(generics.CreateAPIView):
@@ -502,3 +509,33 @@ class ShareRoomResponse(generics.CreateAPIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class OCRImageUploadView(generics.CreateAPIView):
+    serializer_class = OCRImageUploadViewSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        img = ImageAnalysisDB.objects.create(file=request.data.get("image"))
+        subscription_key = "B0faa09900954b4ab9eee55e133399cc"
+        endpoint = "https://bennyocr.cognitiveservices.azure.com/"
+        computervision_client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(subscription_key))
+        read_response = computervision_client.read(str(img.file.url), raw=True)
+        # Get the operation location (URL with an ID at the end) from the response
+        read_operation_location = read_response.headers["Operation-Location"]
+        # Grab the ID from the URL
+        operation_id = read_operation_location.split("/")[-1]
+
+        # Call the "GET" API and wait for it to retrieve the results
+        while True:
+            read_result = computervision_client.get_read_result(operation_id)
+            if read_result.status not in ['notStarted', 'running']:
+                break
+            time.sleep(1)
+        response = ""
+        # Print the detected text, line by line
+        if read_result.status == OperationStatusCodes.succeeded:
+            for text_result in read_result.analyze_result.read_results:
+                for line in text_result.lines:
+                    response += line.text + "\n"
+        return Response(dict({"response": response}), status=status.HTTP_201_CREATED)
