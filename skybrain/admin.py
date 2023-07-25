@@ -1,6 +1,6 @@
 from django.contrib import admin
 from skybrain.models import Organization, LicensesRequests, Room, RoomHistory, RoomItems, CustomerSupport, Favourites, \
-    Unsubscribe
+    Unsubscribe, CustomInstructions
 
 
 class RoomHistoryAdmin(admin.ModelAdmin):
@@ -16,6 +16,10 @@ class CustomerSupportAdmin(admin.ModelAdmin):
     list_display = ("room", "user_input", "has_replied", "added_on")
 
 
+class CustomInstructionsAdmin(admin.ModelAdmin):
+    list_display = ("room", "added_on", "updated_on")
+
+
 admin.site.register(Organization)
 admin.site.register(LicensesRequests)
 admin.site.register(Room)
@@ -24,3 +28,4 @@ admin.site.register(Unsubscribe)
 admin.site.register(CustomerSupport, CustomerSupportAdmin)
 admin.site.register(RoomItems, RoomItemsAdmin)
 admin.site.register(RoomHistory, RoomHistoryAdmin)
+admin.site.register(CustomInstructions, CustomInstructionsAdmin)

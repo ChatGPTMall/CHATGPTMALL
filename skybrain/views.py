@@ -20,11 +20,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from engine.models import ImageAnalysisDB
 from skybrain.models import LicensesRequests, Organization, Room, RoomItems, CustomerSupport, Favourites, Unsubscribe, \
-    RoomHistory
+    RoomHistory, CustomInstructions
 from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSerializer, OrganizationRoomsSerializer, \
     SkybrainCustomerRoomSerializer, HistoryRoomSerializer, ItemsRoomViewSerializer, OrganizationsviewSerializer, \
     CSQueriesViewSerializer, CSQueriesUpdateViewSerializer, FavouritesViewSerializer, ItemsSendEmailViewSerializer, \
-    ShareRoomItemsSerializer, ShareRoomResponseSerializer, OCRImageUploadViewSerializer
+    ShareRoomItemsSerializer, ShareRoomResponseSerializer, OCRImageUploadViewSerializer, UpdateRoomViewSerializer, \
+    CustomInstructionsViewSerializer
 
 
 class LicensesView(generics.CreateAPIView):
@@ -539,3 +540,63 @@ class OCRImageUploadView(generics.CreateAPIView):
                 for line in text_result.lines:
                     response += line.text + "\n"
         return Response(dict({"response": response}), status=status.HTTP_201_CREATED)
+
+
+class UpdateRoomView(generics.UpdateAPIView):
+    serializer_class = UpdateRoomViewSerializer
+
+    def get_object(self):
+        try:
+            room_key = self.request.query_params.get("room_key", "")
+            return Room.objects.get(room_key=room_key)
+        except Exception as e:
+            return None
+
+    def update(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        room = self.get_object()
+        if room:
+            ci = request.data.get("custom_instructions", "false")
+            if ci in ["true", True, 1]:
+                room.custom_instructions = True
+            if ci in ["false", False, 0]:
+                room.custom_instructions = False
+            room.save()
+            return Response(dict({"msg": "Room Details Updated Successfully"}))
+        return Response(dict({"error": "invalid room key provided"}), status=status.HTTP_400_BAD_REQUEST)
+
+
+class CustomInstructionsView(generics.ListCreateAPIView, generics.UpdateAPIView):
+    serializer_class = CustomInstructionsViewSerializer
+
+    def get_object(self):
+        try:
+            room_key = self.request.query_params.get("room_key", "")
+            return Room.objects.get(room_key=room_key)
+        except Exception as e:
+            return None
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        room = self.get_object()
+        if room:
+            serializer.save(room=room)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(dict({"error": "invalid room key provided"}), status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        try:
+            room = self.get_object()
+            instruction = CustomInstructions.objects.get(room=room)
+            if room:
+                serializer = self.get_serializer(instruction, self.request.data)
+                if serializer.is_valid:
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(dict({"error": "invalid data provided"}), status=status.HTTP_400_BAD_REQUEST)
+            return Response(dict({"error": "invalid room key provided"}), status=status.HTTP_400_BAD_REQUEST)
+        except CustomInstructions.DoesNotExist:
+            return Response(dict({"error": "Instruction does not exist"}), status=status.HTTP_400_BAD_REQUEST)
+

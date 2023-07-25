@@ -42,6 +42,7 @@ class Room(models.Model):
     organization = models.ForeignKey(Organization, related_name="rooms", on_delete=models.CASCADE)
     room_id = models.CharField(max_length=200)
     room_key = models.CharField(unique=True, max_length=200, null=True, blank=True)
+    custom_instructions = models.BooleanField(default=False)
     added_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -124,3 +125,15 @@ class Unsubscribe(models.Model):
     class Meta:
         verbose_name = _("Unsubscribe")
         verbose_name_plural = _("Unsubscribed")
+
+
+class CustomInstructions(models.Model):
+    room = models.ForeignKey(Room, related_name="suggestions", on_delete=models.CASCADE)
+    suggestion_one = models.TextField()
+    suggestion_two = models.TextField()
+    added_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("Custom Instruction")
+        verbose_name_plural = _("Custom Instructions")

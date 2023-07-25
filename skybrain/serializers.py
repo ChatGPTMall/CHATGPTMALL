@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from skybrain.models import LicensesRequests, Room, RoomHistory, RoomItems, Organization, CustomerSupport, Favourites
+from skybrain.models import LicensesRequests, Room, RoomHistory, RoomItems, Organization, CustomerSupport, Favourites, \
+    CustomInstructions
 
 
 class LicensesViewSerializer(serializers.ModelSerializer):
@@ -131,3 +132,16 @@ class ShareRoomResponseSerializer(serializers.Serializer):
 
 class OCRImageUploadViewSerializer(serializers.Serializer):
     image = serializers.ImageField(required=True)
+
+
+class UpdateRoomViewSerializer(serializers.Serializer):
+    custom_instructions = serializers.BooleanField(required=True)
+
+
+class CustomInstructionsViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomInstructions
+        exclude = (
+            "updated_on",
+            "room"
+        )
