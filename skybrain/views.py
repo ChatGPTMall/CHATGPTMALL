@@ -2,6 +2,7 @@ import csv
 import io
 import time
 
+import requests
 from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
 from django.contrib import messages
@@ -600,3 +601,17 @@ class CustomInstructionsView(generics.ListCreateAPIView, generics.UpdateAPIView)
         except CustomInstructions.DoesNotExist:
             return Response(dict({"error": "Instruction does not exist"}), status=status.HTTP_400_BAD_REQUEST)
 
+
+class GenerateImageView(generics.ListAPIView):
+    def get(self, request, *args, **kwargs):
+        image_id = self.request.query_params.get("id", None)
+        if image_id:
+            url = "https://backend.blockadelabs.com/api/v1/imagine/requests/{}".format(image_id)
+            response = requests.get(
+                url, params={"api_key": "tYcH74TemOn0LMrSJzXCrJ1Qv45MAbSd7bGYelqBnRN4F6DUeL1Z1PhvZ0y6"}
+            )
+            if response.status_code == 200:
+                data = response.json()
+                return Response(data)
+            return Response(response.json(), status=status.HTTP_400_BAD_REQUEST)
+        return Response(dict({"error": "valid id is required"}), status=status.HTTP_400_BAD_REQUEST)
