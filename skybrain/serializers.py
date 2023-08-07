@@ -40,7 +40,7 @@ class OrganizationRoomsSerializer(serializers.ModelSerializer):
 
 
 class SkybrainCustomerRoomSerializer(serializers.Serializer):
-    organization = serializers.CharField(required=True)
+    organization = serializers.CharField(required=False)
     room_id = serializers.CharField(required=True)
     room_key = serializers.CharField(required=True)
 

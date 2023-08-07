@@ -120,16 +120,22 @@ class SkybrainCustomerRoom(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        try:
-            Room.objects.get(
-                organization__name=request.data.get("organization"), room_id=request.data.get("room_id"),
-                room_key=request.data.get("room_key"))
-            return Response(
-                dict({"msg": "Entered Room Successfully"}),
-                status=status.HTTP_201_CREATED
-            )
-        except Exception as e:
-            return Response(dict({"error": "Invalid Room Key Found"}), status=status.HTTP_400_BAD_REQUEST)
+        is_visitor = request.data.get("is_visitor", False)
+        if is_visitor:
+            if RoomKeys.objects.filter(
+                    room__room_id=request.data.get("room_id"), room_key=request.data.get("room_key")).exists():
+                return Response({"msg": "request validated successfully"}, status=status.HTTP_200_OK)
+        else:
+            try:
+                Room.objects.get(
+                    organization__name=request.data.get("organization"), room_id=request.data.get("room_id"),
+                    room_key=request.data.get("room_key"))
+                return Response(
+                    dict({"msg": "Entered Room Successfully"}),
+                    status=status.HTTP_201_CREATED
+                )
+            except Exception as e:
+                return Response(dict({"error": "Invalid Room Key Found"}), status=status.HTTP_400_BAD_REQUEST)
 
 
 class ValidateRoom(generics.ListAPIView):
