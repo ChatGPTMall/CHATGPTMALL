@@ -166,13 +166,18 @@ class HistoryRoom(generics.ListAPIView):
     search_fields = ['added_on', ]
 
     def get_queryset(self):
+        room_id = self.request.query_params.get("room_id", None)
+        room_key = self.request.query_params.get("room_key", None)
         try:
-            room_id = self.request.query_params.get("room_id", None)
-            room_key = self.request.query_params.get("room_key", None)
             room = Room.objects.get(room_id=room_id, room_key=room_key)
             return room.history.all()
         except Exception as e:
-            raise ValidationError(dict({"error": "invalid room_id provided"}))
+            try:
+                room = RoomKeys.objects.get(room_key=room_key).room
+                return room.history.all()
+            except Exception as e:
+                raise ValidationError(dict({"error": "invalid room_key provided"}))
+            raise ValidationError(dict({"error": "invalid room_key provided"}))
 
     def list(self, request, *args, **kwargs):
         query_set = self.filter_queryset(self.get_queryset())
