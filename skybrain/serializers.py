@@ -145,3 +145,9 @@ class CustomInstructionsViewSerializer(serializers.ModelSerializer):
             "updated_on",
             "room"
         )
+
+
+class RoomAccessShareSerializer(serializers.Serializer):
+    email = serializers.JSONField(required=True)
+    room_key = serializers.CharField(required=True)
+

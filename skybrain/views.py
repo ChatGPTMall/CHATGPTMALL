@@ -21,12 +21,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from engine.models import ImageAnalysisDB
 from skybrain.models import LicensesRequests, Organization, Room, RoomItems, CustomerSupport, Favourites, Unsubscribe, \
-    RoomHistory, CustomInstructions
+    RoomHistory, CustomInstructions, RoomKeys
 from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSerializer, OrganizationRoomsSerializer, \
     SkybrainCustomerRoomSerializer, HistoryRoomSerializer, ItemsRoomViewSerializer, OrganizationsviewSerializer, \
     CSQueriesViewSerializer, CSQueriesUpdateViewSerializer, FavouritesViewSerializer, ItemsSendEmailViewSerializer, \
     ShareRoomItemsSerializer, ShareRoomResponseSerializer, OCRImageUploadViewSerializer, UpdateRoomViewSerializer, \
-    CustomInstructionsViewSerializer
+    CustomInstructionsViewSerializer, RoomAccessShareSerializer
 
 
 class LicensesView(generics.CreateAPIView):
@@ -137,8 +137,13 @@ class ValidateRoom(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         room_id = request.query_params.get("room_id", None)
         room_key = request.query_params.get("room_key", None)
-        if Room.objects.filter(room_id=room_id, room_key=room_key).exists():
-            return Response({"msg": "request validated successfully"}, status=status.HTTP_200_OK)
+        is_visitor = request.query_params.get("is_visitor", False)
+        if is_visitor:
+            if RoomKeys.objects.filter(room__room_id=room_id, room_key=room_key).exists():
+                return Response({"msg": "request validated successfully"}, status=status.HTTP_200_OK)
+        else:
+            if Room.objects.filter(room_id=room_id, room_key=room_key).exists():
+                return Response({"msg": "request validated successfully"}, status=status.HTTP_200_OK)
         return Response({"error": "Invalid Credentials Provided"}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -615,3 +620,26 @@ class GenerateImageView(generics.ListAPIView):
                 return Response(data)
             return Response(response.json(), status=status.HTTP_400_BAD_REQUEST)
         return Response(dict({"error": "valid id is required"}), status=status.HTTP_400_BAD_REQUEST)
+
+
+class RoomAccessShare(generics.CreateAPIView):
+    serializer_class = RoomAccessShareSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        emails = request.data.get("email")
+        room_key = request.data.get("room_key")
+        room = Room.objects.get(room_key=room_key)
+        url = settings.DEPLOYED_HOST + room.organization.name + "/room/" + room.room_id + "?visitor=true"
+        for email in emails:
+            key, created = RoomKeys.objects.get_or_create(room=room, email=email)
+            message_plain = "Hi, \n\n" \
+                            "You have been invited to skybrain room please use url below with key provided \n\n " \
+                            "url : {0}\n" \
+                            "room_key: {1}\n\n" \
+                            "Thanks & Regards \n" \
+                            "Skybrain Engineering Team".format(url, str(key.room_key))
+            send_mail('Skybrain Room Credentials', message_plain, settings.EMAIL_HOST_USER, [email],
+                      fail_silently=False)
+        return Response(dict({"msg": "Mail sent successfully"}), status=status.HTTP_201_CREATED)

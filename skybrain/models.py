@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -52,6 +54,21 @@ class Room(models.Model):
         verbose_name = _("Room")
         verbose_name_plural = _("Rooms")
         unique_together = (("organization", "room_id"),)
+
+
+class RoomKeys(models.Model):
+    room = models.ForeignKey(Room, related_name="keys", on_delete=models.CASCADE)
+    room_key = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    email = models.CharField(unique=True, max_length=200, null=True, blank=True)
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.room_key)
+
+    class Meta:
+        verbose_name = _("Room Key")
+        verbose_name_plural = _("Room Keys")
+        unique_together = (("room_key", "room", "email"),)
 
 
 class RoomHistory(models.Model):

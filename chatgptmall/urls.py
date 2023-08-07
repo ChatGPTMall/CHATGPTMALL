@@ -27,7 +27,7 @@ from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, 
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
     CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \
     ItemsRoomDetailView, ShareRoomItems, RoomHistoryDetailView, ShareRoomResponse, OCRImageUploadView, UpdateRoomView, \
-    CustomInstructionsView, GenerateImageView
+    CustomInstructionsView, GenerateImageView, RoomAccessShare
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans, \
     IndustriesView, GetIndustriesData, TextToImage, GetImages, JobsView, CapabilitiesView, Communities, JoinCommunity, \
@@ -220,6 +220,7 @@ urlpatterns = [
     path("api/v1/room/update/", UpdateRoomView.as_view(), name="UpdateRoomView"),
     path("api/v1/room/custom_instructions/", CustomInstructionsView.as_view(), name="CustomInstructionsView"),
     path("api/v1/room/generate/image/", GenerateImageView.as_view(), name="GenerateImageView"),
+    path("api/v1/room/share/", RoomAccessShare.as_view(), name="RoomAccessShare")
 
 
 
