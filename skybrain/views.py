@@ -26,7 +26,7 @@ from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSeria
     SkybrainCustomerRoomSerializer, HistoryRoomSerializer, ItemsRoomViewSerializer, OrganizationsviewSerializer, \
     CSQueriesViewSerializer, CSQueriesUpdateViewSerializer, FavouritesViewSerializer, ItemsSendEmailViewSerializer, \
     ShareRoomItemsSerializer, ShareRoomResponseSerializer, OCRImageUploadViewSerializer, UpdateRoomViewSerializer, \
-    CustomInstructionsViewSerializer, RoomAccessShareSerializer
+    CustomInstructionsViewSerializer, RoomAccessShareSerializer, urlOCRImageUploadViewSerializer
 
 
 class LicensesView(generics.CreateAPIView):
@@ -654,3 +654,34 @@ class RoomAccessShare(generics.CreateAPIView):
             send_mail('Skybrain Room Credentials', message_plain, settings.EMAIL_HOST_USER, [email],
                       fail_silently=False)
         return Response(dict({"msg": "Mail sent successfully"}), status=status.HTTP_201_CREATED)
+
+
+class URLOCRImageUploadView(generics.CreateAPIView):
+    serializer_class = urlOCRImageUploadViewSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        img = request.data.get("image_url")
+        subscription_key = "B0faa09900954b4ab9eee55e133399cc"
+        endpoint = "https://bennyocr.cognitiveservices.azure.com/"
+        computervision_client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(subscription_key))
+        read_response = computervision_client.read(img, raw=True)
+        # Get the operation location (URL with an ID at the end) from the response
+        read_operation_location = read_response.headers["Operation-Location"]
+        # Grab the ID from the URL
+        operation_id = read_operation_location.split("/")[-1]
+
+        # Call the "GET" API and wait for it to retrieve the results
+        while True:
+            read_result = computervision_client.get_read_result(operation_id)
+            if read_result.status not in ['notStarted', 'running']:
+                break
+            time.sleep(1)
+        response = ""
+        # Print the detected text, line by line
+        if read_result.status == OperationStatusCodes.succeeded:
+            for text_result in read_result.analyze_result.read_results:
+                for line in text_result.lines:
+                    response += line.text + "\n"
+        return Response(dict({"response": response}), status=status.HTTP_201_CREATED)

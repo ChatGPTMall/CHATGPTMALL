@@ -134,6 +134,10 @@ class OCRImageUploadViewSerializer(serializers.Serializer):
     image = serializers.ImageField(required=True)
 
 
+class urlOCRImageUploadViewSerializer(serializers.Serializer):
+    image_url = serializers.URLField(required=True)
+
+
 class UpdateRoomViewSerializer(serializers.Serializer):
     custom_instructions = serializers.BooleanField(required=True)
 
