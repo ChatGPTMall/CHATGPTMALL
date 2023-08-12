@@ -154,13 +154,15 @@ class ValidateRoom(generics.ListAPIView):
 
 
 class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 30
+    page_size = 1000
     page_size_query_param = 'page_size'
-    max_page_size = 100
 
 
 class HistoryRoom(generics.ListAPIView):
     serializer_class = HistoryRoomSerializer
+    pagination_class = StandardResultsSetPagination
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['added_on', ]
 
     def get_queryset(self):
         room_id = self.request.query_params.get("room_id", None)
@@ -178,7 +180,10 @@ class HistoryRoom(generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         query_set = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(query_set, many=True)
+        page = self.paginate_queryset(query_set)
+        serializer = self.get_serializer(page, many=True)
+        if page is not None:
+            return self.get_paginated_response(serializer.data)
         return Response(serializer.data)
 
     def get(self, request, *args, **kwargs):
