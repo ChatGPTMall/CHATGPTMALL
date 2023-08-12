@@ -121,7 +121,7 @@ class SkybrainCustomerRoom(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user_type = request.data.get("user_type", None)
-        if user_type in ["vistor", "contributor"]:
+        if user_type in ["visitor", "contributor"]:
             if RoomKeys.objects.filter(
                     room__room_id=request.data.get("room_id"), room_key=request.data.get("room_key")).exists():
                 return Response({"msg": "request validated successfully"}, status=status.HTTP_200_OK)
