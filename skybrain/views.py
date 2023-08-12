@@ -641,7 +641,7 @@ class RoomAccessShare(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         emails = request.data.get("email")
         room_key = request.data.get("room_key")
-        access_type = request.data.get("access_type")
+        access_type = request.data.get("user_type")
         room = Room.objects.get(room_key=room_key)
         if access_type == "contributor":
             url = settings.DEPLOYED_HOST + room.organization.name + "/room/" + room.room_id + "?contributor=true"
