@@ -154,4 +154,5 @@ class CustomInstructionsViewSerializer(serializers.ModelSerializer):
 class RoomAccessShareSerializer(serializers.Serializer):
     email = serializers.JSONField(required=True)
     room_key = serializers.CharField(required=True)
+    access_type = serializers.CharField(required=True, help_text="visitor or contributor")
 
