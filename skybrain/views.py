@@ -161,9 +161,6 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 class HistoryRoom(generics.ListAPIView):
     serializer_class = HistoryRoomSerializer
-    pagination_class = StandardResultsSetPagination
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['added_on', ]
 
     def get_queryset(self):
         room_id = self.request.query_params.get("room_id", None)
@@ -181,10 +178,7 @@ class HistoryRoom(generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         query_set = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(query_set)
-        serializer = self.get_serializer(page, many=True)
-        if page is not None:
-            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(query_set, many=True)
         return Response(serializer.data)
 
     def get(self, request, *args, **kwargs):
