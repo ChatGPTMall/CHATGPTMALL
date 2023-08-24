@@ -50,15 +50,18 @@ INSTALLED_APPS = [
     'drf_yasg',
     'users',
     'engine',
+    'skybrain',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ORIGIN_ALLOW_ALL = True
-#
-# try:
-#     CSRF_TRUSTED_ORIGINS = json.loads(os.getenv("CSRF_TRUSTED_ORIGINS", []))
-# except Exception as e:
-#     CSRF_TRUSTED_ORIGINS = list()
+
+DEPLOYED_HOST = os.getenv("DEPLOYED_HOST", "https://skybrain.org/")
+
+try:
+    CSRF_TRUSTED_ORIGINS = json.loads(os.getenv("CSRF_TRUSTED_ORIGINS", []))
+except Exception as e:
+    CSRF_TRUSTED_ORIGINS = list()
 
 
 MIDDLEWARE = [
@@ -328,9 +331,9 @@ STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'faisalbashir353@gmail.com'
-EMAIL_HOST_PASSWORD = 'gtlvndoiprcmllnj'
+EMAIL_HOST = 'mail.chatgptmall.tech'
+EMAIL_HOST_USER = 'no-reply@skybrain.org'
+EMAIL_HOST_PASSWORD = '~V2Fgxa68C'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False

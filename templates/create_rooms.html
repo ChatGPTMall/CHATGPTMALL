@@ -1,0 +1,59 @@
+{% extends 'parent.html' %}
+{% block tittle %}Chatgptmall | Create Rooms{% endblock %}
+{% load static %}
+{% block body %}
+{% if messages %}
+<!--<ul class="messages">-->
+<!--    {% for message in messages %}-->
+<!--    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>-->
+<!--    {% endfor %}-->
+<!--</ul>-->
+<!--{% endif %}-->
+  <!-- ======= Hero Section ======= -->
+  <section id="hero" class="hero d-flex align-items-center">
+    <div class="container">
+      <div class="row gy-4 d-flex justify-content-between">
+        <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
+          <h2 data-aos="fade-up">Create Organizations</h2>
+        </div>
+
+        <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
+          <img src="" class="img-fluid mb-3 mb-lg-0" alt="">
+        </div>
+
+      </div>
+    </div>
+  </section><!-- End Hero Section -->
+
+  <main id="main">
+    <!-- ======= Services Section ======= -->
+    <section id="service" class="services pt-0">
+      <div class="container" data-aos="fade-up">
+        <br>
+        <div class="row gy-4">
+            <form class="row g-3" method="post" action="{% url 'CreateRoomsView' %}" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="col-12">
+                  <label for="inputAddress" class="form-label">Organization</label>
+                  <select class="form-select" aria-label="Default select example" name="organization" required>
+                    <option selected>Choose</option>
+                    {% for org in organizations %}
+                    <option value="{{org.name}}">{{org.name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-12">
+                  <label for="inputAddress" class="form-label">Upload Csv file</label>
+                  <input type="file" name="csv_file" class="form-control"  id="inputAddress" required>
+                </div>
+                <div class="col-12">
+                  <button type="submit" class="btn btn-primary">Create Organizations</button>
+                </div>
+              </form>
+        </div>
+      </div>
+    </section><!-- End Services Section -->
+  </main><!-- End #main -->
+
+
+{% endblock %}

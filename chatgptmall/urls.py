@@ -22,7 +22,12 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageView, ImageAnalysisView, \
     ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView, TextToTexTOpeniaiView, \
-    TextToTexTMicrosoftView, TranscribeAudio
+    TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView
+from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
+    HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
+    CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \
+    ItemsRoomDetailView, ShareRoomItems, RoomHistoryDetailView, ShareRoomResponse, OCRImageUploadView, UpdateRoomView, \
+    CustomInstructionsView, GenerateImageView, RoomAccessShare, URLOCRImageUploadView
 from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, UploadVoice, VoiceOutPut, VoiceToVoice, \
     get_chatgpt_response, TextToText, Logout, ShopVoiceToVoice, ApiKeyView, CreateAPIkey, DeleteAPIkey, OurPlans, \
     IndustriesView, GetIndustriesData, TextToImage, GetImages, JobsView, CapabilitiesView, Communities, JoinCommunity, \
@@ -127,6 +132,7 @@ urlpatterns = [
 
     # API's
     path('api/v1/text_to_text/', TextToTexTView.as_view(), name="TextToTexTView"),
+    path('api/v1/room/text_to_text/', RoomTextToTexTView.as_view(), name="RoomTextToTexTView"),
     path('api/v1/openai/text_to_text/', TextToTexTOpeniaiView.as_view(), name="TextToTexTOpeniaiView"),
     path('api/v1/ms/text_to_text/', TextToTexTMicrosoftView.as_view(), name="chatgptmalldb"),
     path('api/v1/transcribe/audio/', TranscribeAudio.as_view(), name="TranscribeAudio"),
@@ -187,6 +193,37 @@ urlpatterns = [
 
     # retail
     path("api/retail_bots/", RetailBotsView, name="RetailBotsView"),
+
+    # sky brain APIs
+    path("api/v1/licenses/", LicensesView.as_view(), name="LicensesView"),
+    path("api/v1/create_licenses/", CreateLicensesView.as_view(), name="CreateLicensesView"),
+    path("api/v1/organization/rooms/", OrganizationRooms.as_view(), name="OrganizationRooms"),
+    path("api/v1/skybrain/customer/", SkybrainCustomerRoom.as_view(), name="SkybrainCustomerRoom"),
+    path("api/v1/room/validate/", ValidateRoom.as_view(), name="ValidateRoom"),
+    path("api/v1/room/history/", HistoryRoom.as_view(), name="HistoryRoom"),
+    path("api/v1/room/items/", ItemsRoomView.as_view(), name="ItemsRoomView"),
+    path("api/v1/room/items/detail/", ItemsRoomDetailView.as_view(), name="ItemsRoomDetailView"),
+    path("api/v1/room/history/detail/", RoomHistoryDetailView.as_view(), name="RoomHistoryDetailView"),
+    path("api/v1/room/items/public/", PublicItemsRoomView.as_view(), name="PublicItemsRoomView"),
+    path("api/v1/room/items/upload/", UploadItemsRoomView.as_view(), name="UploadItemsRoomView"),
+    path("api/v1/organizations/", Organizationsview.as_view(), name="Organizationsview"),
+    path("api/v1/room/CS/queries/", CSQueriesView.as_view(), name="CSQueriesView"),
+    path("api/v1/room/queries/update/", CSQueriesUpdateView.as_view(), name="CSQueriesUpdateView"),
+    path("api/v1/favourites/room/", FavouritesView.as_view(), name="FavouritesView"),
+    path("api/v1/room/items/email/", ItemsSendEmailView.as_view(), name="ItemsSendEmailView"),
+    path("unsubscribe/<str:email>/", UnsubscribeView, name="UnsubscribeView"),
+    path("create/organizations/", CreateOrganizations, name="CreateOrganizations"),
+    path("create/org/rooms/", CreateRooms, name="CreateRoomsView"),
+    path("api/v1/room/items/share/", ShareRoomItems.as_view(), name="ShareRoomItems"),
+    path("api/v1/room/response/share/", ShareRoomResponse.as_view(), name="ShareRoomResponse"),
+    path("api/v1/room/ocr/", OCRImageUploadView.as_view(), name="OCRImageUploadView"),
+    path("api/v1/room/update/", UpdateRoomView.as_view(), name="UpdateRoomView"),
+    path("api/v1/room/custom_instructions/", CustomInstructionsView.as_view(), name="CustomInstructionsView"),
+    path("api/v1/room/generate/image/", GenerateImageView.as_view(), name="GenerateImageView"),
+    path("api/v1/room/share/", RoomAccessShare.as_view(), name="RoomAccessShare"),
+    path("api/v1/room/image/url/ocr/", URLOCRImageUploadView.as_view(), name="URLOCRImageUploadView")
+
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

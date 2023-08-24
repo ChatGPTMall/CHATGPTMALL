@@ -80,6 +80,13 @@
   float: left;
   color: #999;
 }
+        #key_div{
+            display: flex;
+            justify-content: space-between;
+            padding-top: 21px;
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+        }
   </style>
 
 </head>
@@ -92,7 +99,7 @@
 
       <a href="{% url 'HomepageView' %}" class="logo d-flex align-items-center">
         <!-- Uncomment the line below if you also wish to use an image logo -->
-         <img src="{% static 'images/log.png' %}" alt="">
+         <img src="{% static 'images/zk.png' %}" alt="">
 <!--        <h1>Progrow</h1>-->
       </a>
 
@@ -164,6 +171,14 @@
                 <li><a href="#">订阅及接口Subscription and API</a></li>
                 <li><a href="#">集成硬件Integration Hardware</a></li>
                 <li><a href="#">软件及工具Software and Tools</a></li>
+                {% if request.user.is_superuser %}
+              <li class="dropdown"><a href="#"><span>Create Organizations & Rooms</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
+                <ul style="margin-left: -100px !important; color:white;">
+                  <li style="padding: 0px 17px;"><a href="{% url 'CreateOrganizations' %}">Create Organizations</a></li>
+                  <li style="padding: 0px 17px;"><a href="{% url 'CreateRoomsView' %}">Create Rooms</a></li>
+                </ul>
+              </li>
+              {% endif %}
                 <li><a href="{% url 'ShopWithText' %}">Shop</a></li>
                 <li><a href="{% url 'ProfileView' %}">Profile</a></li>
                 <li><a href="{% url 'ApiKeyView' %}">API Key</a></li>
@@ -199,7 +214,9 @@
   <div id="preloader"></div>
 
   <!-- Vendor JS Files -->
-  <script src="{% static 'shop/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'chat/js/jquery-1.12.3.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
   <script src="{% static 'shop/vendor/purecounter/purecounter_vanilla.js' %}"></script>
   <script src="{% static 'shop/vendor/glightbox/js/glightbox.min.js' %}"></script>
   <script src="{% static 'shop/vendor/swiper/swiper-bundle.min.js' %}"></script>
@@ -208,6 +225,9 @@
 
   <!-- Template Main JS File -->
   <script src="{% static 'shop/js/main.js' %}"></script>
+        <script>
+          $("#show_coupon").hide();
+        </script>
 
 <script>
    tinymce.init({

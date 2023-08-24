@@ -5,6 +5,8 @@ import openai
 import stripe
 import requests
 from io import BytesIO
+
+from skybrain.models import Room, RoomHistory, CustomerSupport
 from users.models import User
 from django.urls import reverse
 from django.conf import settings
@@ -14,7 +16,7 @@ from rest_framework import generics, status
 from PIL import Image, ImageDraw, ImageFont
 from rest_framework.response import Response
 from django.shortcuts import render, redirect
-from engine.models import ImagesDB, ImageAnalysisDB, Items, Category
+from engine.models import ImagesDB, ImageAnalysisDB, Items, Category, KeyManagement
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
@@ -29,26 +31,140 @@ class TextToTexTView(generics.CreateAPIView):
     permission_classes = []
 
     def post(self, request, *args, **kwargs):
-        openai.api_key = os.getenv("OPEN_AI_KEY")
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        input = request.data["input"]
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a chatbot"},
-                {"role": "user", "content": "{}?".format(input)},
-            ]
-        )
+        input_ = request.data["input"]
+        ms_key = KeyManagement.objects.filter(platform="MICROSOFT").last()
+        openai_key = KeyManagement.objects.filter(platform="OPENAI").last()
+        if ms_key:
+            openai.api_key = ms_key.key
+            openai.api_base = "{}".format(ms_key.endpoint)
+            openai.api_type = 'azure'
+            openai.api_version = "2023-03-15-preview"
+            model = "davinci"
+            response = openai.Completion.create(
+                engine=model,
+                max_tokens=int(3000),
+                prompt=input_,)
+            text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
+            return Response(dict({
+                "input": input_,
+                "response": text
+            }), status=status.HTTP_201_CREATED)
+        if openai_key:
+            openai.api_key = openai_key.key
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are a chatbot"},
+                    {"role": "user", "content": "{}?".format(input_)},
+                ]
+            )
 
-        result = ''
-        for choice in response.choices:
-            result += choice.message.content
-        return Response(dict({
-            "input": input,
-            "response": result
-        }), status=status.HTTP_201_CREATED)
+            result = ''
+            for choice in response.choices:
+                result += choice.message.content
+            return Response(dict({
+                "input": input_,
+                "response": result
+            }), status=status.HTTP_201_CREATED)
+        return Response({"error": "Please Enter API Key in KeyManagement on Chatgptmall"}, status=status.HTTP_200_OK)
 
+
+class RoomTextToTexTView(generics.CreateAPIView):
+    serializer_class = TextToTexTViewSerializer
+    permission_classes = []
+    authentication_classes = []
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        room_id = request.query_params.get("room_key", None)
+        language = request.query_params.get("language", None)
+        translate = request.query_params.get("translate", None)
+        input_ = request.data["input"]
+        try:
+            support = request.data["customer_support"]
+        except KeyError:
+            support = 0
+        if language:
+            input_lang = input_ + " " + "in" + language
+        elif translate:
+            input_lang = "convert" + " " + '"{}"'.format(input_) + " " + "into" + " " + translate
+        else:
+            input_lang = input_
+        history = None
+        ms_key = KeyManagement.objects.filter(platform="MICROSOFT").last()
+        openai_key = KeyManagement.objects.filter(platform="OPENAI").last()
+        room_history = RoomHistory.objects.filter(user_input=input_)
+        if ms_key:
+            if not room_history.exists():
+                openai.api_key = ms_key.key
+                openai.api_base = "{}".format(ms_key.endpoint)
+                openai.api_type = 'azure'
+                openai.api_version = "2023-03-15-preview"
+                model = "davinci"
+                response = openai.Completion.create(
+                    engine=model,
+                    max_tokens=int(3000),
+                    prompt=input_lang,)
+                text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
+            else:
+                text = room_history.last().response
+            if room_id:
+                try:
+                    room = Room.objects.get(room_key=room_id)
+                    if translate:
+                        history = self.create_history(room, input_lang, text)
+                    else:
+                        history = self.create_history(room, input_, text)
+                    if int(support) == 1:
+                        CustomerSupport.objects.create(user_input=input_, response=text, room=room)
+                except Room.DoesNotExist:
+                    return Response({"error": "Invalid room_id provided"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(dict({
+                "input": input_,
+                "response": text,
+                "history": history,
+            }), status=status.HTTP_201_CREATED)
+        if openai_key:
+            if not room_history.exists():
+                openai.api_key = openai_key.key
+                response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "You are a chatbot"},
+                        {"role": "user", "content": "{}?".format(input_lang)},
+                    ]
+                )
+
+                result = ''
+                for choice in response.choices:
+                    result += choice.message.content
+            else:
+                result = room_history.last().response
+            if room_id:
+                try:
+                    room = Room.objects.get(room_key=room_id)
+                    if translate:
+                        history = self.create_history(room, input_lang, result)
+                    else:
+                        history = self.create_history(room, input_, result)
+                    if int(support) == 1:
+                        CustomerSupport.objects.create(user_input=input_, response=result, room=room)
+                except Room.DoesNotExist:
+                    return Response({"error": "Invalid room_id provided"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(dict({
+                "input": input_,
+                "response": result,
+                "history": history
+            }), status=status.HTTP_201_CREATED)
+        return Response({"error": "Please Enter API Key in KeyManagement on Chatgptmall"}, status=status.HTTP_200_OK)
+
+    @staticmethod
+    def create_history(room, input_, response):
+        history = RoomHistory.objects.create(room=room, user_input=input_, response=response)
+        return history.id
 
 class TextToTexTOpeniaiView(generics.CreateAPIView):
     serializer_class = TextToTexTViewSerializer
@@ -323,3 +439,5 @@ def CreateCheckoutSessionView(request):
         return render(request, "404.html", {"e": e})
 
     return redirect(checkout_session.url, code=303)
+
+
