@@ -441,3 +441,42 @@ def CreateCheckoutSessionView(request):
     return redirect(checkout_session.url, code=303)
 
 
+def ItemCreateCheckoutSessionView(request):
+    try:
+        if request.user.is_authenticated:
+            user = User.objects.get(email=request.POST.get("user"))
+            item_name = request.POST.get("item_name")
+            item_id = request.POST.get("item_id")
+            total_price = float(request.POST.get("total_price"))
+            if total_price > 0:
+                host = request.get_host()
+                checkout_session = stripe.checkout.Session.create(
+                    line_items=[
+                        {
+                            'price_data': {
+                                'currency': 'usd',
+                                'unit_amount': int(total_price*100),
+                                'product_data': {
+                                    'name': item_name,
+                                }
+                            },
+                            'quantity': 1,
+                        },
+                    ],
+                    mode='payment',
+                    metadata=dict({"data": str("test")}),
+                    customer_email=user,
+                    success_url="http://{}{}".format(host, reverse(
+                        'item-payment-success', kwargs={"item_id": item_id, "user_id": user.id})),
+                    cancel_url="http://{}{}".format(host, reverse('payment-cancel')),
+                )
+            else:
+                return redirect("/item/payment/success/{}/{}/".format(item_id, user.id))
+        else:
+            return redirect("/api/login/")
+    except Exception as e:
+        return render(request, "404.html", {"e": e})
+
+    return redirect(checkout_session.url, code=303)
+
+

@@ -1,0 +1,53 @@
+{% extends 'parent.html' %}
+{% block tittle %}Checkout {{item.title}}{% endblock tittle %}
+{% load static %}
+{% block body %}
+
+<div class="container" style="margin-top: 136px;">
+<br><br>
+  <div class="row">
+    <div class="col-md-6 order-md-1">
+      <h4 class="mb-3">{{item.title}}</h4>
+      <p>{{item.description | safe}}</p>
+      <br><br>
+    </div>
+    <div class="col-md-6 order-md-2 mb-4">
+      <ul class="list-group mb-3">
+        <li class="list-group-item d-flex justify-content-between bg-light" id="show_coupon">
+          <div class="text-success">
+            <h6 class="my-0">Coupon Code</h6>
+            <small id="cp"></small>
+          </div>
+          <span class="text-success" id="coupon_price"></span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+          <span>Total (USD)</span>
+          <strong id="price">${{item.price}}</strong>
+        </li>
+      </ul>
+
+      <form class="card p-2">
+        <div class="input-group">
+          <input type="text" class="form-control" id="coupon_code" placeholder="Coupon code">
+          <div class="input-group-append">
+            <a id="redeem_button" class="btn" style="background-color:#5B61EB !important;color:white;">Redeem</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div class="container">
+  <form class="p-2" method="post" action="{% url 'ItemCreateCheckoutSessionView' %}">
+        {% csrf_token %}
+          <input type="hidden" class="form-control" id="total_price" value="{{item.price}}" name="total_price">
+          <input type="hidden" class="form-control" value="{{item.title}}" name="item_name">
+          <input type="hidden" class="form-control" value="{{item.id}}" name="item_id">
+          <input type="hidden" class="form-control" value={{request.user.email}} name="user">
+          <button type="submit"  class="btn" style="background-color:#5B61EB !important;color:white;width:100%;">Continue Checkout</button>
+      </form>
+</div>
+
+{% endblock %}

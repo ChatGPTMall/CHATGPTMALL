@@ -1045,6 +1045,11 @@ def PaymentSuccess(request, plan_id, user_id):
     return render(request, "payment_success.html", context={"plan": plan})
 
 
+def ItemPaymentSuccess(request, item_id, user_id):
+    return HttpResponse("Item Purchased Successfully")
+
+
+
 def PaymentCancel(request):
     return HttpResponse("PAYMENT CANCEL")
 
@@ -1102,6 +1107,12 @@ def ShopWithText(request):
     else:
         items = []
     return render(request, "text_shop.html", context={"items": items})
+
+
+def ShopCheckout(request, item_id):
+    item = Items.objects.get(pk=int(item_id))
+    return render(request, "shop_checkout.html", {"item": item})
+
 
 
 def ItemHowToUse(request, item_id):

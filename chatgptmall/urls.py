@@ -22,7 +22,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageView, ImageAnalysisView, \
     ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView, TextToTexTOpeniaiView, \
-    TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView
+    TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView, ItemCreateCheckoutSessionView
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
     CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \
@@ -42,7 +42,7 @@ from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, Upl
     OCRContentGenerate, SaveCapturedPhoto, ImageAnalysisOCR, voice2voicePlanDetail, RedirectPlan, voice2ImagePlanDetail, \
     text2VoicePlanDetail, text2TextPlanDetail, text2ImagePlanDetail, image2ImagePlanDetail, \
     object_detectPlanDetail, voice2commandPlanDetail, text2commandPlanDetail, OcrPlanDetail, imageAnalysisPlanDetail, \
-    RetailBotsView
+    RetailBotsView, ShopCheckout, ItemPaymentSuccess
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -127,8 +127,11 @@ urlpatterns = [
 
     # Shop
     path("api/v1/shop/text/", ShopWithText, name="ShopWithText"),
+    path("shop/item/checkout/<int:item_id>/", ShopCheckout, name="ShopCheckout"),
     path("item/how_to_use/<int:item_id>/", ItemHowToUse, name="ItemHowToUse"),
     path("item/details/<int:item_id>/", LearHowToUse, name="LearHowToUse"),
+    path("item/checkout/Session/", ItemCreateCheckoutSessionView, name="ItemCreateCheckoutSessionView"),
+    path("item/payment/success/<int:item_id>/<int:user_id>/", ItemPaymentSuccess, name="item-payment-success"),
 
     # API's
     path('api/v1/text_to_text/', TextToTexTView.as_view(), name="TextToTexTView"),

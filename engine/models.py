@@ -36,6 +36,8 @@ class Items(models.Model):
     video = models.FileField(null=True, blank=True, upload_to="items/videos")
     qr_code = models.ImageField(upload_to="images/QR/", null=True, blank=True)
     price = models.FloatField(default=0)
+    location = models.CharField(max_length=200, null=True, blank=True)
+    stock = models.IntegerField(default=0)
     added_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 

@@ -43,16 +43,27 @@
         <div class="row gy-4">
 
           {% for item in items %}
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
             <div class="card">
               <div class="card-img" style="display: flex;justify-content: center;">
-                <img src="/media/{{item.image}}" style="height:160px;" alt="" class="img-fluid">
+                {% if item.image %}
+                <img src="{{item.image.url}}" style="height:160px;" alt="" class="img-fluid">
+                {% else %}
+                <img src="https://www.bedfordcentre.com/plugins/noveldesign-store-directory/images/default-shop.jpg" style="height:160px;" alt="" class="img-fluid">
+                {% endif %}
               </div>
               <h3 style="text-align:center;"><a href="{% url 'LearHowToUse' item.id %}" class="stretched-link">{{item.title}}</a></h3>
               <a class="get-a-quote" href="{% url 'LearHowToUse' item.id %}" style="text-align:center;margin-bottom:23px;">Learn How To Use?</a>
-              <p style="text-align:center;margin-bottom:23px;">
-                <a target="_blank" href="{% url 'ItemHowToUse' item.id %}">Upload How To Use?</a>
-              </p>
+              <div style="display: flex;
+    justify-content: center;margin: -16px 0px;">
+                <p>location: </p>
+                <p>{{item.location}}</p>
+              </div>
+              <div style="display: flex;
+    justify-content: center;margin: -9px 0px;">
+                <p>stock: </p>
+                <p>{{item.stock}}</p>
+              </div>
             </div>
           </div><!-- End Card Item -->
           {% endfor %}
