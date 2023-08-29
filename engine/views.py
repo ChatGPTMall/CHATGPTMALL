@@ -444,9 +444,19 @@ def CreateCheckoutSessionView(request):
 def ItemCreateCheckoutSessionView(request):
     try:
         if request.user.is_authenticated:
+            item_id = request.POST.get("item_id")
+            item = Items.objects.get(pk=int(item_id))
+            if item.public_bank:
+                SECRET_KEY = item.public_bank.private_key
+                WEBHOOK_SECRET = item.public_bank.webhook_key
+            if item.private_bank:
+                SECRET_KEY = item.private_bank.private_key
+                WEBHOOK_SECRET = item.private_bank.webhook_key
+
+            stripe.api_key = SECRET_KEY
+            stripe.endpoint_secret = WEBHOOK_SECRET
             user = User.objects.get(email=request.POST.get("user"))
             item_name = request.POST.get("item_name")
-            item_id = request.POST.get("item_id")
             total_price = float(request.POST.get("total_price"))
             if total_price > 0:
                 host = request.get_host()

@@ -309,3 +309,22 @@ function get_data(text){
   // Remove the textarea from the document
   document.body.removeChild(textarea);
 }
+
+   $("#private_key_div").hide();
+   $("#public_key_div").hide();
+   $("#webhook_key_div").hide();
+  const bank = $("#bank");
+  bank.on("change",function () {
+        var value = $(this).val();
+        if(value == "my_bank"){
+            $("#private_key_div").show();
+            $("#public_key_div").show();
+            $("#webhook_key_div").show();
+        }else{
+        $("#private_key_div").hide();
+        $("#public_key_div").hide();
+        $("#webhook_key_div").hide();
+   }
+
+    }
+  );

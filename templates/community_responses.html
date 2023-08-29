@@ -240,6 +240,43 @@
                   <option value="no">No</option>
                 </select>
               </div>
+                <div class="col-md-12">
+                    <div>
+                    <label for="formFile" class="form-label">Price</label>
+                    <input class="form-control" name="price" type="number">
+                    </div>
+                    <div>
+                    <label for="formFile" class="form-label">Stock</label>
+                    <input class="form-control" name="stock" type="number">
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <label for="formFile" class="form-label">Location</label>
+                    <input class="form-control" name="location" type="text">
+                </div>
+                <div class="col-md-12">
+                <label for="inputState" class="form-label">Select Bank</label>
+                <select id="bank" name="bank" class="form-select" required>
+                  <option selected>Choose...</option>
+                  <option value="my_bank">User My Bank</option>
+                    {% for bank in banks %}
+                  <option value="{{bank.name}}">{{bank.name}}</option>
+                    {% endfor %}
+                </select>
+              </div>
+                <div class="col-md-12" id="private_key_div">
+                    <label for="formFile" class="form-label">Stripe Private Key</label>
+                    <input class="form-control" name="private_key" type="text" id="private_key">
+                </div>
+                <div class="col-md-12" id="public_key_div">
+                    <label for="formFile" class="form-label">Stripe Public Key</label>
+                    <input class="form-control" name="public_key" type="text" id="public_key">
+                </div>
+                <div class="col-md-12" id="webhook_key_div">
+                    <label for="formFile" class="form-label">Stripe Webhook Key</label>
+                    <input class="form-control" name="webhook_key" type="text" id="webhook_key">
+                </div>
+
               <div class="col-md-12">
                 <button type="submit" class="btn btn-primary">Upload Item To Community</button>
               </div>

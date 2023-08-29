@@ -27,6 +27,28 @@ class Category(models.Model):
         return self.title
 
 
+class BankAccounts(models.Model):
+    name = models.CharField(_("Bank Name"), unique=True, max_length=100)
+    private_key = models.CharField(_("Stripe Private Key"), unique=True, max_length=200)
+    public_key = models.CharField(_("Stripe Public Key"), unique=True, max_length=200)
+    webhook_key = models.CharField(_("Stripe Webhook Key"), unique=True, max_length=200)
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Bank Account")
+        verbose_name_plural = _("Bank Accounts")
+
+    def __str__(self):
+        return self.name
+
+
+class PrivateBankAccounts(models.Model):
+    private_key = models.CharField(_("Stripe Private Key"), unique=True, max_length=200)
+    public_key = models.CharField(_("Stripe Public Key"), unique=True, max_length=200)
+    webhook_key = models.CharField(_("Stripe Webhook Key"), unique=True, max_length=200)
+    added_on = models.DateTimeField(auto_now_add=True)
+
+
 class Items(models.Model):
     item_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="items")
@@ -38,6 +60,10 @@ class Items(models.Model):
     price = models.FloatField(default=0)
     location = models.CharField(max_length=200, null=True, blank=True)
     stock = models.IntegerField(default=0)
+    public_bank = models.ForeignKey(BankAccounts, related_name="public_bank_accounts",
+                                    null=True, blank=True, on_delete=models.PROTECT)
+    private_bank = models.ForeignKey(PrivateBankAccounts, related_name="private_bank_accounts",
+                                     null=True, blank=True, on_delete=models.PROTECT)
     added_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 

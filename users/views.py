@@ -39,7 +39,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, Capabilities, \
     Jobs, Community, CommunityMembers, CommunityPosts, CouponCode, Subscriptions, Items, ImageAnalysisDB, Category, \
-    VoiceCommands, KeyManagement, FreeSubscriptions, CapturedImages
+    VoiceCommands, KeyManagement, FreeSubscriptions, CapturedImages, BankAccounts, PrivateBankAccounts
 
 
 # openai.api_key = os.getenv("OPEN_AI_KEY")
@@ -912,7 +912,9 @@ def JoinCommunity(request):
                 "uri": uri,
                 "team_id": community.community_id,
                 "categories": Category.objects.all(),
+                "banks": BankAccounts.objects.all()
             }
+
             if not created:
                 return render(request, "community_responses.html", context=context)
             if show_welcome_ms:
@@ -992,22 +994,31 @@ def UploadCommunityPost(request):
     video = request.FILES.get("item_video", None)
     item_desc = request.POST.get("item_desc")
     upload = request.POST.get("upload")
+    price = request.POST.get("price", 0)
+    stock = request.POST.get("stock", 0)
+    location = request.POST.get("location", "")
+    bank = request.POST.get("bank")
+    private_key = request.POST.get("private_key")
+    public_key = request.POST.get("public_key")
+    webhook_key = request.POST.get("webhook_key")
     question = "How to use {}".format(name)
     if item_image_url:
-        print(item_image_url)
         response1 = urlopen(item_image_url)
         image = BytesIO(response1.read())
         # imagedb.image1.save("image_one.jpg", File(io1))
+
     com = Community.objects.get(community_id=team_id)
     post = CommunityPosts.objects.create(user=request.user, question=question, response=item_desc, community=com)
     if upload == "yes":
         category, created = Category.objects.get_or_create(title=cat)
         if video:
             item = Items.objects.create(
-                category=category, title=name, description=item_desc, video=video)
+                category=category, title=name, description=item_desc, video=video,
+                price=int(price), stock=int(stock), location=location)
         else:
             item = Items.objects.create(
-                category=category, title=name, description=item_desc)
+                category=category, title=name, description=item_desc,
+                price=int(price), stock=int(stock), location=location)
         result = urllib.request.urlretrieve(item.qr_code.url)
         if video:
             result2 = urllib.request.urlretrieve(item.video.url)
@@ -1018,6 +1029,14 @@ def UploadCommunityPost(request):
             with open(result2[0], 'rb') as fa:
                 # Set the image field to the downloaded file
                 post.video.save("test.mp4", File(fa))
+        if bank == "my_bank":
+            private_account = PrivateBankAccounts.objects.create(
+                private_key=private_key, public_key=public_key, webhook_key=webhook_key)
+            item.private_bank = private_account
+        else:
+            print(bank)
+            public_bank = BankAccounts.objects.get(name=bank)
+            item.public_bank = public_bank
         item.image.save("image_one.jpg", File(image))
         if item_image_url:
             result = urllib.request.urlretrieve(item_image_url)
