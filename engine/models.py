@@ -73,7 +73,7 @@ class Items(models.Model):
     def save(self, *args, **kwargs):
         qr_image = qrcode.QRCode(version=1, box_size=10, border=5)
         DEPLOYED_HOST = os.getenv("DEPLOYED_HOST_CHAT", None)
-        url = "https://chatgptmall.tech" + "/item/details/{}".format(self.item_id)
+        url = "https://chatgptmall.tech" + "/item/details/{}".format(self.pk)
         qr_image.add_data(url)
 
         qr_image.make(fit=True)
