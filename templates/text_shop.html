@@ -52,8 +52,8 @@
                 <img src="https://www.bedfordcentre.com/plugins/noveldesign-store-directory/images/default-shop.jpg" style="height:160px;" alt="" class="img-fluid">
                 {% endif %}
               </div>
-              <h3 style="text-align:center;"><a href="{% url 'LearHowToUse' item.id %}" class="stretched-link">{{item.title}}</a></h3>
-              <a class="get-a-quote" href="{% url 'LearHowToUse' item.id %}" style="text-align:center;margin-bottom:23px;">Learn How To Use?</a>
+              <h3 style="text-align:center;"><a href="{% url 'LearHowToUse' item.item_id %}" class="stretched-link">{{item.title}}</a></h3>
+              <a class="get-a-quote" href="{% url 'LearHowToUse' item.item_id %}" style="text-align:center;margin-bottom:23px;">Learn How To Use?</a>
               <div style="display: flex;
     justify-content: center;margin: -16px 0px;">
                 <p>location: </p>

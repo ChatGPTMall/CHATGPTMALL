@@ -1145,7 +1145,7 @@ def ItemHowToUse(request, item_id):
 
 
 def LearHowToUse(request, item_id):
-    item = Items.objects.get(id=item_id)
+    item = Items.objects.get(item_id=item_id)
     return render(request, "item_detail.html", context={"item": item})
 
 

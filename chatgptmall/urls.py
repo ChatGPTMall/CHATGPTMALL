@@ -129,7 +129,7 @@ urlpatterns = [
     path("api/v1/shop/text/", ShopWithText, name="ShopWithText"),
     path("shop/item/checkout/<int:item_id>/", ShopCheckout, name="ShopCheckout"),
     path("item/how_to_use/<int:item_id>/", ItemHowToUse, name="ItemHowToUse"),
-    path("item/details/<int:item_id>/", LearHowToUse, name="LearHowToUse"),
+    path("item/details/<uuid:item_id>/", LearHowToUse, name="LearHowToUse"),
     path("item/checkout/Session/", ItemCreateCheckoutSessionView, name="ItemCreateCheckoutSessionView"),
     path("item/payment/success/<int:item_id>/<int:user_id>/", ItemPaymentSuccess, name="item-payment-success"),
 
