@@ -1043,6 +1043,7 @@ def UploadCommunityPost(request):
             with open(result[0], 'rb') as G:
                 # Set the image field to the downloaded file
                 post.image.save("test.png", File(G))
+        post.item = item
         post.item_name = item.title
         post.save()
     return redirect("/join/community/?team_id={}".format(team_id))

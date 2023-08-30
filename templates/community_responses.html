@@ -79,7 +79,7 @@
               {% if post.qrcode %}
               <div style="display: flex;flex-direction: column;">
                 {% if post.video %}
-                <a href="{{post.video.url}}" class="btn" style="background-color:#5B61EB !important;color:white;">Watch Video>></a><br>
+                <a href="{% url 'LearHowToUse' post.item.id %}" class="btn" style="background-color:#5B61EB !important;color:white;">Watch Video>></a><br>
                 {% endif %}
             <div style="display:flex;">
                 {% if post.image %}

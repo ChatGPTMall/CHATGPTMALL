@@ -72,8 +72,8 @@ class Items(models.Model):
 
     def save(self, *args, **kwargs):
         qr_image = qrcode.QRCode(version=1, box_size=10, border=5)
-        DEPLOYED_HOST = os.getenv("DEPLOYED_HOST", None)
-        url = DEPLOYED_HOST + "/watch/video/{}".format(self.item_id)
+        DEPLOYED_HOST = os.getenv("DEPLOYED_HOST_CHAT", None)
+        url = "https://chatgptmall.tech" + "/item/details/{}".format(self.item_id)
         qr_image.add_data(url)
 
         qr_image.make(fit=True)
@@ -301,6 +301,7 @@ class CommunityPosts(models.Model):
     image1 = models.TextField(null=True, blank=True)
     image2 = models.TextField(null=True, blank=True)
     image3 = models.TextField(null=True, blank=True)
+    item = models.ForeignKey(Items, related_name="com_posts", on_delete=models.CASCADE, null=True, blank=True)
     item_name = models.CharField(max_length=100, null=True, blank=True)
     added_on = models.DateTimeField(auto_now_add=True)
 
