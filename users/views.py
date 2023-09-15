@@ -1537,7 +1537,7 @@ class RegisterViewV2(generics.CreateAPIView):
             user.room = room
             user.save()
             serializer = UserSerializer(user)
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         except IntegrityError as e:
             error = dict({'email': "Another user with this email already exists or home with key already exists"})
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
@@ -1567,7 +1567,7 @@ class LoginViewV2(generics.CreateAPIView):
         token, created = Token.objects.get_or_create(user=user)
         return Response({'token': token.key,
                          'is_active': user.is_active
-                         })
+                         }, status=status.HTTP_201_CREATED)
 
 
 class ProfileViewV2(generics.RetrieveUpdateAPIView):
