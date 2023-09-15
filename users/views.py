@@ -14,6 +14,7 @@ from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
 from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from drf_yasg.utils import swagger_auto_schema
 from msrest.authentication import CognitiveServicesCredentials
 from array import array
 import os
@@ -29,6 +30,11 @@ from django.contrib import messages
 from django.urls import reverse
 from django.utils import timezone
 import pandas as pd
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+
+from skybrain.models import Room
 from users.models import User
 import speech_recognition as sr
 from django.db import IntegrityError
@@ -40,6 +46,9 @@ from django.contrib.auth import authenticate, login, logout
 from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, Capabilities, \
     Jobs, Community, CommunityMembers, CommunityPosts, CouponCode, Subscriptions, Items, ImageAnalysisDB, Category, \
     VoiceCommands, KeyManagement, FreeSubscriptions, CapturedImages, BankAccounts, PrivateBankAccounts
+from rest_framework import generics, status
+
+from users.serializers import UserCreateSerializer, UserSerializer
 
 
 # openai.api_key = os.getenv("OPEN_AI_KEY")
@@ -1499,4 +1508,86 @@ def RetailBotsView(request):
     return render(request, "retail_bots.html", {"communities": communities})
 
 
+class RegisterViewV2(generics.CreateAPIView):
+    """
+    Create a user who can create trips
+    {
+        "email": "bob_marley@gmail.com",
+        "first_name": "Bob",
+        "last_name": "Marley",
+        "phone_no": "123123123"
+    }
+    """
+    serializer_class = UserCreateSerializer
+    authentication_classes = []
+    permission_classes = []
+
+    def create(self, request, *args, **kwargs):
+        try:
+            data = self.request.data
+            home_name = data.get("home_name")
+            home_key = data.get("home_key")
+            email = str(data.get("email"))
+            password = str(data.get("password"))
+
+            room = Room.objects.create(room_id=home_name, room_key=home_key)
+            user = User.objects.create(
+                email=email.lower(), first_name=data.get("first_name"), last_name=data.get("last_name"))
+            user.set_password(password)
+            user.room = room
+            user.save()
+            serializer = UserSerializer(user)
+            return Response(serializer.data)
+        except IntegrityError as e:
+            error = dict({'email': "Another user with this email already exists or home with key already exists"})
+            return Response(error, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(
+        tags=["Authentication APIs"]
+    )
+    def post(self, request, *args, **kwargs):
+        return self.create(self, request, *args, **kwargs)
+
+
+class LoginViewV2(generics.CreateAPIView):
+    serializer_class = AuthTokenSerializer
+    permission_classes = [AllowAny]
+
+    @swagger_auto_schema(
+        request=AuthTokenSerializer,
+        tags=["Authentication APIs"]
+    )
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        if data.get("username", None) is not None:
+            data["username"] = str(data.get("username")).lower()
+        serializer = self.serializer_class(data=data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key,
+                         'is_active': user.is_active
+                         })
+
+
+class ProfileViewV2(generics.RetrieveUpdateAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    @swagger_auto_schema(tags=["Authentication APIs"])
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(self, request, *args, **kwargs)
+
+    @swagger_auto_schema(tags=["Authentication APIs"])
+    def update(self, request, *args, **kwargs):
+        try:
+            kwargs['partial'] = True
+            return super(ProfileViewV2, self).update(request, *args, **kwargs)
+        except Exception as e:
+            return Response(dict({
+                "error": "Ah oh, there was some issue with the backend! Please contact admin!"
+            }), status=500)
 

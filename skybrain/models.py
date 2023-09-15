@@ -41,7 +41,7 @@ class LicensesRequests(models.Model):
 
 
 class Room(models.Model):
-    organization = models.ForeignKey(Organization, related_name="rooms", on_delete=models.CASCADE)
+    organization = models.ForeignKey(Organization, related_name="rooms", on_delete=models.CASCADE, null=True, blank=True)
     room_id = models.CharField(max_length=200)
     room_key = models.CharField(unique=True, max_length=200, null=True, blank=True)
     custom_instructions = models.BooleanField(default=False)

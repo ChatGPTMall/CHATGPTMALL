@@ -9,6 +9,8 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MinLengthValidator
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+
+from skybrain.models import Room
 from users.custom_fields import PhoneNumberField
 
 
@@ -117,6 +119,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(_('active'), default=True)
     reset_token = models.CharField(_('Reset Token'), max_length=5, default=0)
     user_id = models.UUIDField(default=uuid.uuid4, unique=True)
+    room = models.ForeignKey(Room, related_name="room", on_delete=models.PROTECT, null=True, blank=True)
     premium = models.IntegerField(choices=PremiumFlags.choices, default=0)
     joined_on = models.DateTimeField(auto_now_add=True)
     purchased_on = models.DateTimeField(null=True, blank=True)

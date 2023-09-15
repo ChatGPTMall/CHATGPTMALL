@@ -42,7 +42,7 @@ from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, Upl
     OCRContentGenerate, SaveCapturedPhoto, ImageAnalysisOCR, voice2voicePlanDetail, RedirectPlan, voice2ImagePlanDetail, \
     text2VoicePlanDetail, text2TextPlanDetail, text2ImagePlanDetail, image2ImagePlanDetail, \
     object_detectPlanDetail, voice2commandPlanDetail, text2commandPlanDetail, OcrPlanDetail, imageAnalysisPlanDetail, \
-    RetailBotsView, ShopCheckout, ItemPaymentSuccess
+    RetailBotsView, ShopCheckout, ItemPaymentSuccess, RegisterViewV2, LoginViewV2, ProfileViewV2
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -224,7 +224,12 @@ urlpatterns = [
     path("api/v1/room/custom_instructions/", CustomInstructionsView.as_view(), name="CustomInstructionsView"),
     path("api/v1/room/generate/image/", GenerateImageView.as_view(), name="GenerateImageView"),
     path("api/v1/room/share/", RoomAccessShare.as_view(), name="RoomAccessShare"),
-    path("api/v1/room/image/url/ocr/", URLOCRImageUploadView.as_view(), name="URLOCRImageUploadView")
+    path("api/v1/room/image/url/ocr/", URLOCRImageUploadView.as_view(), name="URLOCRImageUploadView"),
+
+    # v2 authentication APIs
+    path("api/v2/register/", RegisterViewV2.as_view(), name="RegisterViewV2"),
+    path("api/v2/login/", LoginViewV2.as_view(), name="LoginViewV2"),
+    path("api/v2/profile/", ProfileViewV2.as_view(), name="ProfileViewV2")
 
 
 
