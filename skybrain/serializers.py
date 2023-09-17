@@ -36,7 +36,9 @@ class OrganizationRoomsSerializer(serializers.ModelSerializer):
         )
 
     def get_organization_name(self, room):
-        return room.organization.name
+        if room.organization:
+            return room.organization.name
+        return None
 
 
 class SkybrainCustomerRoomSerializer(serializers.Serializer):
