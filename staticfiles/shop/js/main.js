@@ -263,18 +263,25 @@ $('#loading').fadeOut(2000,function(){
                 type: "GET",
                 url: `/validate/coupon_code/coupon_code=${coupon_code}/`,
                 success: function (data) {
+                    console.log(data[0], data)
                     if(data[0] == "invalid"){
                         alert("invalid coupon code or expired")
                     }else{
                        var discount = data[1]
                        var p = parseInt(price);
+                       const discount_p = p-discount
+                       let discountPrice = (discount_p >= 0) ? discount_p : 0;
                        if(discount > p){
-                        alert("invalid coupon code or expired")
+                        $("#coupon_price").text(discount);
+                        $("#total_price").val(discountPrice);
+                        $("#cp").text(coupon_code);
+                        $("#price").text("$"+(discountPrice));
+                        $("#show_coupon").show();
                        }else{
-                            $("#coupon_price").text(discount);
-                            $("#total_price").val(p-discount);
+                            $("#coupon_price").text("$" + discount);
+                            $("#total_price").val(discountPrice);
                             $("#cp").text(coupon_code);
-                            $("#price").text("$"+(p-discount));
+                            $("#price").text("$"+(discountPrice));
                             $("#show_coupon").show();
                        }
                     }

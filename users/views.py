@@ -1078,7 +1078,6 @@ def ItemPaymentSuccess(request, item_id, user_id):
     return HttpResponse("Item Purchased Successfully")
 
 
-
 def PaymentCancel(request):
     return HttpResponse("PAYMENT CANCEL")
 
