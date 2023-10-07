@@ -229,7 +229,10 @@ urlpatterns = [
     # v2 authentication APIs
     path("api/v2/register/", RegisterViewV2.as_view(), name="RegisterViewV2"),
     path("api/v2/login/", LoginViewV2.as_view(), name="LoginViewV2"),
-    path("api/v2/profile/", ProfileViewV2.as_view(), name="ProfileViewV2")
+    path("api/v2/profile/", ProfileViewV2.as_view(), name="ProfileViewV2"),
+
+    # home APIs v1
+    path("api/v1/home/plans/", HomePlansAPIView.as_view(), name="HomePlansAPIView")
 
 
 
