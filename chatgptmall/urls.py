@@ -23,6 +23,7 @@ from rest_framework import permissions
 from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageView, ImageAnalysisView, \
     ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView, TextToTexTOpeniaiView, \
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView, ItemCreateCheckoutSessionView
+from homelinked.views import HomePlansAPIView
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
     CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \

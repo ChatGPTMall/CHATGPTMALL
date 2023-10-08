@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'users',
     'engine',
     'skybrain',
+    'homelinked'
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
