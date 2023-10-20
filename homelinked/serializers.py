@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from engine.models import PlanType
-from homelinked.models import HomePlans
+from homelinked.models import HomePlans, HomepageNewFeature
 
 
 class HomePlansAPIViewSerializer(serializers.ModelSerializer):
@@ -14,4 +14,13 @@ class HomePlansAPIViewSerializer(serializers.ModelSerializer):
             "id",
             "added_on",
             "updated_on",
+        )
+
+
+class HomepageNewFeatureViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HomepageNewFeature
+        exclude = (
+            "id",
+            "updated_on"
         )

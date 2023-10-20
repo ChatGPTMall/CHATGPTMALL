@@ -47,3 +47,29 @@ class HomePlanPurchases(models.Model):
 
     def __str__(self):
         return str(self.user.email)
+
+
+class HomepageNewFeature(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    video = models.FileField(null=True, blank=True, upload_to="Homepage/videos")
+    image = models.ImageField(upload_to="Homepage/images", null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    color = models.CharField(max_length=50)
+    added_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+
+
+
+    def __str__(self) -> str:
+        return self.title
+
+    class Meta:
+        verbose_name = _("Homepage Content")
+        verbose_name_plural = _("Homepage Content")
+        unique_together = (("is_active", ),)
+
+
+
+
+

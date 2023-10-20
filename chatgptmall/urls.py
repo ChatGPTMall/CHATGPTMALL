@@ -23,7 +23,7 @@ from rest_framework import permissions
 from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageView, ImageAnalysisView, \
     ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView, TextToTexTOpeniaiView, \
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView, ItemCreateCheckoutSessionView
-from homelinked.views import HomePlansAPIView
+from homelinked.views import HomePlansAPIView, HomepageNewFeatureView
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
     CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \
@@ -233,7 +233,8 @@ urlpatterns = [
     path("api/v2/profile/", ProfileViewV2.as_view(), name="ProfileViewV2"),
 
     # home APIs v1
-    path("api/v1/home/plans/", HomePlansAPIView.as_view(), name="HomePlansAPIView")
+    path("api/v1/home/plans/", HomePlansAPIView.as_view(), name="HomePlansAPIView"),
+    path("api/v1/home/feature/", HomepageNewFeatureView.as_view(), name="HomepageNewFeatureView")
 
 
 
