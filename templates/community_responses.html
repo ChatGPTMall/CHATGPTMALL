@@ -78,9 +78,11 @@
             <p>
               {% if post.qrcode %}
               <div style="display: flex;flex-direction: column;">
-                {% if post.video %}
+            <div style="display: flex;padding: 10px 33px;">
                 <a href="{% url 'LearHowToUse' post.item.item_id %}" class="btn" style="background-color:#5B61EB !important;color:white;">Check Item Detail</a><br>
-                {% endif %}
+                <a href="{% url 'ShopCheckout' post.item.id %}" class="btn"
+                   style="background-color:#5B61EB !important;color:white;margin-left: 14px;">Checkout</a><br>
+            </div>
             <div style="display:flex;">
                 {% if post.image %}
                 <img style="width:200px" src="{{post.image.url}}">
@@ -191,8 +193,15 @@
                 {% csrf_token %}
                 <input type="hidden" name="team_id" value="{{community.community_id}}">
               <div class="col-md-12">
-                <label for="inputEmail4" class="form-label">Item Name <a href="#" style="margin-left:12px;font-size:25px;">Use AI Text Generation</a></label>
-                <input type="text" name="item_name" class="form-control" id="inputEmail4" placeholder="item name" required>
+                <label for="title" class="form-label">Item Name <a href="#" style="margin-left:12px;font-size:25px;" id="text_ai_btn">Use AI Text Generation</a></label>
+                  <div>
+                  <img src="{% static 'images/loading.svg' %}" style="width:50px;" id="loader_title">
+                  </div>
+                  <div id="div_query_title">
+                    <input class="form-control" type="text" id="query_title" placeholder="Type Your Query">
+                      <a style="margin-top:7px;" class="btn btn-primary" id="btn_query_title">Generate Title</a>
+                  </div>
+                <input type="text" name="item_name"  class="form-control" id="title" placeholder="item name" required>
               </div>
               <div class="col-md-12">
                 <label class="form-label">Item Category</label>
@@ -229,7 +238,7 @@
                     <input class="form-control" name="item_image_url" type="text" id="formFileurl">
                 </div>
                 <div class="col-md-12">
-                    <label for="formFile" class="form-label">Item Video(Optional)<a href="#" style="margin-left:12px;font-size:25px;" id="show_ai_image">Use AI Video Generation</a></label>
+                    <label for="formFile" class="form-label">Item Video(Optional)<a href="#" style="margin-left:12px;font-size:25px;" id="show_ai_video">Use AI Video Generation</a></label>
                     <input class="form-control" name="item_video" type="file" id="video">
                 </div>
               <div class="col-md-12">

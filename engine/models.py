@@ -59,7 +59,7 @@ class Items(models.Model):
     qr_code = models.ImageField(upload_to="images/QR/", null=True, blank=True)
     price = models.FloatField(default=0)
     location = models.CharField(max_length=200, null=True, blank=True)
-    stock = models.IntegerField(default=0)
+    stock = models.IntegerField(default=1)
     public_bank = models.ForeignKey(BankAccounts, related_name="public_bank_accounts",
                                     null=True, blank=True, on_delete=models.PROTECT)
     private_bank = models.ForeignKey(PrivateBankAccounts, related_name="private_bank_accounts",

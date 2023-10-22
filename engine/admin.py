@@ -70,6 +70,10 @@ class CouponCodeAdmin(admin.ModelAdmin):
     list_display = ('provider', 'currency', 'code', 'is_expired', 'price', 'start_date', 'end_date', 'added_on')
 
 
+class CommunityPostsAdmin(admin.ModelAdmin):
+    list_display = ("user", "item", "community", "added_on")
+
+
 admin.site.register(Category)
 admin.site.register(Items)
 admin.site.register(ResponsesDB)
@@ -81,7 +85,7 @@ admin.site.register(Jobs)
 admin.site.register(Capabilities)
 admin.site.register(Community)
 admin.site.register(CommunityMembers)
-admin.site.register(CommunityPosts)
+admin.site.register(CommunityPosts, CommunityPostsAdmin)
 admin.site.register(CouponCode, CouponCodeAdmin)
 admin.site.register(UploadCoupons, UploadCouponsAdmin)
 admin.site.register(UploadTeams, UploadTeamsAdmin)

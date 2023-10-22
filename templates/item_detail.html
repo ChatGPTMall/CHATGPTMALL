@@ -11,7 +11,9 @@
           <p style="color: black !important;">{{item.description}}</p>
         </div>
         <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
+          {% if item.image %}
           <img src="{{item.image.url}}" style="height:400px;width:400px" class="img-fluid mb-3 mb-lg-0" alt="">
+          {% endif %}
         </div>
 
       </div>

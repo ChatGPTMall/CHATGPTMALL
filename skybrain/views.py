@@ -1,11 +1,12 @@
 import csv
 import io
 import time
-
+from PIL import Image
 import requests
 from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
 from django.contrib import messages
+from django.core.files.base import ContentFile
 from django.http import HttpResponse
 from django.conf import settings
 from django.core.mail import send_mail
@@ -19,7 +20,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 
-from engine.models import ImageAnalysisDB
+from engine.models import ImageAnalysisDB, Items, Category
 from skybrain.models import LicensesRequests, Organization, Room, RoomItems, CustomerSupport, Favourites, Unsubscribe, \
     RoomHistory, CustomInstructions, RoomKeys
 from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSerializer, OrganizationRoomsSerializer, \
@@ -288,9 +289,20 @@ class UploadItemsRoomView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
+            data = request.data
             room_key = request.data.get("room_key")
             room = Room.objects.get(room_key=room_key)
             serializer.save(room=room)
+            is_private = data.get("is_private")
+            if is_private in ["false", False, 0]:
+                category, created = Category.objects.get_or_create(title=data.get("category"))
+
+                item = Items(
+                    category=category, title=data.get("name"), description=data.get("description"),
+                    price=data.get("price")
+                )
+                item.save()
+
             return Response(serializer.data)
         except Room.DoesNotExist:
             raise ValidationError(dict({"error": "invalid room_key provided"}))

@@ -193,14 +193,16 @@ $('#loading').fadeOut(2000,function(){
    });
 
 
-   $("#show_ai").hide();
+//   $("#show_ai").hide();
    $("#formFileurl").hide();
-   $("#show_ai_image").hide();
+//   $("#show_ai_image").hide();
    $("#div_img_query").hide();
    $("#div_query").hide();
+   $("#div_query_title").hide();
    $("#loader").hide();
+   $("#loader_title").hide();
    $("#img_loader").hide();
-   $('#inputEmail4').keypress(function() {
+   $('#title').keypress(function() {
         var dInput = this.value;
         $("#show_ai").show();
         $("#show_ai_image").show();
@@ -212,6 +214,12 @@ $('#loading').fadeOut(2000,function(){
         $("#show_ai").hide();
         $("#div_query").show();
    });
+
+   $("#text_ai_btn").on("click", (e)=>{
+        $("#div_query_title").show();
+        $("#title").hide();
+   });
+
    $("#btn_query").on("click", (e)=>{
         $("#div_query").hide();
         $("#loader").show();
@@ -224,6 +232,22 @@ $('#loading').fadeOut(2000,function(){
                     $("#inputAddress").show();
                     $("#inputAddress").text(data);
                     $("#query_label").text(item_value);
+                }
+            });
+   });
+
+   $("#btn_query_title").on("click", (e)=>{
+        $("#div_query_title").hide();
+        $("#loader_title").show();
+        var item_value = $('#query_title').val();
+        $.ajax({
+                type: "GET",
+                url: `/api/get_text/?text=${item_value}`,
+                success: function (data) {
+                    console.log(data);
+                    $("#loader_title").hide();
+                    $("#title").show();
+                    $("#title").val(data);
                 }
             });
    });
