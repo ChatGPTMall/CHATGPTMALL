@@ -361,7 +361,6 @@ class ObjectsDetectionView(generics.CreateAPIView):
 class ShopItemsView(generics.CreateAPIView):
     parser_classes = (MultiPartParser, FormParser)
     serializer_class = ShopItemsViewSerializer
-    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -370,15 +369,15 @@ class ShopItemsView(generics.CreateAPIView):
         if not Items.objects.filter(title=request.data["title"]).exists():
             item = Items.objects.create(
                 title=request.data["title"], description=request.data["description"],
-                image=request.data['image'], category=category)
-            URL = os.getenv("DEPLOYED_HOST", "https://madeinthai.org")
+                image=request.data['image'], category=category, price=float(request.data["price"]))
+            URL = os.getenv("DEPLOYED_HOST", "https://chatgptmall.tech")
             return Response({
                 "item_id": item.id,
                 "category_id": category.id,
                 "category_title": category.title,
                 "title": item.title,
                 "description": item.description,
-                "image": URL + item.image.url,
+                "image": item.image.url,
                 "added_on": item.added_on,
                 "updated_on": item.updated_on
             }, status=status.HTTP_201_CREATED)

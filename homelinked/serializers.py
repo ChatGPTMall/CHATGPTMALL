@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from engine.models import PlanType
+from engine.models import PlanType, Community
 from homelinked.models import HomePlans, HomepageNewFeature
 
 
@@ -23,4 +23,13 @@ class HomepageNewFeatureViewSerializer(serializers.ModelSerializer):
         exclude = (
             "id",
             "updated_on"
+        )
+
+
+class CommunitiesViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Community
+        fields = (
+            "name",
+            "logo"
         )

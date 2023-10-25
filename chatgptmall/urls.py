@@ -23,7 +23,7 @@ from rest_framework import permissions
 from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageView, ImageAnalysisView, \
     ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView, TextToTexTOpeniaiView, \
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView, ItemCreateCheckoutSessionView
-from homelinked.views import HomePlansAPIView, HomepageNewFeatureView
+from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
     CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \
@@ -144,7 +144,6 @@ urlpatterns = [
     path('api/v1/text_to_image/', TextToImageView.as_view(), name="TextToImagesAPI"),
     path('api/v1/image/analysis/', ImageAnalysisView.as_view(), name="ImageAnalysisView"),
     path('api/v1/objects/detection/', ObjectsDetectionView.as_view(), name="ObjectsDetectionView"),
-    path('api/v1/shop/items/', ShopItemsView.as_view(), name="ShopItemsView"),
     path('api/v1/items/', GetItemsView.as_view(), name="ShGetItemsViewopItemsView"),
     path('api/v1/shop/categories/', ShopCategoriesView.as_view(), name="ShopItemsView"),
 
@@ -234,7 +233,9 @@ urlpatterns = [
 
     # home APIs v1
     path("api/v1/home/plans/", HomePlansAPIView.as_view(), name="HomePlansAPIView"),
-    path("api/v1/home/feature/", HomepageNewFeatureView.as_view(), name="HomepageNewFeatureView")
+    path("api/v1/home/feature/", HomepageNewFeatureView.as_view(), name="HomepageNewFeatureView"),
+    path("api/v1/home/communities/", CommunitiesView.as_view(), name="CommunitiesView"),
+    path('api/v1/shop/items/', ShopItemsView.as_view(), name="ShopItemsView"),
 
 
 

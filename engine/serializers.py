@@ -16,6 +16,7 @@ class ShopItemsViewSerializer(serializers.Serializer):
     title = serializers.CharField(required=True)
     description = serializers.CharField(required=True)
     image = serializers.ImageField(required=True)
+    price = serializers.IntegerField(required=True)
 
 
 class GetItemsViewSerializer(serializers.ModelSerializer):
