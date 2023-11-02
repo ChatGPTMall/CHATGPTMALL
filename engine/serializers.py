@@ -14,7 +14,7 @@ class ImageAnalysisViewSerializer(serializers.Serializer):
 class ShopItemsViewSerializer(serializers.Serializer):
     category = serializers.CharField(required=True)
     title = serializers.CharField(required=True)
-    description = serializers.CharField(required=True)
+    communities = serializers.JSONField(required=True)
     image = serializers.ImageField(required=True)
     price = serializers.IntegerField(required=True)
 

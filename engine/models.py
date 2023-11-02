@@ -53,7 +53,7 @@ class Items(models.Model):
     item_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="items")
     title = models.CharField(max_length=200)
-    description = models.TextField()
+    description = models.TextField(null=True)
     image = models.ImageField(upload_to="images/items/", null=True, blank=True)
     video = models.FileField(null=True, blank=True, upload_to="items/videos")
     qr_code = models.ImageField(upload_to="images/QR/", null=True, blank=True)
