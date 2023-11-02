@@ -16,7 +16,7 @@ from rest_framework import generics, status
 from PIL import Image, ImageDraw, ImageFont
 from rest_framework.response import Response
 from django.shortcuts import render, redirect
-from engine.models import ImagesDB, ImageAnalysisDB, Items, Category, KeyManagement
+from engine.models import ImagesDB, ImageAnalysisDB, Items, Category, KeyManagement, Community, CommunityPosts
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
@@ -370,6 +370,18 @@ class ShopItemsView(generics.CreateAPIView):
             item = Items.objects.create(
                 title=request.data["title"], description=request.data["description"],
                 image=request.data['image'], category=category, price=float(request.data["price"]))
+            for community in request.data["title"]:
+                com = Community.objects.get(name=community)
+                post = CommunityPosts.objects.create(
+                    user=request.user, question=request.data["title"], response=request.data["description"],
+                    community=com, image=request.data['image']
+                )
+                result = urllib.request.urlretrieve(item.qr_code.url)
+                with open(result[0], 'rb') as f:
+                    # Set the image field to the downloaded file
+                    post.qrcode.save("test.png", File(f))
+                post.item = item
+                post.save()
             URL = os.getenv("DEPLOYED_HOST", "https://chatgptmall.tech")
             return Response({
                 "item_id": item.id,
