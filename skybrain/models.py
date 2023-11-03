@@ -43,7 +43,7 @@ class LicensesRequests(models.Model):
 class Room(models.Model):
     organization = models.ForeignKey(Organization, related_name="rooms", on_delete=models.CASCADE, null=True, blank=True)
     room_id = models.CharField(max_length=200)
-    room_key = models.CharField(unique=True, max_length=200, null=True, blank=True)
+    room_key = models.CharField(max_length=200, null=True, blank=True)
     custom_instructions = models.BooleanField(default=False)
     added_on = models.DateTimeField(auto_now_add=True)
 
@@ -53,7 +53,7 @@ class Room(models.Model):
     class Meta:
         verbose_name = _("Room")
         verbose_name_plural = _("Rooms")
-        unique_together = (("organization", "room_id"),)
+        unique_together = (("organization", "room_id"), ("room_id", "room_key"))
 
 
 class RoomKeys(models.Model):
