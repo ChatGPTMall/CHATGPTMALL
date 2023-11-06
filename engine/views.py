@@ -359,7 +359,7 @@ class ObjectsDetectionView(generics.CreateAPIView):
 
 
 class ShopItemsView(generics.CreateAPIView):
-    # parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (MultiPartParser, FormParser)
     serializer_class = ShopItemsViewSerializer
 
     def post(self, request, *args, **kwargs):
