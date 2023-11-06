@@ -371,17 +371,20 @@ class ShopItemsView(generics.CreateAPIView):
                 title=request.data["title"], description=request.data.get("description", None),
                 image=request.data['image'], category=category, price=float(request.data["price"]))
             for community in request.data["communities"]:
-                com = Community.objects.get(name=community)
-                post = CommunityPosts.objects.create(
-                    user=request.user, question=request.data["title"], response=request.data.get("description", None),
-                    community=com, image=request.data['image']
-                )
-                result = urllib.request.urlretrieve(item.qr_code.url)
-                with open(result[0], 'rb') as f:
-                    # Set the image field to the downloaded file
-                    post.qrcode.save("test.png", File(f))
-                post.item = item
-                post.save()
+                try:
+                    com = Community.objects.get(name=community)
+                    post = CommunityPosts.objects.create(
+                        user=request.user, question=request.data["title"], response=request.data.get("description", None),
+                        community=com, image=request.data['image']
+                    )
+                    result = urllib.request.urlretrieve(item.qr_code.url)
+                    with open(result[0], 'rb') as f:
+                        # Set the image field to the downloaded file
+                        post.qrcode.save("test.png", File(f))
+                    post.item = item
+                    post.save()
+                except Exception as e:
+                    pass
             URL = os.getenv("DEPLOYED_HOST", "https://chatgptmall.tech")
             return Response({
                 "item_id": item.id,
