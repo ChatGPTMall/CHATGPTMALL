@@ -373,6 +373,7 @@ class ShopItemsView(generics.CreateAPIView):
             for community in request.data["communities"]:
                 try:
                     com = Community.objects.get(name=community)
+
                     post = CommunityPosts.objects.create(
                         user=request.user, question=request.data["title"], response=request.data.get("description", None),
                         community=com, image=request.data['image']
