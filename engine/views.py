@@ -359,7 +359,7 @@ class ObjectsDetectionView(generics.CreateAPIView):
 
 
 class ShopItemsView(generics.CreateAPIView):
-    parser_classes = (MultiPartParser, FormParser)
+    # parser_classes = (MultiPartParser, FormParser)
     serializer_class = ShopItemsViewSerializer
 
     def post(self, request, *args, **kwargs):
@@ -368,12 +368,12 @@ class ShopItemsView(generics.CreateAPIView):
         category, created = Category.objects.get_or_create(title=request.data["category"])
         if not Items.objects.filter(title=request.data["title"]).exists():
             item = Items.objects.create(
-                title=request.data["title"], description=request.data.get("description", None),
-                image=request.data['image'], category=category, price=float(request.data["price"]))
+                title=request.data["title"], description=request.data.get("description", ""),
+                category=category, price=float(request.data["price"]), image=request.data.get("image"))
             for community in request.data["communities"]:
                 com = Community.objects.get(name=community)
                 post = CommunityPosts.objects.create(
-                    user=request.user, question=request.data["title"], response=request.data.get("description", None),
+                    user=request.user, question=request.data["title"], response=request.data.get("description", ""),
                     community=com, image=request.data['image']
                 )
                 result = urllib.request.urlretrieve(item.qr_code.url)
