@@ -288,7 +288,7 @@ class CommunityMembers(models.Model):
 
 
 class CommunityPosts(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts", null=True)
     community = models.ForeignKey(Community, related_name="feed", on_delete=models.CASCADE)
     is_object = models.BooleanField(default=False)
     question = models.TextField(_("User Question"), null=True, blank=True)
@@ -304,9 +304,6 @@ class CommunityPosts(models.Model):
     item = models.ForeignKey(Items, related_name="com_posts", on_delete=models.CASCADE, null=True, blank=True)
     item_name = models.CharField(max_length=100, null=True, blank=True)
     added_on = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.user.email
 
     class Meta:
         verbose_name = _("Community Post")

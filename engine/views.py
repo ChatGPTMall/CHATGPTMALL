@@ -1,3 +1,4 @@
+import json
 import os
 import ast
 import urllib
@@ -370,13 +371,13 @@ class ShopItemsView(generics.CreateAPIView):
             item = Items.objects.create(
                 title=request.data["title"], description=request.data.get("description", None),
                 image=request.data['image'], category=category, price=float(request.data["price"]))
-            for community in request.data["communities"]:
+            for community in json.loads(request.data["communities"]):
                 try:
                     com = Community.objects.get(name=community)
 
                     post = CommunityPosts.objects.create(
-                        user=request.user, question=request.data["title"], response=request.data.get("description", None),
-                        community=com, image=request.data['image']
+                        question=request.data["title"], response=request.data.get("description", None),
+                        community=com
                     )
                     result = urllib.request.urlretrieve(item.qr_code.url)
                     with open(result[0], 'rb') as f:
