@@ -3,7 +3,7 @@ from django.contrib import admin
 from engine.models import Items, Category, ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, \
     Jobs, Capabilities, Community, CommunityMembers, CommunityPosts, CouponCode, UploadCoupons, Subscriptions, \
     UploadTeams, ImageAnalysisDB, VoiceCommands, KeyManagement, RestrictedKeywords, FreeSubscriptions, CapturedImages, \
-    BankAccounts
+    BankAccounts, Purchases
 
 
 # Register your models here.
@@ -74,6 +74,10 @@ class CommunityPostsAdmin(admin.ModelAdmin):
     list_display = ("user", "item", "community", "added_on")
 
 
+class PurchasesAdmin(admin.ModelAdmin):
+    list_display = ("item", "user", "buyer_email", "is_paid", "is_shipped", "quantity", "updated_on")
+
+
 admin.site.register(Category)
 admin.site.register(Items)
 admin.site.register(ResponsesDB)
@@ -98,3 +102,4 @@ admin.site.register(KeyManagement)
 admin.site.register(RestrictedKeywords)
 admin.site.register(CapturedImages)
 admin.site.register(BankAccounts)
+admin.site.register(Purchases, PurchasesAdmin)

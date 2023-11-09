@@ -49,8 +49,17 @@ class PrivateBankAccounts(models.Model):
     added_on = models.DateTimeField(auto_now_add=True)
 
 
+class ItemType(models.TextChoices):
+    PHYSICAL = "PHYSICAL", _('Physical')
+    DIGITAL = "DIGITAL", _('Digital')
+    SERVICE = "SERVICE", _('Service')
+
+
 class Items(models.Model):
+    vendor = models.ForeignKey(User, on_delete=models.PROTECT, related_name="vendor_items", null=True)
+    vendor_email = models.EmailField(null=True)
     item_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    item_type = models.CharField(choices=ItemType.choices, default="PHYSICAL", max_length=10)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="items")
     title = models.CharField(max_length=200)
     description = models.TextField(null=True)
@@ -88,6 +97,30 @@ class Items(models.Model):
     class Meta:
         verbose_name = _("Item")
         verbose_name_plural = _("Items")
+
+
+class Purchases(models.Model):
+    item = models.ForeignKey(Items, on_delete=models.PROTECT, related_name="item_purchases")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_purchases", null=True, blank=True)
+    quantity = models.PositiveIntegerField(default=1)
+    buyer_email = models.EmailField(null=True, blank=True)
+    address = models.TextField()
+    phone_no = models.CharField(max_length=20)
+    is_paid = models.BooleanField(default=False)
+    is_shipped = models.BooleanField(default=False)
+    is_purchased = models.BooleanField(default=False)
+    purchase_date = models.DateTimeField(null=True)
+    updated_on = models.DateTimeField(auto_now=True)
+
+    def calculate_total_amount(self):
+        return self.quantity * self.item.price
+
+    def __str__(self):
+        return f"{self.quantity} of {self.item} by {self.user.first_name}"
+
+    class Meta:
+        verbose_name = _("Purchase")
+        verbose_name_plural = _("Purchases")
 
 
 class ResponsesDB(models.Model):

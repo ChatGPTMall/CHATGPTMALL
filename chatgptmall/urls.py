@@ -43,7 +43,7 @@ from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, Upl
     OCRContentGenerate, SaveCapturedPhoto, ImageAnalysisOCR, voice2voicePlanDetail, RedirectPlan, voice2ImagePlanDetail, \
     text2VoicePlanDetail, text2TextPlanDetail, text2ImagePlanDetail, image2ImagePlanDetail, \
     object_detectPlanDetail, voice2commandPlanDetail, text2commandPlanDetail, OcrPlanDetail, imageAnalysisPlanDetail, \
-    RetailBotsView, ShopCheckout, ItemPaymentSuccess, RegisterViewV2, LoginViewV2, ProfileViewV2
+    RetailBotsView, ShopCheckout, ItemPaymentSuccess, RegisterViewV2, LoginViewV2, ProfileViewV2, GetUserItemData
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -128,11 +128,12 @@ urlpatterns = [
 
     # Shop
     path("api/v1/shop/text/", ShopWithText, name="ShopWithText"),
-    path("shop/item/checkout/<int:item_id>/", ShopCheckout, name="ShopCheckout"),
+    path("shop/item/checkout/<uuid:item_id>/", ShopCheckout, name="ShopCheckout"),
+    path("item/user/info/<uuid:item_id>/", GetUserItemData, name="GetUserItemData"),
     path("item/how_to_use/<int:item_id>/", ItemHowToUse, name="ItemHowToUse"),
     path("item/details/<uuid:item_id>/", LearHowToUse, name="LearHowToUse"),
     path("item/checkout/Session/", ItemCreateCheckoutSessionView, name="ItemCreateCheckoutSessionView"),
-    path("item/payment/success/<int:item_id>/<int:user_id>/", ItemPaymentSuccess, name="item-payment-success"),
+    path("item/payment/success/<uuid:item_id>/<uuid:user_id>/", ItemPaymentSuccess, name="item-payment-success"),
 
     # API's
     path('api/v1/text_to_text/', TextToTexTView.as_view(), name="TextToTexTView"),

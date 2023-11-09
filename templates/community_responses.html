@@ -205,12 +205,7 @@
               </div>
               <div class="col-md-12">
                 <label class="form-label">Item Category</label>
-                  <select name="item_category" class="form-select" aria-label="Default select example" required>
-                  <option selected>Choose</option>
-                      {% for cat in categories %}
-                  <option value="{{cat.title}}">{{cat.title}}</option>
-                      {% endfor %}
-                </select>
+                  <input name="item_category" placeholder="Category" class="form-control" required>
               </div>
               <div class="col-md-12">
                 <label for="inputAddress" id="query_label" class="form-label">Item Description
@@ -247,6 +242,15 @@
                   <option selected>Choose...</option>
                   <option value="yes">Yes</option>
                   <option value="no">No</option>
+                </select>
+              </div>
+                <div class="col-md-12">
+                <label for="item_type" class="form-label">Select Item Type</label>
+                <select id="item_type" name="item_type" class="form-select" required>
+                  <option selected>Choose...</option>
+                  <option value="PHYSICAL">Physical</option>
+                  <option value="DIGITAL">Digital</option>
+                  <option value="SERVICE">Service</option>
                 </select>
               </div>
                 <div class="col-md-12">

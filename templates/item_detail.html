@@ -1,5 +1,5 @@
 {% extends 'parent.html' %}
-{% block tittle %}How To Use | MadeinThai{% endblock %}
+{% block tittle %}{{item.title}} | Chatgptmall{% endblock %}
 {% block body %}
 
   <!-- ======= Hero Section ======= -->
@@ -7,7 +7,7 @@
     <div class="container">
       <div class="row gy-4 d-flex justify-content-between">
         <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
-          <h2 data-aos="fade-up">Learn How To Use {{item.title}}</h2>
+          <h2 data-aos="fade-up">{{item.title}}</h2>
           <p style="color: black !important;">{{item.description}}</p>
         </div>
         <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
@@ -47,8 +47,12 @@
       <div class="container" data-aos="fade-up">
         <br>
         <div class="row gy-4">
+          {% if item.item_type == "PHYSICAL" %}
+          <a href="{% url 'GetUserItemData' item.item_id %}" class="btn btn-primary">BUY NOW</a>
+          {% else %}
           <a href="{% url 'ShopCheckout' item.id %}" class="btn btn-primary">BUY NOW</a>
-          </div>
+          {% endif %}
+        </div>
       </div>
     </section><!-- End Services Section -->
   </main><!-- End #main -->

@@ -45,7 +45,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, Capabilities, \
     Jobs, Community, CommunityMembers, CommunityPosts, CouponCode, Subscriptions, Items, ImageAnalysisDB, Category, \
-    VoiceCommands, KeyManagement, FreeSubscriptions, CapturedImages, BankAccounts, PrivateBankAccounts
+    VoiceCommands, KeyManagement, FreeSubscriptions, CapturedImages, BankAccounts, PrivateBankAccounts, Purchases
 from rest_framework import generics, status
 
 from users.serializers import UserCreateSerializer, UserSerializer
@@ -998,6 +998,8 @@ def UploadCommunityPost(request):
     team_id = request.POST.get("team_id")
     name = request.POST.get("item_name")
     cat = request.POST.get("item_category")
+    item_type = request.POST.get("item_type")
+    image2 = request.FILES.get("item_image")
     image = request.FILES.get("item_image")
     item_image_url = request.POST.get("item_image_url", None)
     video = request.FILES.get("item_video", None)
@@ -1010,24 +1012,30 @@ def UploadCommunityPost(request):
     private_key = request.POST.get("private_key")
     public_key = request.POST.get("public_key")
     webhook_key = request.POST.get("webhook_key")
-    question = "How to use {}".format(name)
+    question = name
     if item_image_url:
         response1 = urlopen(item_image_url)
         image = BytesIO(response1.read())
         # imagedb.image1.save("image_one.jpg", File(io1))
 
     com = Community.objects.get(community_id=team_id)
-    post = CommunityPosts.objects.create(user=request.user, question=question, response=item_desc, community=com)
+    post = CommunityPosts.objects.create(
+        user=request.user, question=question, response=item_desc, community=com, image=image2 if image2 else None
+    )
     if upload == "yes":
         category, created = Category.objects.get_or_create(title=cat)
         if video:
             item = Items.objects.create(
                 category=category, title=name, description=item_desc, video=video,
-                price=int(price), stock=int(stock), location=location)
+                price=int(price), stock=int(stock), location=location, item_type=item_type,
+                vendor=request.user, vendor_email=request.user.email, image=image2 if image2 else None
+            )
         else:
             item = Items.objects.create(
                 category=category, title=name, description=item_desc,
-                price=int(price), stock=int(stock), location=location)
+                price=int(price), stock=int(stock), location=location, item_type=item_type,
+                vendor=request.user, vendor_email=request.user.email, image=image2 if image2 else None
+            )
         result = urllib.request.urlretrieve(item.qr_code.url)
         if video:
             result2 = urllib.request.urlretrieve(item.video.url)
@@ -1043,7 +1051,6 @@ def UploadCommunityPost(request):
                 private_key=private_key, public_key=public_key, webhook_key=webhook_key)
             item.private_bank = private_account
         else:
-            print(bank)
             public_bank = BankAccounts.objects.get(name=bank)
             item.public_bank = public_bank
         item.image.save("image_one.jpg", File(image))
@@ -1075,6 +1082,10 @@ def PaymentSuccess(request, plan_id, user_id):
 
 
 def ItemPaymentSuccess(request, item_id, user_id):
+    item = Items.objects.get(item_id=item_id)
+    user = User.objects.get(user_id=user_id)
+    Purchases.objects.filter(item=item, user=user).update(
+        is_purchased=True, is_paid=True, purchase_date=timezone.now())
     return HttpResponse("Item Purchased Successfully")
 
 
@@ -1138,8 +1149,25 @@ def ShopWithText(request):
 
 
 def ShopCheckout(request, item_id):
-    item = Items.objects.get(pk=int(item_id))
+    item = Items.objects.get(item_id=item_id)
+    if request.method == "POST":
+        phone = request.POST.get("phone")
+        address = request.POST.get("address")
+        city = request.POST.get("city")
+        state = request.POST.get("state")
+        pin = request.POST.get("zip")
+
+        full_address = address + " " + city + " " + state + " " + pin
+        Purchases.objects.create(
+            item=item, user=request.user, buyer_email=request.user.email, phone_no=phone, address=full_address
+        )
     return render(request, "shop_checkout.html", {"item": item})
+
+
+def GetUserItemData(request, item_id):
+    item = Items.objects.get(item_id=item_id)
+    return render(request, "get_item_user_data.html", {"item": item})
+
 
 
 

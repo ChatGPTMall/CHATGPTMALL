@@ -11,7 +11,6 @@ from django.core.validators import MinValueValidator, MinLengthValidator
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
 from skybrain.models import Room
-from users.custom_fields import PhoneNumberField
 
 
 def is_aphanum(value):
