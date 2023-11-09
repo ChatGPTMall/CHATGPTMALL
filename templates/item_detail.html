@@ -50,7 +50,7 @@
           {% if item.item_type == "PHYSICAL" %}
           <a href="{% url 'GetUserItemData' item.item_id %}" class="btn btn-primary">BUY NOW</a>
           {% else %}
-          <a href="{% url 'ShopCheckout' item.id %}" class="btn btn-primary">BUY NOW</a>
+          <a href="{% url 'ShopCheckout' item.item_id %}" class="btn btn-primary">BUY NOW</a>
           {% endif %}
         </div>
       </div>

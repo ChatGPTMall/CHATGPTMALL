@@ -80,8 +80,12 @@
               <div style="display: flex;flex-direction: column;">
             <div style="display: flex;padding: 10px 33px;">
                 <a href="{% url 'LearHowToUse' post.item.item_id %}" class="btn" style="background-color:#5B61EB !important;color:white;">Check Item Detail</a><br>
-                <a href="{% url 'ShopCheckout' post.item.id %}" class="btn"
-                   style="background-color:#5B61EB !important;color:white;margin-left: 14px;">Checkout</a><br>
+
+                {% if item.item_type == "PHYSICAL" %}
+                        <a href="{% url 'GetUserItemData' post.item.item_id %}" class="btn btn-primary">BUY NOW</a>
+                    {% else %}
+                        <a href="{% url 'ShopCheckout' post.item.item_id %}" class="btn btn-primary">BUY NOW</a>
+                    {% endif %}
             </div>
             <div style="display:flex;">
                 {% if post.image %}

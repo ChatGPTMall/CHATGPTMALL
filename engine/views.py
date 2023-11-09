@@ -458,7 +458,7 @@ def CreateCheckoutSessionView(request):
 
 
 def ItemCreateCheckoutSessionView(request):
-    print(request, request.user)
+
     try:
         if request.user.is_authenticated:
             item_id = request.POST.get("item_id")
@@ -469,7 +469,6 @@ def ItemCreateCheckoutSessionView(request):
             if item.private_bank:
                 SECRET_KEY = item.private_bank.private_key
                 WEBHOOK_SECRET = item.private_bank.webhook_key
-            print("hello")
             stripe.api_key = SECRET_KEY
             stripe.endpoint_secret = WEBHOOK_SECRET
             user = User.objects.get(email=request.POST.get("user"))
@@ -502,7 +501,6 @@ def ItemCreateCheckoutSessionView(request):
         else:
             return redirect("/api/login/")
     except Exception as e:
-        print(e)
         return render(request, "404.html", {"e": e})
 
     return redirect(checkout_session.url, code=303)
