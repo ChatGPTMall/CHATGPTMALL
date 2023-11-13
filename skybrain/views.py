@@ -172,7 +172,7 @@ class HistoryRoom(generics.ListAPIView):
         room_key = self.request.query_params.get("room_key", None)
         try:
             room = Room.objects.get(room_id=room_id, room_key=room_key)
-            return room.history.all()
+            return room.history.filter(user=self.request.user)
         except Exception as e:
             try:
                 room = RoomKeys.objects.get(room_key=room_key).room
