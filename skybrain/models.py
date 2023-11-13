@@ -71,20 +71,6 @@ class RoomKeys(models.Model):
         unique_together = (("room_key", "room", "email"),)
 
 
-class RoomHistory(models.Model):
-    room = models.ForeignKey(Room, related_name="history", on_delete=models.CASCADE)
-    user_input = models.TextField()
-    response = models.TextField()
-    added_on = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return str(self.room)
-
-    class Meta:
-        verbose_name = _("Room History")
-        verbose_name_plural = _("Room History")
-
-
 class RoomItems(models.Model):
     room = models.ForeignKey(Room, to_field="id", related_name="room_items", on_delete=models.CASCADE)
     name = models.CharField(max_length=200, default="ROOM Item")

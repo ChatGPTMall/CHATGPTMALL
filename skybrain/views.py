@@ -19,10 +19,11 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-
+from rest_framework.permissions import IsAuthenticated
 from engine.models import ImageAnalysisDB, Items, Category
 from skybrain.models import LicensesRequests, Organization, Room, RoomItems, CustomerSupport, Favourites, Unsubscribe, \
-    RoomHistory, CustomInstructions, RoomKeys
+    CustomInstructions, RoomKeys
+from users.models import RoomHistory
 from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSerializer, OrganizationRoomsSerializer, \
     SkybrainCustomerRoomSerializer, HistoryRoomSerializer, ItemsRoomViewSerializer, OrganizationsviewSerializer, \
     CSQueriesViewSerializer, CSQueriesUpdateViewSerializer, FavouritesViewSerializer, ItemsSendEmailViewSerializer, \
@@ -164,6 +165,7 @@ class HistoryRoom(generics.ListAPIView):
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['added_on', ]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         room_id = self.request.query_params.get("room_id", None)

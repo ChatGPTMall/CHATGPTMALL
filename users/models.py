@@ -173,3 +173,19 @@ class UploadUsers(models.Model):
     class Meta:
         verbose_name = _("Upload User")
         verbose_name_plural = _("Upload Users")
+
+
+class RoomHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="home_history", null=True)
+    room = models.ForeignKey(Room, related_name="history", on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="openai/gpt_4", null=True, blank=True)
+    user_input = models.TextField()
+    response = models.TextField()
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.room)
+
+    class Meta:
+        verbose_name = _("Room History")
+        verbose_name_plural = _("Room History")

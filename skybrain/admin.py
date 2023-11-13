@@ -1,6 +1,7 @@
 from django.contrib import admin
-from skybrain.models import Organization, LicensesRequests, Room, RoomHistory, RoomItems, CustomerSupport, Favourites, \
+from skybrain.models import Organization, LicensesRequests, Room, RoomItems, CustomerSupport, Favourites, \
     Unsubscribe, CustomInstructions, RoomKeys
+from users.models import RoomHistory
 
 
 class RoomHistoryAdmin(admin.ModelAdmin):

@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
-from skybrain.models import LicensesRequests, Room, RoomHistory, RoomItems, Organization, CustomerSupport, Favourites, \
+from skybrain.models import LicensesRequests, Room, RoomItems, Organization, CustomerSupport, Favourites, \
     CustomInstructions
+from users.models import RoomHistory
 
 
 class LicensesViewSerializer(serializers.ModelSerializer):
@@ -54,6 +55,7 @@ class HistoryRoomSerializer(serializers.ModelSerializer):
         model = RoomHistory
         exclude = (
             "room",
+            "user"
         )
         read_only_fields = (
             "is_favourite",
