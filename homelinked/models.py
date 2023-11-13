@@ -67,7 +67,6 @@ class HomepageNewFeature(models.Model):
     class Meta:
         verbose_name = _("Homepage Content")
         verbose_name_plural = _("Homepage Content")
-        unique_together = (("is_active", ),)
 
 
 
