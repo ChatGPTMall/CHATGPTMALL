@@ -214,7 +214,7 @@ class RoomTextToTexTView(generics.CreateAPIView):
                 return Response({"error": "Invalid room_id provided"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(dict({
             "input": input_,
-            "image": his_image,
+            "image": his_image.url if his_image else None ,
             "response": result,
             "history": history
         }), status=status.HTTP_201_CREATED)
@@ -229,7 +229,7 @@ class RoomTextToTexTView(generics.CreateAPIView):
             history = RoomHistory.objects.create(
                 room=room, user_input=input_, response=response, user=self.request.user
             )
-        return history.id, history.image.url
+        return history.id, history.image
 
 
 class TextToTexTOpeniaiView(generics.CreateAPIView):
