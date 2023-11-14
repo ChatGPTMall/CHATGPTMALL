@@ -139,6 +139,7 @@ class RoomTextToTexTView(generics.CreateAPIView):
         else:
             input_lang = input_
         history = None
+        his_image = None
         openai_key = KeyManagement.objects.filter(platform="OPENAI").last()
         room_history = RoomHistory.objects.filter(user_input=input_)
         result = ""
@@ -204,15 +205,16 @@ class RoomTextToTexTView(generics.CreateAPIView):
 
                 room = Room.objects.get(room_key=room_id)
                 if translate:
-                    history = self.create_history(room, input_lang, result, input_image)
+                    history, his_image = self.create_history(room, input_lang, result, input_image)
                 else:
-                    history = self.create_history(room, input_, result, input_image)
+                    history, his_image = self.create_history(room, input_, result, input_image)
                 if int(support) == 1:
                     CustomerSupport.objects.create(user_input=input_, response=result, room=room)
             except Room.DoesNotExist:
                 return Response({"error": "Invalid room_id provided"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(dict({
             "input": input_,
+            "image": his_image.image,
             "response": result,
             "history": history
         }), status=status.HTTP_201_CREATED)
@@ -227,7 +229,8 @@ class RoomTextToTexTView(generics.CreateAPIView):
             history = RoomHistory.objects.create(
                 room=room, user_input=input_, response=response, user=self.request.user
             )
-        return history.id
+        return history.id, history.image
+
 
 class TextToTexTOpeniaiView(generics.CreateAPIView):
     serializer_class = TextToTexTViewSerializer
