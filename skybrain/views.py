@@ -172,7 +172,7 @@ class HistoryRoom(generics.ListAPIView):
         room_key = self.request.query_params.get("room_key", None)
         try:
             room = Room.objects.get(room_id=room_id, room_key=room_key)
-            return room.history.filter(user=self.request.user)
+            return room.history.filter(user=self.request.user).order_by("-added_on")
         except Exception as e:
             try:
                 room = RoomKeys.objects.get(room_key=room_key).room
