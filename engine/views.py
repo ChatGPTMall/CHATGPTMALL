@@ -127,97 +127,98 @@ class RoomTextToTexTView(generics.CreateAPIView):
         language = request.query_params.get("language", None)
         translate = request.query_params.get("translate", None)
         input_ = request.data["input"]
-
         try:
-            support = request.data["customer_support"]
-        except KeyError:
-            support = 0
-        if language:
-            input_lang = input_ + " " + "in" + language
-        elif translate:
-            input_lang = "convert" + " " + '"{}"'.format(input_) + " " + "into" + " " + translate
-        else:
-            input_lang = input_
-        history = None
-        his_image = None
-        openai_key = KeyManagement.objects.filter(platform="OPENAI").last()
-        room_history = RoomHistory.objects.filter(user_input=input_)
-        result = ""
-        if "image" in request.data.keys():
-            input_image = request.data["image"]
-            encode_image = self.encode_image(input_image)
-            if openai_key:
-                headers = {
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {openai_key.key}"
-                }
-
-                payload = {
-                    "model": "gpt-4-vision-preview",
-                    "messages": [
-                        {
-                            "role": "user",
-                            "content": [
-                                {
-                                    "type": "text",
-                                    "text": "{}".format(input_)
-                                },
-                                {
-                                    "type": "image_url",
-                                    "image_url": {
-                                        "url": f"data:image/jpeg;base64,{encode_image}"
-                                    }
-                                }
-                            ]
-                        }
-                    ],
-                    "max_tokens": 300
-                }
-
-                response = requests.post(
-                    "https://api.openai.com/v1/chat/completions", headers=headers, json=payload
-                )
-                try:
-                    result = response.json()["choices"][0]["message"]["content"]
-                except Exception as e:
-                    return Response(response.json())
-        else:
-            input_image = None
-            if openai_key:
-                if not room_history.exists():
-                    client = OpenAI()
-                    response = client.completions.create(
-                        model="gpt-3.5-turbo-instruct",
-                        prompt=input_,
-                        max_tokens=int(3000),
-                        stop=None,
-                    )
-                    for object in response:
-                        if "choices" in object:
-                            response2 = object[1][0]
-                            for object2 in response2:
-                                if "text" in object2:
-                                    result = object2[1]
-                else:
-                    result = room_history.last().response
-        if room_id:
             try:
+                support = request.data["customer_support"]
+            except KeyError:
+                support = 0
+            if language:
+                input_lang = input_ + " " + "in" + language
+            elif translate:
+                input_lang = "convert" + " " + '"{}"'.format(input_) + " " + "into" + " " + translate
+            else:
+                input_lang = input_
+            history = None
+            his_image = None
+            openai_key = KeyManagement.objects.filter(platform="OPENAI").last()
+            room_history = RoomHistory.objects.filter(user_input=input_)
+            result = ""
+            if "image" in request.data.keys():
+                input_image = request.data["image"]
+                encode_image = self.encode_image(input_image)
+                if openai_key:
+                    headers = {
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {openai_key.key}"
+                    }
 
-                room = Room.objects.get(room_key=room_id)
-                if translate:
-                    history, his_image = self.create_history(room, input_lang, result, input_image)
-                else:
-                    history, his_image = self.create_history(room, input_, result, input_image)
-                if int(support) == 1:
-                    CustomerSupport.objects.create(user_input=input_, response=result, room=room)
-            except Room.DoesNotExist:
-                return Response({"error": "Invalid room_id provided"}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(dict({
-            "input": input_,
-            "image": his_image.url if his_image else None ,
-            "response": result,
-            "history": history
-        }), status=status.HTTP_201_CREATED)
+                    payload = {
+                        "model": "gpt-4-vision-preview",
+                        "messages": [
+                            {
+                                "role": "user",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "{}".format(input_)
+                                    },
+                                    {
+                                        "type": "image_url",
+                                        "image_url": {
+                                            "url": f"data:image/jpeg;base64,{encode_image}"
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        "max_tokens": 300
+                    }
+
+                    response = requests.post(
+                        "https://api.openai.com/v1/chat/completions", headers=headers, json=payload
+                    )
+                    try:
+                        result = response.json()["choices"][0]["message"]["content"]
+                    except Exception as e:
+                        return Response(response.json())
+            else:
+                input_image = None
+                if openai_key:
+                    if not room_history.exists():
+                        client = OpenAI()
+                        response = client.completions.create(
+                            model="gpt-3.5-turbo-instruct",
+                            prompt=input_,
+                            max_tokens=int(3000),
+                            stop=None,
+                        )
+                        for object in response:
+                            if "choices" in object:
+                                response2 = object[1][0]
+                                for object2 in response2:
+                                    if "text" in object2:
+                                        result = object2[1]
+                    else:
+                        result = room_history.last().response
+            if room_id:
+                try:
+                    room = Room.objects.get(room_key=room_id)
+                    if translate:
+                        history, his_image = self.create_history(room, input_lang, result, input_image)
+                    else:
+                        history, his_image = self.create_history(room, input_, result, input_image)
+                    if int(support) == 1:
+                        CustomerSupport.objects.create(user_input=input_, response=result, room=room)
+                except Room.DoesNotExist:
+                    return Response({"error": "Invalid room_id provided"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(dict({
+                "input": input_,
+                "image": his_image.url if his_image else None ,
+                "response": result,
+                "history": history
+            }), status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response(e)
 
     def create_history(self, room, input_, response, image=None):
         if image:
