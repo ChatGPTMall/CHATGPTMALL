@@ -340,17 +340,25 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
 
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_STORAGE_BUCKET_NAME = 'madeinthai'
-AWS_S3_ENDPOINT_URL = 'https://4c599da67711c3829ed7447f51d49f39.r2.cloudflarestorage.com'
-AWS_S3_ACCESS_KEY_ID = 'faef268a9d2ae5a6a2618c5ce5411095'
-AWS_S3_SECRET_ACCESS_KEY = 'c70c066c75f88eb4df55811f080080b1fd2bfa4d13a08e707084b66c44c08370'
-AWS_S3_SIGNATURE_VERSION = 's3v4'
-AWS_DEFAULT_ACL = None
-AWS_QUERYSTRING_EXPIRE = '604800'
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# AWS_STORAGE_BUCKET_NAME = 'madeinthai'
+# AWS_S3_ENDPOINT_URL = 'https://4c599da67711c3829ed7447f51d49f39.r2.cloudflarestorage.com'
+# AWS_S3_ACCESS_KEY_ID = 'faef268a9d2ae5a6a2618c5ce5411095'
+# AWS_S3_SECRET_ACCESS_KEY = 'c70c066c75f88eb4df55811f080080b1fd2bfa4d13a08e707084b66c44c08370'
+# AWS_S3_SIGNATURE_VERSION = 's3v4'
+# AWS_DEFAULT_ACL = None
+# AWS_QUERYSTRING_EXPIRE = '604800'
 
 
 SWAGGER_SETTINGS = {
     "exclude_namespaces": ["internal_apis"],    #  List URL namespaces to ignore
 }
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dtylfkbhd',
+    'API_KEY': '233297849861843',
+    'API_SECRET': 'BewlZNTgH5c77nFQcTdl-a7qNvU',
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 

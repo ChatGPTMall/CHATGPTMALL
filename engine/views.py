@@ -79,7 +79,6 @@ class TextToTexTView(generics.CreateAPIView):
             }
 
             response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
-
             return Response(dict({
                 "input": input_,
                 "response": response.json()["choices"][0]["message"]["content"]
