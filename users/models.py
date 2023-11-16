@@ -121,6 +121,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     room = models.ForeignKey(Room, related_name="room", on_delete=models.PROTECT, null=True, blank=True)
     premium = models.IntegerField(choices=PremiumFlags.choices, default=0)
     joined_on = models.DateTimeField(auto_now_add=True)
+    credits = models.IntegerField(default=5)
     purchased_on = models.DateTimeField(null=True, blank=True)
     address = models.TextField(null=True, blank=True)
     about = models.TextField(null=True, blank=True)

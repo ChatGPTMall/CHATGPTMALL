@@ -12,6 +12,7 @@ from homelinked.serializers import HomePlansAPIViewSerializer, HomepageNewFeatur
 
 
 class HomePlansAPIView(generics.ListCreateAPIView):
+    swagger_schema = None
     serializer_class = HomePlansAPIViewSerializer
 
     def get_queryset(self):
@@ -19,6 +20,7 @@ class HomePlansAPIView(generics.ListCreateAPIView):
 
 
 class HomepageNewFeatureView(generics.ListAPIView):
+    swagger_schema = None
     serializer_class = HomepageNewFeatureViewSerializer
 
     def get_queryset(self):
@@ -33,7 +35,7 @@ class HomepageNewFeatureView(generics.ListAPIView):
 
 
 class CommunitiesView(generics.ListAPIView):
-
+    swagger_schema = None
     serializer_class = CommunitiesViewSerializer
 
     def get_queryset(self):

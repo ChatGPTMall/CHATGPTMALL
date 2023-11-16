@@ -136,13 +136,13 @@ urlpatterns = [
     path("item/payment/success/<uuid:item_id>/<uuid:user_id>/", ItemPaymentSuccess, name="item-payment-success"),
 
     # API's
-    path('api/v1/text_to_text/', TextToTexTView.as_view(), name="TextToTexTView"),
-    path('api/v1/room/text_to_text/', RoomTextToTexTView.as_view(), name="RoomTextToTexTView"),
+    path('api/v1/vision/', TextToTexTView.as_view(), name="TextToTexTView"),
     path('api/v1/openai/text_to_text/', TextToTexTOpeniaiView.as_view(), name="TextToTexTOpeniaiView"),
+    path('api/v1/text_to_image/', TextToImageView.as_view(), name="TextToImagesAPI"),
+
+    path('api/v1/room/text_to_text/', RoomTextToTexTView.as_view(), name="RoomTextToTexTView"),
     path('api/v1/ms/text_to_text/', TextToTexTMicrosoftView.as_view(), name="chatgptmalldb"),
     path('api/v1/transcribe/audio/', TranscribeAudio.as_view(), name="TranscribeAudio"),
-
-    path('api/v1/text_to_image/', TextToImageView.as_view(), name="TextToImagesAPI"),
     path('api/v1/image/analysis/', ImageAnalysisView.as_view(), name="ImageAnalysisView"),
     path('api/v1/objects/detection/', ObjectsDetectionView.as_view(), name="ObjectsDetectionView"),
     path('api/v1/items/', GetItemsView.as_view(), name="ShGetItemsViewopItemsView"),

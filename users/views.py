@@ -1598,6 +1598,7 @@ class LoginViewV2(generics.CreateAPIView):
 
 
 class ProfileViewV2(generics.RetrieveUpdateAPIView):
+    swagger_schema = None
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 

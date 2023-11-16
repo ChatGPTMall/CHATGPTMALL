@@ -316,11 +316,11 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'CHATGPTMALL APIs Documentation',
-    'DESCRIPTION': 'Document to try out all APIs for CHATGPTMALL',
+    'TITLE': 'Homelinked APIs Documentation',
+    'DESCRIPTION': 'Document to try out all APIs for Homelinked',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
-    'CONTACT': {'email': 'faisalbashir252@gmail.com', 'name': 'Faisal Ahmad'},
+    'CONTACT': {'email': 'faisalbashir253@gmail.com', 'name': 'Faisal Ahmad'},
     'LICENSE': {'name': 'BSD License'},
     # OTHER SETTINGS
 }
@@ -348,4 +348,9 @@ AWS_S3_SECRET_ACCESS_KEY = 'c70c066c75f88eb4df55811f080080b1fd2bfa4d13a08e707084
 AWS_S3_SIGNATURE_VERSION = 's3v4'
 AWS_DEFAULT_ACL = None
 AWS_QUERYSTRING_EXPIRE = '604800'
+
+
+SWAGGER_SETTINGS = {
+    "exclude_namespaces": ["internal_apis"],    #  List URL namespaces to ignore
+}
 

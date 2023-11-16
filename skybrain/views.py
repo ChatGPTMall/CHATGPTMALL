@@ -32,6 +32,7 @@ from skybrain.serializers import LicensesViewSerializer, CreateLicensesViewSeria
 
 
 class LicensesView(generics.CreateAPIView):
+    swagger_schema = None
     serializer_class = LicensesViewSerializer
 
     def post(self, request, *args, **kwargs):
@@ -71,6 +72,7 @@ class LicensesView(generics.CreateAPIView):
 
 
 class CreateLicensesView(generics.CreateAPIView):
+    swagger_schema = None
     serializer_class = CreateLicensesViewSerializer
 
     def post(self, request, *args, **kwargs):
@@ -106,6 +108,7 @@ class CreateLicensesView(generics.CreateAPIView):
 
 
 class OrganizationRooms(generics.ListAPIView):
+    swagger_schema = None
     serializer_class = OrganizationRoomsSerializer
 
     def get_queryset(self):
@@ -117,6 +120,7 @@ class OrganizationRooms(generics.ListAPIView):
 
 
 class SkybrainCustomerRoom(generics.CreateAPIView):
+    swagger_schema = None
     serializer_class = SkybrainCustomerRoomSerializer
 
     def post(self, request, *args, **kwargs):
@@ -141,6 +145,7 @@ class SkybrainCustomerRoom(generics.CreateAPIView):
 
 
 class ValidateRoom(generics.ListAPIView):
+    swagger_schema = None
 
     def get(self, request, *args, **kwargs):
         room_id = request.query_params.get("room_id", None)
@@ -161,6 +166,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 
 class HistoryRoom(generics.ListAPIView):
+    swagger_schema = None
     serializer_class = HistoryRoomSerializer
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -194,6 +200,7 @@ class HistoryRoom(generics.ListAPIView):
 
 
 class ItemsRoomView(generics.ListAPIView):
+    swagger_schema = None
     serializer_class = ItemsRoomViewSerializer
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -225,6 +232,8 @@ class ItemsRoomView(generics.ListAPIView):
 
 
 class ItemsRoomDetailView(generics.ListAPIView):
+    swagger_schema = None
+
     def get_object(self):
         item_id = self.request.query_params.get("item_id", None)
         if item_id:
@@ -243,6 +252,8 @@ class ItemsRoomDetailView(generics.ListAPIView):
 
 
 class RoomHistoryDetailView(generics.ListAPIView):
+    swagger_schema = None
+
     def get_object(self):
         history_id = self.request.query_params.get("history_id", None)
         if history_id:
@@ -261,6 +272,7 @@ class RoomHistoryDetailView(generics.ListAPIView):
 
 
 class PublicItemsRoomView(generics.ListAPIView):
+    swagger_schema = None
     serializer_class = ItemsRoomViewSerializer
     pagination_class = StandardResultsSetPagination
 
@@ -285,6 +297,7 @@ class PublicItemsRoomView(generics.ListAPIView):
 
 
 class UploadItemsRoomView(generics.CreateAPIView):
+    swagger_schema = None
     serializer_class = ItemsRoomViewSerializer
 
     def post(self, request, *args, **kwargs):
@@ -311,6 +324,7 @@ class UploadItemsRoomView(generics.CreateAPIView):
 
 
 class Organizationsview(generics.ListAPIView):
+    swagger_schema = None
     serializer_class = OrganizationsviewSerializer
     pagination_class = StandardResultsSetPagination
     permission_classes = []
@@ -329,6 +343,7 @@ class Organizationsview(generics.ListAPIView):
 
 
 class CSQueriesView(generics.ListAPIView):
+    swagger_schema = None
     serializer_class = CSQueriesViewSerializer
     pagination_class = StandardResultsSetPagination
     permission_classes = []
@@ -358,6 +373,7 @@ class CSQueriesView(generics.ListAPIView):
 
 
 class CSQueriesUpdateView(generics.CreateAPIView):
+    swagger_schema = None
     serializer_class = CSQueriesUpdateViewSerializer
     permission_classes = []
     authentication_classes = []
@@ -376,6 +392,7 @@ class CSQueriesUpdateView(generics.CreateAPIView):
 
 
 class FavouritesView(generics.ListCreateAPIView, generics.DestroyAPIView):
+    swagger_schema = None
     serializer_class = FavouritesViewSerializer
     permission_classes = []
     authentication_classes = []
@@ -420,6 +437,7 @@ class FavouritesView(generics.ListCreateAPIView, generics.DestroyAPIView):
 
 
 class ItemsSendEmailView(generics.CreateAPIView):
+    swagger_schema = None
     serializer_class = ItemsSendEmailViewSerializer
 
     def post(self, request, *args, **kwargs):
@@ -476,6 +494,7 @@ def CreateRooms(request):
 
 
 class ShareRoomItems(generics.CreateAPIView):
+    swagger_schema = None
     serializer_class = ShareRoomItemsSerializer
     permission_classes = []
     authentication_classes = []
@@ -512,6 +531,7 @@ class ShareRoomItems(generics.CreateAPIView):
 
 
 class ShareRoomResponse(generics.CreateAPIView):
+    swagger_schema = None
     serializer_class = ShareRoomResponseSerializer
     permission_classes = []
     authentication_classes = []
@@ -542,6 +562,7 @@ class ShareRoomResponse(generics.CreateAPIView):
 
 
 class OCRImageUploadView(generics.CreateAPIView):
+    swagger_schema = None
     serializer_class = OCRImageUploadViewSerializer
 
     def post(self, request, *args, **kwargs):
@@ -573,6 +594,7 @@ class OCRImageUploadView(generics.CreateAPIView):
 
 
 class UpdateRoomView(generics.UpdateAPIView):
+    swagger_schema = None
     serializer_class = UpdateRoomViewSerializer
 
     def get_object(self):
@@ -598,6 +620,7 @@ class UpdateRoomView(generics.UpdateAPIView):
 
 
 class CustomInstructionsView(generics.ListCreateAPIView, generics.UpdateAPIView):
+    swagger_schema = None
     serializer_class = CustomInstructionsViewSerializer
 
     def get_object(self):
@@ -632,6 +655,8 @@ class CustomInstructionsView(generics.ListCreateAPIView, generics.UpdateAPIView)
 
 
 class GenerateImageView(generics.ListAPIView):
+    swagger_schema = None
+
     def get(self, request, *args, **kwargs):
         image_id = self.request.query_params.get("id", None)
         if image_id:
@@ -647,6 +672,7 @@ class GenerateImageView(generics.ListAPIView):
 
 
 class RoomAccessShare(generics.CreateAPIView):
+    swagger_schema = None
     serializer_class = RoomAccessShareSerializer
 
     def post(self, request, *args, **kwargs):
@@ -674,6 +700,7 @@ class RoomAccessShare(generics.CreateAPIView):
 
 
 class URLOCRImageUploadView(generics.CreateAPIView):
+    swagger_schema = None
     serializer_class = urlOCRImageUploadViewSerializer
 
     def post(self, request, *args, **kwargs):

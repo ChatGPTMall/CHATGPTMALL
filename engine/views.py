@@ -47,69 +47,48 @@ class TextToTexTView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         openai_key = KeyManagement.objects.filter(platform="OPENAI").last()
         input_ = request.data["input"]
-        if "image" in request.data.keys():
-            input_image = request.data["image"]
-            encode_image = self.encode_image(input_image)
-            if openai_key:
-                headers = {
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {openai_key.key}"
-                }
+        input_image = request.data["image"]
+        encode_image = self.encode_image(input_image)
+        if openai_key:
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {openai_key.key}"
+            }
 
-                payload = {
-                    "model": "gpt-4-vision-preview",
-                    "messages": [
-                        {
-                            "role": "user",
-                            "content": [
-                                {
-                                    "type": "text",
-                                    "text": "What’s in this image?"
-                                },
-                                {
-                                    "type": "image_url",
-                                    "image_url": {
-                                        "url": f"data:image/jpeg;base64,{encode_image}"
-                                    }
+            payload = {
+                "model": "gpt-4-vision-preview",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": input_
+                            },
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": f"data:image/jpeg;base64,{encode_image}"
                                 }
-                            ]
-                        }
-                    ],
-                    "max_tokens": 300
-                }
+                            }
+                        ]
+                    }
+                ],
+                "max_tokens": 300
+            }
 
-                response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
-
-                return Response(dict({
-                    "input": input_,
-                    "response": response.json()["choices"][0]["message"]["content"]
-                }), status=status.HTTP_201_CREATED)
-            return Response({"error": "Please Enter API Key in KeyManagement on Chatgptmall"},
-                            status=status.HTTP_200_OK)
-
-        else:
-            client = OpenAI()
-            response = client.completions.create(
-                model="gpt-3.5-turbo-instruct",
-                prompt=input_,
-                max_tokens=int(3000),
-                stop=None,
-            )
-            result = ""
-            for object in response:
-                if "choices" in object:
-                    response2 = object[1][0]
-                    for object2 in response2:
-                        if "text" in object2:
-                            result = object2[1]
+            response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
             return Response(dict({
                 "input": input_,
-                "response": result
+                "response": response.json()["choices"][0]["message"]["content"]
             }), status=status.HTTP_201_CREATED)
+        return Response({"error": "Some issues at backend please contact admin"},
+                        status=status.HTTP_200_OK)
 
 
 class RoomTextToTexTView(generics.CreateAPIView):
+    swagger_schema = None
     parser_classes = (MultiPartParser, FormParser)
     serializer_class = TextToTexTViewSerializer
     permission_classes = [IsAuthenticated]
@@ -235,7 +214,7 @@ class RoomTextToTexTView(generics.CreateAPIView):
 
 class TextToTexTOpeniaiView(generics.CreateAPIView):
     serializer_class = TextToTexTViewSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -266,6 +245,7 @@ class TextToTexTOpeniaiView(generics.CreateAPIView):
 
 
 class TextToTexTMicrosoftView(generics.CreateAPIView):
+    swagger_schema = None
     serializer_class = TextToTexTMicrosoftViewSerializer
     permission_classes = []
 
@@ -294,6 +274,7 @@ class TextToTexTMicrosoftView(generics.CreateAPIView):
 
 
 class TranscribeAudio(generics.CreateAPIView):
+    swagger_schema = None
     serializer_class = TranscribeAudioSerializer
     permission_classes = []
 
@@ -356,6 +337,7 @@ class TextToImageView(generics.CreateAPIView):
 
 
 class ImageAnalysisView(generics.CreateAPIView):
+    swagger_schema = None
     permission_classes = [IsAuthenticated]
     serializer_class = ImageAnalysisViewSerializer
 
@@ -379,6 +361,7 @@ class ImageAnalysisView(generics.CreateAPIView):
 
 
 class ObjectsDetectionView(generics.CreateAPIView):
+    swagger_schema = None
     permission_classes = [IsAuthenticated]
     serializer_class = ImageAnalysisViewSerializer
 
@@ -426,6 +409,7 @@ class ObjectsDetectionView(generics.CreateAPIView):
 
 
 class ShopItemsView(generics.CreateAPIView):
+    swagger_schema = None
     parser_classes = (MultiPartParser, FormParser)
     serializer_class = ShopItemsViewSerializer
 
@@ -468,6 +452,7 @@ class ShopItemsView(generics.CreateAPIView):
 
 
 class GetItemsView(generics.ListAPIView):
+    swagger_schema = None
     serializer_class = GetItemsViewSerializer
     permission_classes = [IsAuthenticated]
 
@@ -476,6 +461,7 @@ class GetItemsView(generics.ListAPIView):
 
 
 class ShopCategoriesView(generics.ListAPIView):
+    swagger_schema = None
     serializer_class = ShopCategoriesViewSerializer
     permission_classes = [IsAuthenticated]
 
