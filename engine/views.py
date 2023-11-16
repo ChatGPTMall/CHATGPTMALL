@@ -25,7 +25,8 @@ from engine.models import ImagesDB, ImageAnalysisDB, Items, Category, KeyManagem
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
-    ShopCategoriesViewSerializer, GetItemsViewSerializer, TextToTexTMicrosoftViewSerializer, TranscribeAudioSerializer
+    ShopCategoriesViewSerializer, GetItemsViewSerializer, TextToTexTMicrosoftViewSerializer, TranscribeAudioSerializer, \
+    TextToTexTViewImageSerializer
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
@@ -90,7 +91,7 @@ class TextToTexTView(generics.CreateAPIView):
 class RoomTextToTexTView(generics.CreateAPIView):
     swagger_schema = None
     parser_classes = (MultiPartParser, FormParser)
-    serializer_class = TextToTexTViewSerializer
+    serializer_class = TextToTexTViewImageSerializer
     permission_classes = [IsAuthenticated]
 
     # Function to encode the image
