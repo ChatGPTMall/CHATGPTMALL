@@ -138,14 +138,14 @@
               <li><a href="{% url 'RetailBotsView' %}">Sales Bot</a></li>
             </ul>
           </li>
-          <li class="dropdown"><a href="#"><span>加入虚拟工厂Join Connected Supplier Chain</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
+          <li class="dropdown"><a href="#"><span>加入数字供应链Join Connected Supplier Chain</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
             <ul>
               {% if request.user.is_authenticated %}
               <li><a href="{% url 'DownloadTeams' %}">下载工厂Download Connected Supplier Chain List</a></li>
               <li><a href="{% url 'CreateTeams' %}">创建自己的工厂Create Own Connected Supplier Chain</a></li>
               {% endif %}
-              <li><a href="{% url 'Communities' %}">搜索新工厂Search New  Connected Supplier Chain</a></li>
-              <li><a href="{% url 'JoinedCommunities' %}">我参与的工厂Joined Connected Supplier Chain</a></li>
+              <li><a href="{% url 'Communities' %}">探索数字供应链Search New  Connected Supplier Chain</a></li>
+              <li><a href="{% url 'JoinedCommunities' %}">我要加入数字供应链Joined Connected Supplier Chain</a></li>
             </ul>
           </li>
           {% if request.user.premium == 2 %}
