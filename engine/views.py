@@ -3,6 +3,8 @@ import json
 import os
 import ast
 import urllib
+from json import JSONDecodeError
+
 import openai
 import stripe
 import requests
@@ -158,6 +160,8 @@ class RoomTextToTexTView(generics.CreateAPIView):
                     )
                     try:
                         result = response.json()["choices"][0]["message"]["content"]
+                    except JSONDecodeError as e:
+                        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
                     except Exception as e:
                         return Response(response.json())
             else:

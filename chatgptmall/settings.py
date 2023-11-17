@@ -340,6 +340,57 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
 
+LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'verbose': {
+                'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s',
+                'datefmt': '%Y-%m-%d %H:%M:%S'
+            },
+            'simple': {
+                'format': '%(asctime)s - %(levelname)s - %(name)s : %(message)s',
+                'datefmt': '%Y-%m-%d %H:%M:%S'
+            },
+        },
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'simple',
+                'level': 'INFO',
+            },
+            'mobileLogs': {
+                'class': 'logging.FileHandler',
+                'formatter': 'simple',
+                'filename': os.path.join(BASE_DIR, 'logs', 'server.log'),
+                'level': 'INFO',
+            }
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['console', 'chatgptmall'],
+                'level': 'INFO',
+                'propagate': True,
+            },
+            'engine': {
+                'handlers': ['console', 'chatgptmall'],
+                'level': 'INFO',
+                'propagate': True,
+            },
+            'skybrain': {
+                'handlers': ['console', 'mobchatgptmallileLogs'],
+                'level': 'INFO',
+                'propagate': True,
+            },
+            'homelinked': {
+                'handlers': ['console', 'mobchatgptmallileLogs'],
+                'level': 'INFO',
+                'propagate': True,
+            }
+        }
+    }
+
+
 # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 # AWS_STORAGE_BUCKET_NAME = 'madeinthai'
 # AWS_S3_ENDPOINT_URL = 'https://4c599da67711c3829ed7447f51d49f39.r2.cloudflarestorage.com'
