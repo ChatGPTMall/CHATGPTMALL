@@ -51,9 +51,9 @@ admin.site.site_title = 'CHATGPTMALL Admin'  # default: "Django site admin"
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="CHATGPTMALL APIs Documentation",
+        title="Homelinked APIs Documentation",
         default_version='v1',
-        description="Document to try out all APIs for CHATGPTMALL",
+        description="Document to try out all APIs for Homelinked",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="faisalbashir353@gmail.com"),
         license=openapi.License(name="BSD License"),
