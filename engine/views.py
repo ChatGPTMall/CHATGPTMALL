@@ -124,8 +124,8 @@ class RoomTextToTexTView(generics.CreateAPIView):
             openai_key = KeyManagement.objects.filter(platform="OPENAI").last()
             room_history = RoomHistory.objects.filter(user_input=input_)
             result = ""
-            if "image" in request.data.keys():
-                input_image = request.data["image"]
+            if "file" in request.data.keys():
+                input_image = request.data["file"]
                 encode_image = self.encode_image(input_image)
                 if openai_key:
                     headers = {
