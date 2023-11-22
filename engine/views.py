@@ -12,6 +12,8 @@ from io import BytesIO
 
 from django.core.files.base import ContentFile
 from openai import OpenAI
+
+from engine.permissions import HaveCredits
 from skybrain.models import Room, CustomerSupport
 from users.models import RoomHistory
 from users.models import User
@@ -37,7 +39,7 @@ endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
 class TextToTexTView(generics.CreateAPIView):
     parser_classes = (MultiPartParser, FormParser)
     serializer_class = TextToTexTViewSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HaveCredits]
 
     # Function to encode the image
     def encode_image(self, image_path):
@@ -81,6 +83,9 @@ class TextToTexTView(generics.CreateAPIView):
             }
 
             response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+            user = self.request.user
+            user.credits -= 1
+            user.save()
             return Response(dict({
                 "input": input_,
                 "response": response.json()["choices"][0]["message"]["content"]
@@ -218,7 +223,7 @@ class RoomTextToTexTView(generics.CreateAPIView):
 
 class TextToTexTOpeniaiView(generics.CreateAPIView):
     serializer_class = TextToTexTViewSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HaveCredits]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -240,6 +245,9 @@ class TextToTexTOpeniaiView(generics.CreateAPIView):
             result = ''
             for choice in response.choices:
                 result += choice.message.content
+            user = self.request.user
+            user.credits -= 1
+            user.save()
             return Response(dict({
                 "input": input_,
                 "response": result
@@ -297,7 +305,7 @@ class TranscribeAudio(generics.CreateAPIView):
 
 
 class TextToImageView(generics.CreateAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HaveCredits]
     serializer_class = TextToTexTViewSerializer
 
     def post(self, request, *args, **kwargs):
@@ -334,6 +342,9 @@ class TextToImageView(generics.CreateAPIView):
             show_images.append(URL + res.last().image1.url)
             show_images.append(URL + res.last().image2.url)
             show_images.append(URL + res.last().image3.url)
+        user = self.request.user
+        user.credits -= 1
+        user.save()
         return Response(dict({
             "input": input,
             "images": show_images
