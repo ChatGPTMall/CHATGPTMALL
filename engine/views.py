@@ -95,7 +95,7 @@ class TextToTexTView(generics.CreateAPIView):
 
 
 class RoomTextToTexTView(generics.CreateAPIView):
-    swagger_schema = None
+    
     parser_classes = (MultiPartParser, FormParser)
     serializer_class = TextToTexTViewImageSerializer
     permission_classes = [IsAuthenticated]
@@ -257,7 +257,7 @@ class TextToTexTOpeniaiView(generics.CreateAPIView):
 
 
 class TextToTexTMicrosoftView(generics.CreateAPIView):
-    swagger_schema = None
+    
     serializer_class = TextToTexTMicrosoftViewSerializer
     permission_classes = []
 
@@ -286,7 +286,7 @@ class TextToTexTMicrosoftView(generics.CreateAPIView):
 
 
 class TranscribeAudio(generics.CreateAPIView):
-    swagger_schema = None
+    
     serializer_class = TranscribeAudioSerializer
     permission_classes = []
 
@@ -352,7 +352,7 @@ class TextToImageView(generics.CreateAPIView):
 
 
 class ImageAnalysisView(generics.CreateAPIView):
-    swagger_schema = None
+    
     permission_classes = [IsAuthenticated]
     serializer_class = ImageAnalysisViewSerializer
 
@@ -376,7 +376,7 @@ class ImageAnalysisView(generics.CreateAPIView):
 
 
 class ObjectsDetectionView(generics.CreateAPIView):
-    swagger_schema = None
+    
     permission_classes = [IsAuthenticated]
     serializer_class = ImageAnalysisViewSerializer
 
@@ -424,7 +424,7 @@ class ObjectsDetectionView(generics.CreateAPIView):
 
 
 class ShopItemsView(generics.CreateAPIView):
-    swagger_schema = None
+    
     parser_classes = (MultiPartParser, FormParser)
     serializer_class = ShopItemsViewSerializer
 
@@ -467,7 +467,7 @@ class ShopItemsView(generics.CreateAPIView):
 
 
 class GetItemsView(generics.ListAPIView):
-    swagger_schema = None
+    
     serializer_class = GetItemsViewSerializer
     permission_classes = [IsAuthenticated]
 
@@ -476,7 +476,7 @@ class GetItemsView(generics.ListAPIView):
 
 
 class ShopCategoriesView(generics.ListAPIView):
-    swagger_schema = None
+    
     serializer_class = ShopCategoriesViewSerializer
     permission_classes = [IsAuthenticated]
 
