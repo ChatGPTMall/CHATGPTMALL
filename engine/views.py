@@ -366,11 +366,7 @@ class GetTaobaoItems(generics.ListAPIView):
         user = self.request.user
         user.credits -= 1
         user.save()
-        return Response({
-            "page": int(page),
-            "search": search,
-            "results": response.json(),
-        })
+        return Response(response.json())
 
 
 class GetCurrencies(generics.ListAPIView):
