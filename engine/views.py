@@ -369,7 +369,7 @@ class GetTaobaoItems(generics.ListAPIView):
         return Response({
             "page": int(page),
             "search": search,
-            "results": response.json()["result"]["item"],
+            "results": response.json(),
         })
 
 
