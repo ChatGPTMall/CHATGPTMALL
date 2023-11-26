@@ -1556,8 +1556,10 @@ class RegisterViewV2(generics.CreateAPIView):
             home_key = data.get("home_key")
             email = str(data.get("email"))
             password = str(data.get("password"))
-
-            room = Room.objects.create(room_id=home_name, room_key=home_key)
+            try:
+                room = Room.objects.create(room_id=home_name, room_key=home_key)
+            except Exception as e:
+                room = None
             user = User.objects.create(
                 email=email.lower(), first_name=data.get("first_name"), last_name=data.get("last_name"))
             user.set_password(password)
