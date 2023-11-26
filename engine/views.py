@@ -9,10 +9,11 @@ import openai
 import stripe
 import requests
 from io import BytesIO
+from drf_yasg.utils import swagger_auto_schema
 
 from django.core.files.base import ContentFile
+from drf_spectacular.utils import extend_schema
 from openai import OpenAI
-
 from engine.permissions import HaveCredits
 from skybrain.models import Room, CustomerSupport
 from users.models import RoomHistory
@@ -30,7 +31,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
     ShopCategoriesViewSerializer, GetItemsViewSerializer, TextToTexTMicrosoftViewSerializer, TranscribeAudioSerializer, \
-    TextToTexTViewImageSerializer
+    TextToTexTViewImageSerializer, VisionViewSerializer
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
@@ -38,7 +39,7 @@ endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
 
 class TextToTexTView(generics.CreateAPIView):
     parser_classes = (MultiPartParser, FormParser)
-    serializer_class = TextToTexTViewSerializer
+    serializer_class = VisionViewSerializer
     permission_classes = [IsAuthenticated, HaveCredits]
 
     # Function to encode the image
@@ -47,6 +48,9 @@ class TextToTexTView(generics.CreateAPIView):
         file_content = image_path.read()
         return base64.b64encode(file_content).decode('utf-8')
 
+    @swagger_auto_schema(
+        tags=["Homelinked APIs"]
+    )
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -225,26 +229,27 @@ class TextToTexTOpeniaiView(generics.CreateAPIView):
     serializer_class = TextToTexTViewSerializer
     permission_classes = [IsAuthenticated, HaveCredits]
 
+    @swagger_auto_schema(
+        tags=["Homelinked APIs"]
+    )
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
-            api_key = request.query_params.get("openai_key", None)
-            if api_key is None:
-                return Response({"error": "openai_key API Key is Required"}, status=status.HTTP_400_BAD_REQUEST)
-            openai.api_key = api_key
             input_ = request.data["input"]
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "You are a chatbot"},
-                    {"role": "user", "content": "{}?".format(input_)},
-                ]
+            client = OpenAI()
+            response = client.completions.create(
+                model="gpt-3.5-turbo-instruct",
+                prompt=input_,
+                max_tokens=int(3000),
+                stop=None,
             )
-
-            result = ''
-            for choice in response.choices:
-                result += choice.message.content
+            for object in response:
+                if "choices" in object:
+                    response2 = object[1][0]
+                    for object2 in response2:
+                        if "text" in object2:
+                            result = object2[1]
             user = self.request.user
             user.credits -= 1
             user.save()
@@ -308,47 +313,100 @@ class TextToImageView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated, HaveCredits]
     serializer_class = TextToTexTViewSerializer
 
+    @swagger_auto_schema(
+        tags=["Homelinked APIs"]
+    )
     def post(self, request, *args, **kwargs):
-        URL = os.getenv("DEPLOYED_HOST", "https://madeinthai.org")
+        URL = os.getenv("DEPLOYED_HOST", "https://chatgptmall.tech")
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        input = request.data["input"]
-        res = ImagesDB.objects.filter(question__icontains=input)
-        if not res:
-            response = openai.Image.create(prompt="{}".format(input), n=3, size="1024x1024")
-            images = list()
-            for image in response['data']:
-                images.append(image.url)
-            imagedb = ImagesDB.objects.create(question=input, user=self.request.user)
-            response1 = urlopen(images[0])
-            io1 = BytesIO(response1.read())
-            imagedb.image1.save("image_one.jpg", File(io1))
-
-            response2 = urlopen(images[1])
-            io2 = BytesIO(response2.read())
-            imagedb.image2.save("image_two.jpg", File(io2))
-
-            response3 = urlopen(images[2])
-            io3 = BytesIO(response3.read())
-            imagedb.image3.save("image_three.jpg", File(io3))
-
-            show_images = list()
-
-            show_images.append(URL+imagedb.image1.url)
-            show_images.append(URL+imagedb.image2.url)
-            show_images.append(URL+imagedb.image3.url)
+        input_ = request.data["input"]
+        internal_image = ImagesDB.objects.filter(question=input_)
+        if not internal_image:
+            client = OpenAI()
+            response = client.images.generate(
+                model="dall-e-3", prompt=input_, size="1024x1024", quality="standard", n=1,
+            )
+            image_url = response.data[0].url
+            image = ImagesDB.objects.create(question=input_, user=self.request.user)
+            response = urlopen(image_url)
+            io = BytesIO(response.read())
+            image.image.save("{}.jpg".format(input_), File(io))
         else:
-            show_images = list()
-            show_images.append(URL + res.last().image1.url)
-            show_images.append(URL + res.last().image2.url)
-            show_images.append(URL + res.last().image3.url)
+            image = internal_image.last()
         user = self.request.user
         user.credits -= 1
         user.save()
         return Response(dict({
-            "input": input,
-            "images": show_images
+            "input": input_,
+            "image": image.image.url if image.image else None
         }), status=201)
+
+
+class GetTaobaoItems(generics.ListAPIView):
+    permission_classes = [IsAuthenticated, HaveCredits]
+
+    @swagger_auto_schema(
+        tags=["Homelinked APIs"]
+    )
+    def get(self, request, *args, **kwargs):
+        search = self.request.query_params.get("search")
+        page = self.request.query_params.get("page_no", 1)
+
+        url = "https://taobao-api.p.rapidapi.com/api"
+
+        querystring = {"q": "{}".format(search), "api": "item_search", "page": int(page)}
+
+        headers = {
+            "X-RapidAPI-Key": settings.TAOBAO_KEY,
+            "X-RapidAPI-Host": "taobao-api.p.rapidapi.com"
+        }
+
+        response = requests.get(url, headers=headers, params=querystring)
+        user = self.request.user
+        user.credits -= 1
+        user.save()
+        return Response({
+            "page": int(page),
+            "search": search,
+            "results": response.json()["result"]["item"],
+        })
+
+
+class GetCurrencies(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_currencies(self):
+
+        url = "https://currency-converter-pro1.p.rapidapi.com/currencies"
+
+        headers = {
+            "X-RapidAPI-Key": settings.TAOBAO_KEY,
+            "X-RapidAPI-Host": "currency-converter-pro1.p.rapidapi.com"
+        }
+
+        response = requests.get(url, headers=headers)
+        return list(response.json()["result"].keys())
+
+    @swagger_auto_schema(
+        tags=["Homelinked APIs"]
+    )
+    def get(self, request, *args, **kwargs):
+        currencies_list = self.get_currencies()
+        currencies_list.remove('VEF')
+        currencies = ",".join(currencies_list)
+        url = "https://currency-converter-pro1.p.rapidapi.com/latest-rates"
+
+        querystring = {"base": "USD", "currencies": str(currencies)}
+
+        headers = {
+            "X-RapidAPI-Key": settings.TAOBAO_KEY,
+            "X-RapidAPI-Host": "currency-converter-pro1.p.rapidapi.com"
+        }
+
+        response = requests.get(url, headers=headers, params=querystring)
+
+        return Response(response.json())
 
 
 class ImageAnalysisView(generics.CreateAPIView):

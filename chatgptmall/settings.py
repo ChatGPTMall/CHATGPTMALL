@@ -339,6 +339,9 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+TAOBAO_KEY = os.getenv("TAOBAO_KEY")
+
 
 # LOGGING = {
 #         'version': 1,

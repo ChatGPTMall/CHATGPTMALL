@@ -154,10 +154,7 @@ class VoiceToVoiceRequests(models.Model):
 class ImagesDB(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="images", null=True, blank=True)
     question = models.TextField(_("Users Query"))
-    images = models.JSONField(default=list, null=True, blank=True)
-    image1 = models.ImageField(_("Image One"), upload_to="openai/images", null=True, blank=True)
-    image2 = models.ImageField(_("Image Two"), upload_to="openai/images", null=True, blank=True)
-    image3 = models.ImageField(_("Image Three"), upload_to="openai/images", null=True, blank=True)
+    image = models.ImageField(_("Image"), upload_to="openai/images", null=True, blank=True)
     added_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 

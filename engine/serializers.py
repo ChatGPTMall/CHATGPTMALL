@@ -5,8 +5,11 @@ from engine.models import Category, Items
 
 class TextToTexTViewSerializer(serializers.Serializer):
     input = serializers.CharField(required=True)
-    image = serializers.ImageField(required=True)
 
+
+class VisionViewSerializer(serializers.Serializer):
+    input = serializers.CharField(required=True)
+    image = serializers.ImageField(required=True)
 
 class TextToTexTViewImageSerializer(serializers.Serializer):
     input = serializers.CharField(required=True)
