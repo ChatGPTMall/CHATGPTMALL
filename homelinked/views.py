@@ -1,11 +1,12 @@
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
+from rest_framework import filters
 from engine.models import Community
 from homelinked.models import HomePlans, HomepageNewFeature
 from homelinked.serializers import HomePlansAPIViewSerializer, HomepageNewFeatureViewSerializer, \
-    CommunitiesViewSerializer
+    CommunitiesViewSerializer, GetCreditsHistorySerializer
 
 
 # Create your views here.
@@ -40,3 +41,17 @@ class CommunitiesView(generics.ListAPIView):
 
     def get_queryset(self):
         return Community.objects.all()
+
+
+class GetCreditsHistory(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = GetCreditsHistorySerializer
+
+    def get_queryset(self):
+        return self.request.user.credits_history.all()
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=self.request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

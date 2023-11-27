@@ -59,8 +59,6 @@ class HomepageNewFeature(models.Model):
     added_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 
-
-
     def __str__(self) -> str:
         return self.title
 
@@ -69,6 +67,28 @@ class HomepageNewFeature(models.Model):
         verbose_name_plural = _("Homepage Content")
 
 
+class FeaturesChoices(models.TextChoices):
+    GENERAL = "GENERAL", _("General")
+    TEXT_TO_TEXT = "TEXT_TO_TEXT", _("Text To Text")
+    TEXT_TO_IMAGE = "TEXT_TO_IMAGE", _("Text To Image")
+    VISION = "VISION", _("Vision")
+    TAOBAO = "TAOBAO", _("Taobao")
 
 
+class CreditsHistory(models.Model):
+    credit_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    user = models.ForeignKey(User, related_name="credits_history", on_delete=models.CASCADE)
+    feature = models.CharField(choices=FeaturesChoices.choices, default=FeaturesChoices.GENERAL, max_length=20)
+    tokens = models.FloatField(default=0)
+    added_on = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return str(self.credit_id)
+
+    class Meta:
+        verbose_name = _("Credit")
+        verbose_name_plural = _("Credits Usage")
+
+    @staticmethod
+    def create_credits(user, tokens, feature):
+        CreditsHistory.objects.create(user=user, tokens=tokens, feature=feature)

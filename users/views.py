@@ -1080,11 +1080,14 @@ def PaymentSuccess(request, plan_id, user_id):
     return render(request, "payment_success.html", context={"plan": plan})
 
 
-def ItemPaymentSuccess(request, item_id, user_id):
+def ItemPaymentSuccess(request, item_id, user_id, purchase_id):
     item = Items.objects.get(item_id=item_id)
     user = User.objects.get(user_id=user_id)
-    Purchases.objects.filter(item=item, user=user).update(
-        is_purchased=True, is_paid=True, purchase_date=timezone.now())
+    purchase, created = Purchases.objects.get_or_create(id=purchase_id if purchase_id != "None" else 0, item=item, user=user)
+    purchase.is_purchased = True
+    purchase.is_paid = True
+    purchase.purchase_date = timezone.now()
+    purchase.save()
     return HttpResponse("Item Purchased Successfully")
 
 
@@ -1148,6 +1151,7 @@ def ShopWithText(request):
 
 
 def ShopCheckout(request, item_id):
+    purchase_id = None
     item = Items.objects.get(item_id=item_id)
     if request.method == "POST":
         phone = request.POST.get("phone")
@@ -1157,10 +1161,11 @@ def ShopCheckout(request, item_id):
         pin = request.POST.get("zip")
 
         full_address = address + " " + city + " " + state + " " + pin
-        Purchases.objects.create(
+        purchase = Purchases.objects.create(
             item=item, user=request.user, buyer_email=request.user.email, phone_no=phone, address=full_address
         )
-    return render(request, "shop_checkout.html", {"item": item})
+        purchase_id = purchase.id
+    return render(request, "shop_checkout.html", {"item": item, "purchase_id": purchase_id})
 
 
 def GetUserItemData(request, item_id):
@@ -1551,16 +1556,11 @@ class RegisterViewV2(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         try:
             data = self.request.data
-            home_name = data.get("home_name")
-            home_key = data.get("home_key")
             email = str(data.get("email"))
             password = str(data.get("password"))
-            try:
-                room = Room.objects.create(room_id=home_name, room_key=home_key)
-            except Exception as e:
-                room = None
             user = User.objects.create(
                 email=email.lower(), first_name=data.get("first_name"), last_name=data.get("last_name"))
+            room = Room.objects.create(custom_instructions=False)
             user.set_password(password)
             user.room = room
             user.save()
@@ -1596,6 +1596,25 @@ class LoginViewV2(generics.CreateAPIView):
         return Response({'token': token.key,
                          'is_active': user.is_active
                          }, status=status.HTTP_201_CREATED)
+
+
+class LogoutViewV2(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        # simply delete the token to force a login
+        request.user.auth_token.delete()
+        resp = dict({
+            "message": "Successfully Logout"
+        })
+        return Response(resp, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        tags=["Authentication APIs"]
+    )
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
 
 
 class ProfileViewV2(generics.RetrieveUpdateAPIView):

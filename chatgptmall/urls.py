@@ -24,7 +24,7 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
     ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView, TextToTexTOpeniaiView, \
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView, ItemCreateCheckoutSessionView, GetTaobaoItems, \
     GetCurrencies
-from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView
+from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
     CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \
@@ -44,7 +44,8 @@ from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, Upl
     OCRContentGenerate, SaveCapturedPhoto, ImageAnalysisOCR, voice2voicePlanDetail, RedirectPlan, voice2ImagePlanDetail, \
     text2VoicePlanDetail, text2TextPlanDetail, text2ImagePlanDetail, image2ImagePlanDetail, \
     object_detectPlanDetail, voice2commandPlanDetail, text2commandPlanDetail, OcrPlanDetail, imageAnalysisPlanDetail, \
-    RetailBotsView, ShopCheckout, ItemPaymentSuccess, RegisterViewV2, LoginViewV2, ProfileViewV2, GetUserItemData
+    RetailBotsView, ShopCheckout, ItemPaymentSuccess, RegisterViewV2, LoginViewV2, ProfileViewV2, GetUserItemData, \
+    LogoutViewV2
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -134,7 +135,7 @@ urlpatterns = [
     path("item/how_to_use/<int:item_id>/", ItemHowToUse, name="ItemHowToUse"),
     path("item/details/<uuid:item_id>/", LearHowToUse, name="LearHowToUse"),
     path("item/checkout/Session/", ItemCreateCheckoutSessionView, name="ItemCreateCheckoutSessionView"),
-    path("item/payment/success/<uuid:item_id>/<uuid:user_id>/", ItemPaymentSuccess, name="item-payment-success"),
+    path("item/payment/success/<uuid:item_id>/<uuid:user_id>/<str:purchase_id>/", ItemPaymentSuccess, name="item-payment-success"),
 
     # API's
     path('api/v1/vision/', TextToTexTView.as_view(), name="TextToTexTView"),
@@ -234,12 +235,14 @@ urlpatterns = [
     path("api/v2/register/", RegisterViewV2.as_view(), name="RegisterViewV2"),
     path("api/v2/login/", LoginViewV2.as_view(), name="LoginViewV2"),
     path("api/v2/profile/", ProfileViewV2.as_view(), name="ProfileViewV2"),
+    path('api/v2/logout/', LogoutViewV2.as_view(), name="LogoutViewV2"),
 
     # home APIs v1
     path("api/v1/home/plans/", HomePlansAPIView.as_view(), name="HomePlansAPIView"),
     path("api/v1/home/feature/", HomepageNewFeatureView.as_view(), name="HomepageNewFeatureView"),
     path("api/v1/home/communities/", CommunitiesView.as_view(), name="CommunitiesView"),
     path('api/v1/shop/items/', ShopItemsView.as_view(), name="ShopItemsView"),
+    path('api/v1/credits/history/', GetCreditsHistory.as_view(), name="GetCreditsHistory")
 
 
 

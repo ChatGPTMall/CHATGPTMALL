@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from engine.models import PlanType, Community
-from homelinked.models import HomePlans, HomepageNewFeature
+from homelinked.models import HomePlans, HomepageNewFeature, CreditsHistory
 
 
 class HomePlansAPIViewSerializer(serializers.ModelSerializer):
@@ -32,4 +32,13 @@ class CommunitiesViewSerializer(serializers.ModelSerializer):
         fields = (
             "name",
             "logo"
+        )
+
+
+class GetCreditsHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CreditsHistory
+        exclude = (
+            "id",
+            "user"
         )

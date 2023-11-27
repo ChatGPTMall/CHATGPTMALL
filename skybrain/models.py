@@ -41,14 +41,15 @@ class LicensesRequests(models.Model):
 
 
 class Room(models.Model):
-    organization = models.ForeignKey(Organization, related_name="rooms", on_delete=models.CASCADE, null=True, blank=True)
-    room_id = models.CharField(max_length=200)
-    room_key = models.CharField(max_length=200, null=True, blank=True)
+    organization = models.ForeignKey(Organization, related_name="rooms",
+                                     on_delete=models.CASCADE, null=True, blank=True)
+    room_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=True)
+    room_key = models.UUIDField(default=uuid.uuid4, unique=True, editable=True)
     custom_instructions = models.BooleanField(default=False)
     added_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.room_id
+        return str(self.room_id)
 
     class Meta:
         verbose_name = _("Room")

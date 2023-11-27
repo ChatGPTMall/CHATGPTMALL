@@ -15,6 +15,7 @@ from django.core.files.base import ContentFile
 from drf_spectacular.utils import extend_schema
 from openai import OpenAI
 from engine.permissions import HaveCredits
+from homelinked.models import CreditsHistory, FeaturesChoices
 from skybrain.models import Room, CustomerSupport
 from users.models import RoomHistory
 from users.models import User
@@ -90,6 +91,7 @@ class TextToTexTView(generics.CreateAPIView):
             user = self.request.user
             user.credits -= 1
             user.save()
+            CreditsHistory.create_credits(user, 1, FeaturesChoices.VISION)
             return Response(dict({
                 "input": input_,
                 "response": response.json()["choices"][0]["message"]["content"]
@@ -203,6 +205,7 @@ class RoomTextToTexTView(generics.CreateAPIView):
                         CustomerSupport.objects.create(user_input=input_, response=result, room=room)
                 except Room.DoesNotExist:
                     return Response({"error": "Invalid room_id provided"}, status=status.HTTP_400_BAD_REQUEST)
+            CreditsHistory.create_credits(self.request.user, 1, FeaturesChoices.GENERAL)
             return Response(dict({
                 "input": input_,
                 "image": his_image.url if his_image else None ,
@@ -253,6 +256,7 @@ class TextToTexTOpeniaiView(generics.CreateAPIView):
             user = self.request.user
             user.credits -= 1
             user.save()
+            CreditsHistory.create_credits(user, 1, FeaturesChoices.TEXT_TO_TEXT)
             return Response(dict({
                 "input": input_,
                 "response": result
@@ -337,6 +341,7 @@ class TextToImageView(generics.CreateAPIView):
         user = self.request.user
         user.credits -= 1
         user.save()
+        CreditsHistory.create_credits(user, 1, FeaturesChoices.TEXT_TO_IMAGE)
         return Response(dict({
             "input": input_,
             "image": image.image.url if image.image else None
@@ -366,6 +371,7 @@ class GetTaobaoItems(generics.ListAPIView):
         user = self.request.user
         user.credits -= 1
         user.save()
+        CreditsHistory.create_credits(user, 1, FeaturesChoices.TAOBAO)
         return Response(response.json())
 
 
@@ -583,6 +589,7 @@ def ItemCreateCheckoutSessionView(request):
     try:
         if request.user.is_authenticated:
             item_id = request.POST.get("item_id")
+            purchase_id = request.POST.get("purchase_id")
             item = Items.objects.get(pk=int(item_id))
             if item.public_bank:
                 SECRET_KEY = item.public_bank.private_key
@@ -614,11 +621,12 @@ def ItemCreateCheckoutSessionView(request):
                     metadata=dict({"data": str("test")}),
                     customer_email=user,
                     success_url="http://{}{}".format(host, reverse(
-                        'item-payment-success', kwargs={"item_id": item.item_id, "user_id": user.user_id})),
+                        'item-payment-success', kwargs={"item_id": item.item_id, "user_id": user.user_id,
+                                                        "purchase_id": purchase_id})),
                     cancel_url="http://{}{}".format(host, reverse('payment-cancel')),
                 )
             else:
-                return redirect("/item/payment/success/{}/{}/".format(item_id, user.id))
+                return redirect("/item/payment/success/{}/{}/{}/".format(item.item_id, user.user_id, purchase_id))
         else:
             return redirect("/api/login/")
     except Exception as e:
