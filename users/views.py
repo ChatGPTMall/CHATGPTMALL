@@ -999,7 +999,6 @@ def UploadCommunityPost(request):
     name = request.POST.get("item_name")
     cat = request.POST.get("item_category")
     item_type = request.POST.get("item_type")
-    image2 = request.FILES.get("item_image")
     image = request.FILES.get("item_image")
     item_image_url = request.POST.get("item_image_url", None)
     video = request.FILES.get("item_video", None)
@@ -1020,7 +1019,7 @@ def UploadCommunityPost(request):
 
     com = Community.objects.get(community_id=team_id)
     post = CommunityPosts.objects.create(
-        user=request.user, question=question, response=item_desc, community=com, image=image2 if image2 else None
+        user=request.user, question=question, response=item_desc, community=com, image=image if image else None
     )
     if upload == "yes":
         category, created = Category.objects.get_or_create(title=cat)
@@ -1028,13 +1027,13 @@ def UploadCommunityPost(request):
             item = Items.objects.create(
                 category=category, title=name, description=item_desc, video=video,
                 price=int(price), stock=int(stock), location=location, item_type=item_type,
-                vendor=request.user, vendor_email=request.user.email, image=image2 if image2 else None
+                vendor=request.user, vendor_email=request.user.email, image=image if image else None
             )
         else:
             item = Items.objects.create(
                 category=category, title=name, description=item_desc,
-                price=int(price), stock=int(stock), location=location, item_type=item_type,
-                vendor=request.user, vendor_email=request.user.email, image=image2 if image2 else None
+                price=float(price), stock=int(stock), location=location, item_type=item_type,
+                vendor=request.user, vendor_email=request.user.email, image=image if image else None
             )
         result = urllib.request.urlretrieve(item.qr_code.url)
         if video:
