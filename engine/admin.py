@@ -1,3 +1,6 @@
+import io
+
+import chardet
 import pandas as pd
 from django.contrib import admin
 from engine.models import Items, Category, ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, \
@@ -48,16 +51,29 @@ class UploadTeamsAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         file = form.cleaned_data.get('file')
         if file:
+            # Create a file-like object from the uploaded content
+            file_content = file.read()
+            file.seek(0)  # Reset file pointer to the beginning
+
+            # Detect the encoding of the file content
+            result = chardet.detect(file_content)
+            encoding = result['encoding']
+
             if file.name.endswith('.csv'):
-                df = pd.read_csv(file)
+                # Use StringIO to create a file-like object for pandas
+                file_io = io.StringIO(file_content.decode(encoding))
+                df = pd.read_csv(file_io)
             elif file.name.endswith('.xlsx'):
-                df = pd.read_excel(file)
+                # For Excel files, you can directly use pd.read_excel
+                df = pd.read_excel(io.BytesIO(file_content))
             else:
                 raise ValueError('Invalid file format')
+
             records = df.to_dict(orient='records')
             for coupon in records:
                 try:
                     name = coupon["team_name"]
+                    print(name, coupon)
                     Community.objects.create(name=name)
                 except KeyError:
                     raise ValueError('Invalid file format')
