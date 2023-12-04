@@ -17,6 +17,10 @@ class VoiceToVoiceRequestsAdmin(admin.ModelAdmin):
     list_filter = ('added_on', 'user__premium',)
 
 
+class CommunityMembersAdmin(admin.ModelAdmin):
+    list_display = ("user", "community", "added_on")
+
+
 class UploadCouponsAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
@@ -90,6 +94,11 @@ class CommunityPostsAdmin(admin.ModelAdmin):
     list_display = ("user", "item", "community", "added_on")
 
 
+class CommunityAdmin(admin.ModelAdmin):
+    list_display = ("community_id", "name", "leader", "added_on")
+    search_fields = ("name", "community_id", "leader__email")
+
+
 class PurchasesAdmin(admin.ModelAdmin):
     list_display = ("item", "user", "buyer_email", "is_paid", "is_shipped", "quantity", "updated_on")
 
@@ -103,8 +112,7 @@ admin.site.register(Plans)
 admin.site.register(Industries)
 admin.site.register(Jobs)
 admin.site.register(Capabilities)
-admin.site.register(Community)
-admin.site.register(CommunityMembers)
+admin.site.register(Community, CommunityAdmin)
 admin.site.register(CommunityPosts, CommunityPostsAdmin)
 admin.site.register(CouponCode, CouponCodeAdmin)
 admin.site.register(UploadCoupons, UploadCouponsAdmin)
@@ -112,6 +120,7 @@ admin.site.register(UploadTeams, UploadTeamsAdmin)
 admin.site.register(Subscriptions)
 admin.site.register(FreeSubscriptions)
 admin.site.register(VoiceToVoiceRequests, VoiceToVoiceRequestsAdmin)
+admin.site.register(CommunityMembers, CommunityMembersAdmin)
 admin.site.register(ImageAnalysisDB)
 admin.site.register(VoiceCommands)
 admin.site.register(KeyManagement)

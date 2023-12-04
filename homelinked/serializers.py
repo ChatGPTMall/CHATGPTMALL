@@ -27,11 +27,15 @@ class HomepageNewFeatureViewSerializer(serializers.ModelSerializer):
 
 
 class CommunitiesViewSerializer(serializers.ModelSerializer):
+    total_members = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = Community
         fields = (
+            "community_id",
             "name",
-            "logo"
+            "logo",
+            "total_members"
         )
 
 
@@ -41,4 +45,19 @@ class GetCreditsHistorySerializer(serializers.ModelSerializer):
         exclude = (
             "id",
             "user"
+        )
+
+
+class CommunitiesJoinViewSerializer(serializers.ModelSerializer):
+    total_members = serializers.IntegerField(read_only=True)
+    has_joined = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = Community
+        fields = (
+            "community_id",
+            "name",
+            "logo",
+            "total_members",
+            "has_joined"
         )

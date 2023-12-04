@@ -24,7 +24,8 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
     ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView, TextToTexTOpeniaiView, \
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView, ItemCreateCheckoutSessionView, GetTaobaoItems, \
     GetCurrencies
-from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory
+from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory, \
+    CommunitiesJoinView, CommunitiesJoinedView
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
     CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \
@@ -241,10 +242,10 @@ urlpatterns = [
     path("api/v1/home/plans/", HomePlansAPIView.as_view(), name="HomePlansAPIView"),
     path("api/v1/home/feature/", HomepageNewFeatureView.as_view(), name="HomepageNewFeatureView"),
     path("api/v1/home/communities/", CommunitiesView.as_view(), name="CommunitiesView"),
+    path("api/v1/community/", CommunitiesJoinView.as_view(), name="CommunitiesJoinView"),
+    path("api/v1/joined/communities/", CommunitiesJoinedView.as_view(), name="CommunitiesJoinedView"),
     path('api/v1/shop/items/', ShopItemsView.as_view(), name="ShopItemsView"),
     path('api/v1/credits/history/', GetCreditsHistory.as_view(), name="GetCreditsHistory")
-
-
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
