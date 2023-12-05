@@ -60,8 +60,8 @@ class CommunitiesJoinView(generics.ListCreateAPIView):
                 return Response({"error": "You already have joined {} supply chain".format(community.name)},
                                 status=status.HTTP_400_BAD_REQUEST)
             CommunityMembers.objects.create(user=self.request.user, community=community)
-            return Response({"error": "Congratulations you have joined {} Supply chain".format(
-                community.name).format(community.name)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"msg": "Congratulations you have joined {} Supply chain".format(
+                community.name).format(community.name)}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({"error": "invalid community_id passed"}, status=status.HTTP_400_BAD_REQUEST)
 
