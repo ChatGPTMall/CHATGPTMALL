@@ -26,7 +26,7 @@
                           Share <i class="copy fa fa-clone" style="font-size:24px;cursor:pointer;"></i>
                         </button>
             <button style="background-color:#5B61EB !important;color:white;"class="btn btn-lg my-3 mb-2"
-                data-toggle="modal" data-target="#myModal2">Upload items</button>
+                data-toggle="modal" data-target="#myModal2">Upload Capability</button>
             <button style="background-color:#5B61EB !important;color:white;"class="btn btn-lg my-3 mb-2"
                 data-toggle="modal" data-target="#myModal3">Restricted Keywords</button>
             </div>
@@ -196,7 +196,7 @@
                 {% csrf_token %}
                 <input type="hidden" name="team_id" value="{{community.community_id}}">
               <div class="col-md-12">
-                <label for="title" class="form-label">Item Name <a href="#" style="margin-left:12px;font-size:25px;" id="text_ai_btn">Use AI Text Generation</a></label>
+                <label for="title" class="form-label">Capability Name <a href="#" style="margin-left:12px;font-size:25px;" id="text_ai_btn">Use AI Text Generation</a></label>
                   <div>
                   <img src="{% static 'images/loading.svg' %}" style="width:50px;" id="loader_title">
                   </div>
@@ -207,7 +207,7 @@
                 <input type="text" name="item_name"  class="form-control" id="title" placeholder="item name" required>
               </div>
               <div class="col-md-12">
-                <label class="form-label">Item Category</label>
+                <label class="form-label">Capability Category</label>
                 <select id="category" name="item_category" class="form-select" required>
                   <option selected>Choose...</option>
                     {% for category in categories %}
@@ -216,7 +216,7 @@
                 </select>
               </div>
               <div class="col-md-12">
-                <label for="inputAddress" id="query_label" class="form-label">Item Description
+                <label for="inputAddress" id="query_label" class="form-label">Capability Description
                     <a href="#" style="margin-left:12px;font-size:25px;" id="show_ai">Use AI Text Generation</a></label>
                   <div style="display: flex;justify-content: center;">
                   <img src="{% static 'images/loading.svg' %}" style="width:50px;" id="loader">
@@ -228,7 +228,7 @@
                   <textarea class="form-control" rows="8" name="item_desc" id="inputAddress" placeholder="Item Description"></textarea>
               </div>
                 <div class="col-md-12">
-                    <label for="formFile" class="form-label" id="img_label">Item Image
+                    <label for="formFile" class="form-label" id="img_label">Capability Image
                     <a href="#" style="margin-left:12px;font-size:25px;" id="show_ai_image">Use AI Image Generation</a></label>
                     <div style="display: flex;justify-content: center;">
                         <img src="{% static 'images/loading.svg' %}" style="width:50px;" id="img_loader">
@@ -241,7 +241,7 @@
                     <input class="form-control" name="item_image_url" type="text" id="formFileurl">
                 </div>
                 <div class="col-md-12">
-                    <label for="formFile" class="form-label">Item Video(Optional)<a href="#" style="margin-left:12px;font-size:25px;" id="show_ai_video">Use AI Video Generation</a></label>
+                    <label for="formFile" class="form-label">Capability Video(Optional)<a href="#" style="margin-left:12px;font-size:25px;" id="show_ai_video">Use AI Video Generation</a></label>
                     <input class="form-control" name="item_video" type="file" id="video">
                 </div>
                 <div class="col-md-12">
@@ -253,7 +253,7 @@
                 </select>
               </div>
               <div class="col-md-12">
-                <label for="inputState" class="form-label">Upload Items To Shop</label>
+                <label for="inputState" class="form-label">Upload Capability To Shop</label>
                 <select id="inputState" name="upload" class="form-select" required>
                   <option selected>Choose...</option>
                   <option value="yes">Yes</option>
@@ -261,7 +261,7 @@
                 </select>
               </div>
                 <div class="col-md-12">
-                <label for="item_type" class="form-label">Select Item Type</label>
+                <label for="item_type" class="form-label">Select Capability Type</label>
                 <select id="item_type" name="item_type" class="form-select" required>
                   <option selected>Choose...</option>
                   <option value="PHYSICAL">Physical</option>
@@ -307,7 +307,7 @@
                 </div>
 
               <div class="col-md-12">
-                <button type="submit" class="btn btn-primary">Upload Item To Community</button>
+                <button type="submit" class="btn btn-primary">Upload Capability To Community</button>
               </div>
             </form>
         </div>
