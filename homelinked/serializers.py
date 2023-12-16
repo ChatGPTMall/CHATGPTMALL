@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from engine.models import PlanType, Community
+from engine.models import PlanType, Community, CommunityPosts, Items
 from homelinked.models import HomePlans, HomepageNewFeature, CreditsHistory
 
 
@@ -61,3 +61,37 @@ class CommunitiesJoinViewSerializer(serializers.ModelSerializer):
             "total_members",
             "has_joined"
         )
+
+
+class ItemShortSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Items
+        exclude = (
+            "id",
+            "added_on",
+            "vendor",
+            "category",
+            "public_bank",
+            "private_bank",
+
+        )
+
+
+class GrowthNetworkSerializer(serializers.ModelSerializer):
+    item_details = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = CommunityPosts
+        exclude = (
+            "id",
+            "user",
+            "added_on",
+            "community",
+            "item",
+        )
+        read_only_fields = (
+            "item_details",
+        )
+
+    def get_item_details(self, post):
+        return ItemShortSerializer(post.item).data

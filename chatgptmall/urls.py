@@ -25,7 +25,7 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView, ItemCreateCheckoutSessionView, GetTaobaoItems, \
     GetCurrencies
 from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory, \
-    CommunitiesJoinView, CommunitiesJoinedView
+    CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
     CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \
@@ -150,7 +150,6 @@ urlpatterns = [
     path('api/v1/transcribe/audio/', TranscribeAudio.as_view(), name="TranscribeAudio"),
     path('api/v1/image/analysis/', ImageAnalysisView.as_view(), name="ImageAnalysisView"),
     path('api/v1/objects/detection/', ObjectsDetectionView.as_view(), name="ObjectsDetectionView"),
-    path('api/v1/items/', GetItemsView.as_view(), name="ShGetItemsViewopItemsView"),
     path('api/v1/shop/categories/', ShopCategoriesView.as_view(), name="ShopItemsView"),
 
     path("team/share/<int:team_id>/", ShareTeam, name="ShareTeam"),
@@ -245,7 +244,11 @@ urlpatterns = [
     path("api/v1/community/", CommunitiesJoinView.as_view(), name="CommunitiesJoinView"),
     path("api/v1/joined/communities/", CommunitiesJoinedView.as_view(), name="CommunitiesJoinedView"),
     path('api/v1/shop/items/', ShopItemsView.as_view(), name="ShopItemsView"),
-    path('api/v1/credits/history/', GetCreditsHistory.as_view(), name="GetCreditsHistory")
+    path('api/v1/credits/history/', GetCreditsHistory.as_view(), name="GetCreditsHistory"),
+    path('api/v1/growth_network/<str:network_id>/', GrowthNetwork.as_view(), name="GrowthNetwork"),
+    path('api/v1/growth_network/<str:network_id>/capability/upload/', UploadCapabilityPost.as_view(),
+         name="UploadCapabilityPost"),
+    path('api/v1/items/', GetItemsView.as_view(), name="ShGetItemsViewopItemsView"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -526,13 +526,21 @@ class ShopItemsView(generics.CreateAPIView):
         return Response({"error": "item already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class GetItemsView(generics.ListAPIView):
+class GetItemsView(generics.ListCreateAPIView):
     
     serializer_class = GetItemsViewSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Items.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(vendor=self.request.user, vendor_email=self.request.user.email)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
 
 
 class ShopCategoriesView(generics.ListAPIView):

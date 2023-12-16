@@ -95,7 +95,7 @@ class CommunityPostsAdmin(admin.ModelAdmin):
 
 
 class CommunityAdmin(admin.ModelAdmin):
-    list_display = ("community_id", "name", "leader", "added_on")
+    list_display = ("community_id", "priority", "name", "leader", "added_on")
     search_fields = ("name", "community_id", "leader__email")
 
 
