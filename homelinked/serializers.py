@@ -64,6 +64,8 @@ class CommunitiesJoinViewSerializer(serializers.ModelSerializer):
 
 
 class ItemShortSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Items
         exclude = (
@@ -75,6 +77,12 @@ class ItemShortSerializer(serializers.ModelSerializer):
             "private_bank",
 
         )
+        read_only_fields = (
+            "name",
+        )
+
+    def get_name(self, item):
+        return item.vendor.get_full_name()
 
 
 class GrowthNetworkSerializer(serializers.ModelSerializer):
