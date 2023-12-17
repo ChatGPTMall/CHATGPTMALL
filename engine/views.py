@@ -9,6 +9,8 @@ import openai
 import stripe
 import requests
 from io import BytesIO
+
+from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
 
 from django.core.files.base import ContentFile
@@ -16,6 +18,7 @@ from drf_spectacular.utils import extend_schema
 from openai import OpenAI
 from engine.permissions import HaveCredits
 from homelinked.models import CreditsHistory, FeaturesChoices
+from homelinked.serializers import RedeemCouponViewSerializer, ItemPurchasesSerializer
 from skybrain.models import Room, CustomerSupport
 from users.models import RoomHistory
 from users.models import User
@@ -28,7 +31,7 @@ from PIL import Image, ImageDraw, ImageFont
 from rest_framework.response import Response
 from django.shortcuts import render, redirect
 from engine.models import ImagesDB, ImageAnalysisDB, Items, Category, KeyManagement, Community, CommunityPosts, \
-    BankAccounts
+    BankAccounts, CouponCode
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
@@ -651,3 +654,42 @@ class GrowthNetworkFilters(generics.ListAPIView):
             "categories": categories,
             "banks": banks
         })
+
+
+class RedeemCouponView(generics.CreateAPIView):
+    serializer_class = RedeemCouponViewSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            coupon_code = self.request.data.get("coupon_code")
+            coupon = CouponCode.objects.get(code=coupon_code)
+            if not coupon.is_expired:
+                coupon.is_expired = True
+                coupon.save()
+                return Response({
+                    "msg": "Coupon Redeemed Successfully",
+                    "discount": coupon.price
+                }, status=status.HTTP_201_CREATED
+                )
+            return Response({"error": "Expired Coupon Provided"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": "Invalid coupon_code provided"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ItemPurchases(generics.ListCreateAPIView):
+    serializer_class = ItemPurchasesSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return self.request.user.user_purchases.all()
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(
+            user=self.request.user, buyer_email=self.request.user.email,
+            purchase_date=timezone.now())
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

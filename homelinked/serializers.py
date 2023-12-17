@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from engine.models import PlanType, Community, CommunityPosts, Items
+from engine.models import PlanType, Community, CommunityPosts, Items, Purchases
 from homelinked.models import HomePlans, HomepageNewFeature, CreditsHistory
 
 
@@ -69,7 +69,6 @@ class ItemShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Items
         exclude = (
-            "id",
             "added_on",
             "vendor",
             "category",
@@ -103,3 +102,17 @@ class GrowthNetworkSerializer(serializers.ModelSerializer):
 
     def get_item_details(self, post):
         return ItemShortSerializer(post.item).data
+
+
+class RedeemCouponViewSerializer(serializers.Serializer):
+    coupon_code = serializers.CharField(required=True)
+
+
+class ItemPurchasesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Purchases
+        exclude = (
+            "updated_on",
+            "user",
+            "id",
+        )

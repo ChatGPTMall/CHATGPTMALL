@@ -23,7 +23,7 @@ from rest_framework import permissions
 from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageView, ImageAnalysisView, \
     ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView, TextToTexTOpeniaiView, \
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView, ItemCreateCheckoutSessionView, GetTaobaoItems, \
-    GetCurrencies, GrowthNetworkFilters
+    GetCurrencies, GrowthNetworkFilters, RedeemCouponView, ItemPurchases
 from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory, \
     CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
@@ -250,6 +250,8 @@ urlpatterns = [
          name="UploadCapabilityPost"),
     path('api/v1/items/', GetItemsView.as_view(), name="GetItemsView"),
     path('api/v1/filters/', GrowthNetworkFilters.as_view(), name="GrowthNetworkFilters"),
+    path('api/v1/coupon/redeem/', RedeemCouponView.as_view(), name="RedeemCouponView"),
+    path('api/v1/purchases/', ItemPurchases.as_view(), name="ItemPurchases")
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
