@@ -23,7 +23,7 @@ from rest_framework import permissions
 from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageView, ImageAnalysisView, \
     ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView, TextToTexTOpeniaiView, \
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView, ItemCreateCheckoutSessionView, GetTaobaoItems, \
-    GetCurrencies
+    GetCurrencies, GrowthNetworkFilters
 from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory, \
     CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
@@ -248,7 +248,8 @@ urlpatterns = [
     path('api/v1/growth_network/<str:network_id>/', GrowthNetwork.as_view(), name="GrowthNetwork"),
     path('api/v1/growth_network/<str:network_id>/capability/upload/', UploadCapabilityPost.as_view(),
          name="UploadCapabilityPost"),
-    path('api/v1/items/', GetItemsView.as_view(), name="ShGetItemsViewopItemsView"),
+    path('api/v1/items/', GetItemsView.as_view(), name="GetItemsView"),
+    path('api/v1/filters/', GrowthNetworkFilters.as_view(), name="GrowthNetworkFilters"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -27,7 +27,8 @@ from rest_framework import generics, status
 from PIL import Image, ImageDraw, ImageFont
 from rest_framework.response import Response
 from django.shortcuts import render, redirect
-from engine.models import ImagesDB, ImageAnalysisDB, Items, Category, KeyManagement, Community, CommunityPosts
+from engine.models import ImagesDB, ImageAnalysisDB, Items, Category, KeyManagement, Community, CommunityPosts, \
+    BankAccounts
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
@@ -541,8 +542,6 @@ class GetItemsView(generics.ListCreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-
-
 class ShopCategoriesView(generics.ListAPIView):
     
     serializer_class = ShopCategoriesViewSerializer
@@ -643,3 +642,14 @@ def ItemCreateCheckoutSessionView(request):
     return redirect(checkout_session.url, code=303)
 
 
+class GrowthNetworkFilters(generics.ListAPIView):
+
+    def get(self, request, *args, **kwargs):
+        print("hello")
+        categories = list(Category.objects.all().values_list("title", flat=True))
+        banks = BankAccounts.objects.all().values("name", "id")
+        print("cate", categories)
+        return Response({
+            "categories": categories,
+            "banks": banks
+        })
