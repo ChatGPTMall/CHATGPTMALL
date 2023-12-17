@@ -648,7 +648,7 @@ def ItemCreateCheckoutSessionView(request):
 class GrowthNetworkFilters(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
-        categories = list(Category.objects.all().values_list("title", flat=True))
+        categories = Category.objects.all().values("title", "id")
         banks = BankAccounts.objects.all().values("name", "id")
         return Response({
             "categories": categories,
