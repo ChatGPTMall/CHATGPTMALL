@@ -321,16 +321,7 @@ class CommunityMembers(models.Model):
 class CommunityPosts(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts", null=True)
     community = models.ForeignKey(Community, related_name="feed", on_delete=models.CASCADE)
-    is_object = models.BooleanField(default=False)
-    question = models.TextField(_("User Question"))
-    response = models.TextField(_("AI Response"), null=True, blank=True)
-    input_image = models.URLField(null=True, blank=True)
-    image = models.ImageField(upload_to="community/images", null=True, blank=True)
-    response_image = models.URLField(null=True, blank=True)
-    qrcode = models.ImageField(upload_to="community/qr_code", null=True, blank=True)
-    video = models.FileField(upload_to="community/video", null=True, blank=True)
     item = models.ForeignKey(Items, related_name="com_posts", on_delete=models.CASCADE, null=True, blank=True)
-    item_name = models.CharField(max_length=100, null=True, blank=True)
     added_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:

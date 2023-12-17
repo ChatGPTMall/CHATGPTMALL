@@ -539,10 +539,17 @@ class GetItemsView(generics.ListCreateAPIView):
         return Items.objects.all()
 
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(vendor=self.request.user, vendor_email=self.request.user.email)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        try:
+            community_id = self.request.query_params.get("community_id")
+            community = Community.objects.get(community_id=community_id)
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save(vendor=self.request.user, vendor_email=self.request.user.email)
+            item_instance = Items.objects.get(id=serializer.data.get("id"))
+            CommunityPosts.objects.create(community=community, user=self.request.user, item=item_instance)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ShopCategoriesView(generics.ListAPIView):
