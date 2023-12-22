@@ -319,6 +319,7 @@ class CommunityMembers(models.Model):
 
 
 class CommunityPosts(models.Model):
+    post_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts", null=True)
     community = models.ForeignKey(Community, related_name="feed", on_delete=models.CASCADE)
     item = models.ForeignKey(Items, related_name="com_posts", on_delete=models.CASCADE, null=True, blank=True)
@@ -465,10 +466,59 @@ class CapturedAudio(models.Model):
     audio = models.FileField(upload_to="skybrain/audios")
 
 
+class FeedComments(models.Model):
+    """
+    This Django model, 'FeedComments', is used to store comments on feed editorials.
+
+    - 'comment_id': A unique identifier for each comment entry in the form of a UUID.
+    - 'post_id': A foreign key linking the comment entry to the associated feed editorial, using the 'post_id' field.
+    - 'user': A foreign key linking the comment entry to the user who made the comment.
+    - 'parent': A foreign key linking the comment entry to its parent comment, if applicable.
+    - 'content': The content of the comment.
+    - 'added_on': Timestamp of when the comment entry was added to the database.
+    - 'updated_at': Timestamp of the last update to the comment entry in the database.
+
+    """
+    comment_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    post = models.ForeignKey(CommunityPosts, related_name="comments", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name="post_comments", on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
+    content = models.TextField(_("Comment Content"))
+    added_on = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("Comment")
+        verbose_name_plural = _("Feed Comments")
+
+    def __str__(self):
+        return str(self.comment_id)
+
+    def comment(self):
+        return self.content[:20] + '...' if len(self.content) > 20 else self.content
 
 
+class FeedLikes(models.Model):
+    """
+    This model, 'FeedLikes', is used to store information about likes given to feed editorials.
 
+    - 'like_id': A unique identifier for each like entry in the form of a UUID.
+    - 'post': A foreign key linking the like to the associated feed editorial, using the 'post_id' field.
+    - 'user': A foreign key linking the like to the user who performed the like.
+    - 'added_on': Timestamp of when the like was added to the database.
+    - 'updated_at': Timestamp of the last update to the like entry in the database.
 
+    """
+    like_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    post = models.ForeignKey(CommunityPosts, related_name="post_likes", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name="likes", on_delete=models.CASCADE)
+    added_on = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        verbose_name = _("Like")
+        verbose_name_plural = _("Feed Likes")
+        unique_together = (("post", "user"),)
 
-
+    def __str__(self):
+        return str(self.like_id)

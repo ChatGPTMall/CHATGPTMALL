@@ -86,6 +86,9 @@ class ItemShortSerializer(serializers.ModelSerializer):
 
 class GrowthNetworkSerializer(serializers.ModelSerializer):
     item_details = serializers.SerializerMethodField(read_only=True)
+    likes = serializers.SerializerMethodField(read_only=True)
+    liked = serializers.SerializerMethodField(read_only=True)
+    total_comments = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = CommunityPosts
@@ -98,10 +101,28 @@ class GrowthNetworkSerializer(serializers.ModelSerializer):
         )
         read_only_fields = (
             "item_details",
+            "likes",
+            "liked",
+            "total_comments",
         )
 
     def get_item_details(self, post):
         return ItemShortSerializer(post.item).data
+
+    def get_likes(self, post):
+        return post.post_likes.count()
+
+    def get_liked(self, post):
+        try:
+            user = self.context["request"].user
+        except KeyError:
+            user = self.context["user"]
+        if user.likes.filter(post=post).exists():
+            return True
+        return False
+
+    def get_total_comments(self, post):
+        return post.comments.count()
 
 
 class RedeemCouponViewSerializer(serializers.Serializer):

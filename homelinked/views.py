@@ -96,6 +96,7 @@ class GetCreditsHistory(generics.ListCreateAPIView):
 
 class GrowthNetwork(generics.ListAPIView):
     serializer_class = GrowthNetworkSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         try:

@@ -23,7 +23,8 @@ from rest_framework import permissions
 from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageView, ImageAnalysisView, \
     ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView, TextToTexTOpeniaiView, \
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView, ItemCreateCheckoutSessionView, GetTaobaoItems, \
-    GetCurrencies, GrowthNetworkFilters, RedeemCouponView, ItemPurchases
+    GetCurrencies, GrowthNetworkFilters, RedeemCouponView, ItemPurchases, PostLikeView, PostCommentView, GetPostsView, \
+    PostDetailView
 from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory, \
     CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
@@ -251,7 +252,11 @@ urlpatterns = [
     path('api/v1/items/', GetItemsView.as_view(), name="GetItemsView"),
     path('api/v1/filters/', GrowthNetworkFilters.as_view(), name="GrowthNetworkFilters"),
     path('api/v1/coupon/redeem/', RedeemCouponView.as_view(), name="RedeemCouponView"),
-    path('api/v1/purchases/', ItemPurchases.as_view(), name="ItemPurchases")
+    path('api/v1/purchases/', ItemPurchases.as_view(), name="ItemPurchases"),
+    path('api/v1/posts/like/', PostLikeView.as_view(), name="PostLikeView"),
+    path('api/v1/posts/comments/', PostCommentView.as_view(), name="PostCommentView"),
+    path('api/v1/posts/<str:network_id>/', GetPostsView.as_view(), name="GetPostsView"),
+    path('api/v1/post/detail/', PostDetailView.as_view(), name="PostDetailView")
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

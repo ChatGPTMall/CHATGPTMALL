@@ -6,7 +6,7 @@ from django.contrib import admin
 from engine.models import Items, Category, ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, \
     Jobs, Capabilities, Community, CommunityMembers, CommunityPosts, CouponCode, UploadCoupons, Subscriptions, \
     UploadTeams, ImageAnalysisDB, VoiceCommands, KeyManagement, RestrictedKeywords, FreeSubscriptions, CapturedImages, \
-    BankAccounts, Purchases
+    BankAccounts, Purchases, FeedComments, FeedLikes
 
 
 # Register your models here.
@@ -103,6 +103,17 @@ class PurchasesAdmin(admin.ModelAdmin):
     list_display = ("item", "user", "buyer_email", "is_paid", "is_shipped", "quantity", "updated_on")
 
 
+class FeedCommentsAdmin(admin.ModelAdmin):
+    list_display = ("user", "comment_id", "post", "comment", "parent", "added_on")
+    list_filter = ("added_on", )
+    search_fields = ("user__email", )
+
+
+class FeedLikesAdmin(admin.ModelAdmin):
+    list_display = ("post", "user", "added_on")
+    search_fields = ("user__email", )
+
+
 admin.site.register(Category)
 admin.site.register(Items)
 admin.site.register(ResponsesDB)
@@ -128,3 +139,7 @@ admin.site.register(RestrictedKeywords)
 admin.site.register(CapturedImages)
 admin.site.register(BankAccounts)
 admin.site.register(Purchases, PurchasesAdmin)
+admin.site.register(FeedComments, FeedCommentsAdmin)
+admin.site.register(FeedLikes, FeedLikesAdmin)
+
+

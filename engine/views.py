@@ -16,6 +16,8 @@ from drf_yasg.utils import swagger_auto_schema
 from django.core.files.base import ContentFile
 from drf_spectacular.utils import extend_schema
 from openai import OpenAI
+from rest_framework.exceptions import ValidationError
+
 from engine.permissions import HaveCredits
 from homelinked.models import CreditsHistory, FeaturesChoices
 from homelinked.serializers import RedeemCouponViewSerializer, ItemPurchasesSerializer
@@ -31,12 +33,13 @@ from PIL import Image, ImageDraw, ImageFont
 from rest_framework.response import Response
 from django.shortcuts import render, redirect
 from engine.models import ImagesDB, ImageAnalysisDB, Items, Category, KeyManagement, Community, CommunityPosts, \
-    BankAccounts, CouponCode
+    BankAccounts, CouponCode, FeedLikes
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
     ShopCategoriesViewSerializer, GetItemsViewSerializer, TextToTexTMicrosoftViewSerializer, TranscribeAudioSerializer, \
-    TextToTexTViewImageSerializer, VisionViewSerializer
+    TextToTexTViewImageSerializer, VisionViewSerializer, PostLikeViewSerializer, PostCommentViewSerializer, \
+    GetPostsViewSerializer
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
@@ -700,3 +703,107 @@ class ItemPurchases(generics.ListCreateAPIView):
             user=self.request.user, buyer_email=self.request.user.email,
             purchase_date=timezone.now())
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class PostLikeView(generics.CreateAPIView):
+    """
+        API to like a feed editorial & return total no of likes on feed
+        if post is already liked then it returns error message
+    """
+    serializer_class = PostLikeViewSerializer
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            post = CommunityPosts.objects.get(post_id=self.request.data.get("post_id"))
+            like = self.request.data.get("like")
+            if int(like) == 1:
+                if post.post_likes.filter(user=self.request.user).exists():
+                    return Response(
+                        dict({
+                            "msg": "You already have liked this post"
+                        }),
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                FeedLikes.objects.create(user=self.request.user, post=post)
+            else:
+                post.post_likes.filter(user=self.request.user).delete()
+            return Response(
+                dict({
+                    "like_count": post.post_likes.all().count(),
+                    "liked": True if post.post_likes.filter(user=self.request.user).exists() else False
+                }),
+                status=status.HTTP_201_CREATED
+            )
+        except CommunityPosts.DoesNotExist:
+            return Response(dict({
+                "error": "invalid post_id found"
+            },
+                status=status.HTTP_400_BAD_REQUEST
+            ))
+
+
+class PostCommentView(generics.ListCreateAPIView):
+    """
+    API to save & return users comment in FeedComments models
+    returns 404 if invalid or no data is passed
+    """
+    serializer_class = PostCommentViewSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        try:
+            post_id = self.request.query_params.get("post_id", None)
+            feed = CommunityPosts.objects.get(post_id=post_id)
+            return feed.comments.all().order_by("-added_on")
+        except Exception as e:
+            print(e)
+            raise ValidationError(dict({"error": "Invalid post_id found"}))
+
+    def create(self, request, *args, **kwargs):
+        data = self.request.data
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        post_id = data.get("post", None)
+        post = CommunityPosts.objects.get(post_id=post_id)
+        serializer.save(user=self.request.user, post=post)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(self, request, *args, **kwargs)
+
+
+class GetPostsView(generics.ListAPIView):
+    serializer_class = GetPostsViewSerializer
+
+    def get_object(self):
+        try:
+            return Community.objects.get(community_id=self.kwargs['network_id'])
+        except Exception as e:
+            raise ValidationError("Invalid network_id provided")
+
+    def get_queryset(self):
+        try:
+            community = self.get_object()
+            return community.feed.all().order_by("-added_on")
+        except Exception as e:
+            return []
+
+
+class PostDetailView(generics.ListAPIView):
+    def get_object(self):
+        try:
+            post_id = self.request.query_params.get("post_id", None)
+            return CommunityPosts.objects.get(post_id=post_id)
+        except Exception as e:
+            raise ValidationError(dict({"error": "Invalid post_id found"}))
+
+    def get(self, request, *args, **kwargs):
+        instance = self.get_object()
+        print(instance)
+        serializer = GetPostsViewSerializer(instance)
+        return Response(serializer.data)
+
+
