@@ -24,7 +24,7 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
     ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView, TextToTexTOpeniaiView, \
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView, ItemCreateCheckoutSessionView, GetTaobaoItems, \
     GetCurrencies, GrowthNetworkFilters, RedeemCouponView, ItemPurchases, PostLikeView, PostCommentView, GetPostsView, \
-    PostDetailView
+    PostDetailView, NetworkPostItemSessionCheckout
 from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory, \
     CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
@@ -256,7 +256,8 @@ urlpatterns = [
     path('api/v1/posts/like/', PostLikeView.as_view(), name="PostLikeView"),
     path('api/v1/posts/comments/', PostCommentView.as_view(), name="PostCommentView"),
     path('api/v1/posts/<str:network_id>/', GetPostsView.as_view(), name="GetPostsView"),
-    path('api/v1/post/detail/', PostDetailView.as_view(), name="PostDetailView")
+    path('api/v1/post/detail/', PostDetailView.as_view(), name="PostDetailView"),
+    path('api/v1/item/checkout/', NetworkPostItemSessionCheckout.as_view(), name="NetworkPostItemSessionCheckout")
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -98,3 +98,10 @@ class GetPostsViewSerializer(serializers.Serializer):
 
     def get_item_details(self, post):
         return ItemShortSerializer(post.item).data
+
+
+class NetworkPostItemSessionCheckoutSerializer(serializers.Serializer):
+    item_id = serializers.UUIDField(required=True)
+    total_price = serializers.IntegerField(required=True)
+    success_url = serializers.URLField(required=True)
+    cancel_url = serializers.URLField(required=True)

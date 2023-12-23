@@ -39,7 +39,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
     ShopCategoriesViewSerializer, GetItemsViewSerializer, TextToTexTMicrosoftViewSerializer, TranscribeAudioSerializer, \
     TextToTexTViewImageSerializer, VisionViewSerializer, PostLikeViewSerializer, PostCommentViewSerializer, \
-    GetPostsViewSerializer
+    GetPostsViewSerializer, NetworkPostItemSessionCheckoutSerializer
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
@@ -802,8 +802,54 @@ class PostDetailView(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         instance = self.get_object()
-        print(instance)
         serializer = GetPostsViewSerializer(instance)
         return Response(serializer.data)
 
+
+class NetworkPostItemSessionCheckout(generics.CreateAPIView):
+    serializer_class = NetworkPostItemSessionCheckoutSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            data = self.request.data
+            serializer = self.get_serializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            item_id = data.get("item_id")
+            item = Items.objects.get(item_id=item_id)
+            if item.public_bank:
+                SECRET_KEY = item.public_bank.private_key
+                WEBHOOK_SECRET = item.public_bank.webhook_key
+            if item.private_bank:
+                SECRET_KEY = item.private_bank.private_key
+                WEBHOOK_SECRET = item.private_bank.webhook_key
+            stripe.api_key = SECRET_KEY
+            stripe.endpoint_secret = WEBHOOK_SECRET
+            user = User.objects.get(email=self.request.user.email)
+            total_price = float(data.get("total_price"))
+            if total_price > 0:
+                checkout_session = stripe.checkout.Session.create(
+                    line_items=[
+                        {
+                            'price_data': {
+                                'currency': 'usd',
+                                'unit_amount': int(total_price * 100),
+                                'product_data': {
+                                    'name': item.title,
+                                    'images': [item.image.url]
+                                }
+                            },
+                            'quantity': 1,
+                        },
+                    ],
+                    mode='payment',
+                    metadata=dict({"data": str("test")}),
+                    customer_email=user,
+                    success_url=data.get("success_url"),
+                    cancel_url=data.get("cancel_url"),
+                )
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(checkout_session)
 
