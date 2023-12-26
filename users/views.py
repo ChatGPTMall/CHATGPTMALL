@@ -30,6 +30,7 @@ from django.contrib import messages
 from django.urls import reverse
 from django.utils import timezone
 import pandas as pd
+from openai import OpenAI
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -445,44 +446,38 @@ def get_chatgpt_response(request):
 
 def get_text(request):
     prompt = request.GET.get('text', '')
-    key = KeyManagement.objects.all().last()
-    openai.api_key = key.key
-    if key.platform == "MICROSOFT":
-        openai.api_base = "{}".format(key.endpoint)
-        openai.api_type = 'azure'
-        openai.api_version = "2023-03-15-preview"
-        model = "davinci"
-        response = openai.Completion.create(
-            engine=model,
-            max_tokens=int(2000),
-            prompt=prompt,
-        )
-        text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
-        return HttpResponse(str(text))
-    else:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            max_tokens=int(2000),
-            messages=[
-                {"role": "system", "content": "You are a chatbot"},
-                {"role": "user", "content": "{}?".format(prompt)},
-                ]
-        )
-        result = ''
-        for choice in response.choices:
-            result += choice.message.content
+    client = OpenAI()
+    client = OpenAI()
+    response = client.completions.create(
+        model="gpt-3.5-turbo-instruct",
+        prompt=prompt,
+        max_tokens=int(3000),
+        stop=None,
+    )
+    for object in response:
+        if "choices" in object:
+            response2 = object[1][0]
+            for object2 in response2:
+                if "text" in object2:
+                    result = object2[1]
 
-        return HttpResponse(str(result))
+    return HttpResponse(str(result))
 
 
 def get_image(request):
     prompt = request.GET.get('text', '')
-    openai.api_key = os.getenv("OPEN_AI_KEY")
-    resp = openai.Image.create(prompt="{}".format(prompt), n=1, size="1024x1024")
-    images = list()
-    for image in resp['data']:
-        images.append(image.url)
-    return HttpResponse(str(images[0]))
+    client = OpenAI()
+
+    response = client.images.generate(
+        model="dall-e-3",
+        prompt=prompt,
+        size="1024x1024",
+        quality="standard",
+        n=1,
+    )
+
+    image_url = response.data[0].url
+    return HttpResponse(str(image_url))
 
 
 def TextToText(request):
