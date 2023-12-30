@@ -33,7 +33,7 @@ from PIL import Image, ImageDraw, ImageFont
 from rest_framework.response import Response
 from django.shortcuts import render, redirect
 from engine.models import ImagesDB, ImageAnalysisDB, Items, Category, KeyManagement, Community, CommunityPosts, \
-    BankAccounts, CouponCode, FeedLikes
+    BankAccounts, CouponCode, FeedLikes, Purchases
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
@@ -689,12 +689,35 @@ class RedeemCouponView(generics.CreateAPIView):
             return Response({"error": "Invalid coupon_code provided"}, status=status.HTTP_404_NOT_FOUND)
 
 
-class ItemPurchases(generics.ListCreateAPIView):
+class ItemPurchases(generics.ListCreateAPIView, generics.UpdateAPIView):
     serializer_class = ItemPurchasesSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return self.request.user.user_purchases.all()
+
+    def get_object(self):
+        try:
+            return Purchases.objects.get(purchase_id=self.request.query_params.get("purchase_id", None))
+        except Exception as e:
+            return None
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance:
+            if not instance.is_modified:
+                is_paid = int(self.request.query_params.get("is_paid"))
+                is_purchased = int(self.request.query_params.get("is_purchased"))
+                is_paid = True if is_paid == 1 else False
+                is_purchased = True if is_purchased == 1 else False
+                instance.is_modified = True
+                instance.is_paid = is_paid
+                instance.is_purchased = is_purchased
+                instance.save()
+                return Response({"msg": "Purchase Updated Successfully"}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({"error": "Session Expired Try another item id"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Invalid purchase_id found"}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

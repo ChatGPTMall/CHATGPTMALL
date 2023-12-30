@@ -100,6 +100,7 @@ class Items(models.Model):
 
 
 class Purchases(models.Model):
+    purchase_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     item = models.ForeignKey(Items, on_delete=models.PROTECT, related_name="item_purchases")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_purchases", null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
@@ -109,6 +110,7 @@ class Purchases(models.Model):
     is_paid = models.BooleanField(default=False)
     is_shipped = models.BooleanField(default=False)
     is_purchased = models.BooleanField(default=False)
+    is_modified = models.BooleanField(default=False)
     purchase_date = models.DateTimeField(null=True)
     updated_on = models.DateTimeField(auto_now=True)
 
