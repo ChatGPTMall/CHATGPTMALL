@@ -528,7 +528,7 @@ class FeedLikes(models.Model):
 
 class Chatbots(models.Model):
     chatbot_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    assistant_id = models.CharField(unique=True, null=True, blank=True)
+    assistant_id = models.CharField(unique=True, null=True, blank=True, max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="chatbots")
     title = models.CharField(max_length=128)
     instructions = models.TextField()
