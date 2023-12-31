@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from engine.models import Category, Items, FeedComments, CommunityPosts
+from engine.models import Category, Items, FeedComments, CommunityPosts, Chatbots
 from homelinked.serializers import ItemShortSerializer
 
 
@@ -106,3 +106,12 @@ class NetworkPostItemSessionCheckoutSerializer(serializers.Serializer):
     total_price = serializers.IntegerField(required=True)
     success_url = serializers.URLField(required=True)
     cancel_url = serializers.URLField(required=True)
+
+
+class ChatbotAPIViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chatbots
+        exclude = (
+            "id",
+            "user"
+        )

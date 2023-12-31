@@ -524,3 +524,23 @@ class FeedLikes(models.Model):
 
     def __str__(self):
         return str(self.like_id)
+
+
+class Chatbots(models.Model):
+    chatbot_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    assistant_id = models.CharField(unique=True, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="chatbots")
+    title = models.CharField(max_length=128)
+    instructions = models.TextField()
+    description = models.TextField()
+    file = models.FileField(upload_to="chatbots/training_data")
+    image = models.ImageField(upload_to="chatbots")
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("Chatbot")
+        verbose_name_plural = _("Chatbots")
+
+    def __str__(self):
+        return str(self.chatbot_id)

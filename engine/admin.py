@@ -6,7 +6,7 @@ from django.contrib import admin
 from engine.models import Items, Category, ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, \
     Jobs, Capabilities, Community, CommunityMembers, CommunityPosts, CouponCode, UploadCoupons, Subscriptions, \
     UploadTeams, ImageAnalysisDB, VoiceCommands, KeyManagement, RestrictedKeywords, FreeSubscriptions, CapturedImages, \
-    BankAccounts, Purchases, FeedComments, FeedLikes
+    BankAccounts, Purchases, FeedComments, FeedLikes, Chatbots
 
 
 # Register your models here.
@@ -114,6 +114,11 @@ class FeedLikesAdmin(admin.ModelAdmin):
     search_fields = ("user__email", )
 
 
+class ChatbotsAdmin(admin.ModelAdmin):
+    list_display = ("user", "chatbot_id", "title", "created_on", "updated_at")
+    search_fields = ("user__email",)
+
+
 admin.site.register(Category)
 admin.site.register(Items)
 admin.site.register(ResponsesDB)
@@ -141,5 +146,6 @@ admin.site.register(BankAccounts)
 admin.site.register(Purchases, PurchasesAdmin)
 admin.site.register(FeedComments, FeedCommentsAdmin)
 admin.site.register(FeedLikes, FeedLikesAdmin)
+admin.site.register(Chatbots, ChatbotsAdmin)
 
 

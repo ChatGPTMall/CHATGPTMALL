@@ -39,7 +39,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
     ShopCategoriesViewSerializer, GetItemsViewSerializer, TextToTexTMicrosoftViewSerializer, TranscribeAudioSerializer, \
     TextToTexTViewImageSerializer, VisionViewSerializer, PostLikeViewSerializer, PostCommentViewSerializer, \
-    GetPostsViewSerializer, NetworkPostItemSessionCheckoutSerializer
+    GetPostsViewSerializer, NetworkPostItemSessionCheckoutSerializer, ChatbotAPIViewSerializer
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
@@ -876,3 +876,18 @@ class NetworkPostItemSessionCheckout(generics.CreateAPIView):
 
         return Response(checkout_session)
 
+
+class ChatbotAPIView(generics.ListCreateAPIView):
+    parser_classes = (MultiPartParser, FormParser)
+    serializer_class = ChatbotAPIViewSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return self.request.user.chatbots.all()
+
+    def create(self, request, *args, **kwargs):
+        data = self.request.data
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=self.request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
