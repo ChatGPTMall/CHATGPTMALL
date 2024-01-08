@@ -544,3 +544,19 @@ class Chatbots(models.Model):
 
     def __str__(self):
         return str(self.chatbot_id)
+
+
+class WhatsappConfiguration(models.Model):
+    chatbot = models.ForeignKey(Chatbots, related_name="configurations", on_delete=models.CASCADE)
+    version = models.CharField(max_length=60, null=True, blank=True)
+    phone_no_id = models.CharField(max_length=200)
+    access_token = models.TextField()
+    app_id = models.TextField()
+    app_secret = models.TextField()
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("Chatbot Configuration")
+        verbose_name_plural = _("Chatbot Configurations")
+

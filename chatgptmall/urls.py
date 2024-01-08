@@ -24,7 +24,8 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
     ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView, TextToTexTOpeniaiView, \
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView, ItemCreateCheckoutSessionView, GetTaobaoItems, \
     GetCurrencies, GrowthNetworkFilters, RedeemCouponView, ItemPurchases, PostLikeView, PostCommentView, GetPostsView, \
-    PostDetailView, NetworkPostItemSessionCheckout, ChatbotAPIView
+    PostDetailView, NetworkPostItemSessionCheckout, ChatbotAPIView, SendWhatsappMessage, WhatsappWebhook, \
+    ChatbotDelUpdateAPIView
 from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory, \
     CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
@@ -47,7 +48,7 @@ from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, Upl
     text2VoicePlanDetail, text2TextPlanDetail, text2ImagePlanDetail, image2ImagePlanDetail, \
     object_detectPlanDetail, voice2commandPlanDetail, text2commandPlanDetail, OcrPlanDetail, imageAnalysisPlanDetail, \
     RetailBotsView, ShopCheckout, ItemPaymentSuccess, RegisterViewV2, LoginViewV2, ProfileViewV2, GetUserItemData, \
-    LogoutViewV2
+    LogoutViewV2, privacy
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -260,7 +261,11 @@ urlpatterns = [
     path('api/v1/item/checkout/', NetworkPostItemSessionCheckout.as_view(), name="NetworkPostItemSessionCheckout"),
 
     # chatbots
-    path('api/v1/chatbots/', ChatbotAPIView.as_view(), name="ChatbotAPIView")
+    path('privacy/', privacy, name="privacy"),
+    path('api/v1/chatbots/', ChatbotAPIView.as_view(), name="ChatbotAPIView"),
+    path('api/v1/chatbot/', ChatbotDelUpdateAPIView.as_view(), name="ChatbotDelUpdateAPIView"),
+    path('api/v1/send_whatsapp_message/', SendWhatsappMessage.as_view, name="SendWhatsappMessage"),
+    path("webhook", WhatsappWebhook.as_view(), name="WhatsappWebhook")
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

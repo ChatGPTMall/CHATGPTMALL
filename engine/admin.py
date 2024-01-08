@@ -6,7 +6,7 @@ from django.contrib import admin
 from engine.models import Items, Category, ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, \
     Jobs, Capabilities, Community, CommunityMembers, CommunityPosts, CouponCode, UploadCoupons, Subscriptions, \
     UploadTeams, ImageAnalysisDB, VoiceCommands, KeyManagement, RestrictedKeywords, FreeSubscriptions, CapturedImages, \
-    BankAccounts, Purchases, FeedComments, FeedLikes, Chatbots
+    BankAccounts, Purchases, FeedComments, FeedLikes, Chatbots, WhatsappConfiguration
 
 
 # Register your models here.
@@ -147,5 +147,6 @@ admin.site.register(Purchases, PurchasesAdmin)
 admin.site.register(FeedComments, FeedCommentsAdmin)
 admin.site.register(FeedLikes, FeedLikesAdmin)
 admin.site.register(Chatbots, ChatbotsAdmin)
+admin.site.register(WhatsappConfiguration)
 
 

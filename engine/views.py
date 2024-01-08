@@ -2,23 +2,32 @@ import base64
 import json
 import os
 import ast
+import tempfile
 import urllib
 from json import JSONDecodeError
+from pathlib import Path
 
 import openai
 import stripe
 import requests
 from io import BytesIO
 
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 
 from django.core.files.base import ContentFile
 from drf_spectacular.utils import extend_schema
 from openai import OpenAI
+from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
 
+from engine.assistants import create_assistant
+from engine.authentication import HMACAuthentication
 from engine.permissions import HaveCredits
+from engine.thread_functions import run_in_thread
 from homelinked.models import CreditsHistory, FeaturesChoices
 from homelinked.serializers import RedeemCouponViewSerializer, ItemPurchasesSerializer
 from skybrain.models import Room, CustomerSupport
@@ -33,7 +42,7 @@ from PIL import Image, ImageDraw, ImageFont
 from rest_framework.response import Response
 from django.shortcuts import render, redirect
 from engine.models import ImagesDB, ImageAnalysisDB, Items, Category, KeyManagement, Community, CommunityPosts, \
-    BankAccounts, CouponCode, FeedLikes, Purchases
+    BankAccounts, CouponCode, FeedLikes, Purchases, Chatbots
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
@@ -876,7 +885,6 @@ class NetworkPostItemSessionCheckout(generics.CreateAPIView):
 
         return Response(checkout_session)
 
-
 class ChatbotAPIView(generics.ListCreateAPIView):
     parser_classes = (MultiPartParser, FormParser)
     serializer_class = ChatbotAPIViewSerializer
@@ -890,4 +898,183 @@ class ChatbotAPIView(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save(user=self.request.user)
+
+        uploaded_file = data.get("file")
+        # Save the uploaded file temporarily
+        with tempfile.NamedTemporaryFile(delete=False, suffix=Path(uploaded_file.name).suffix) as temp_file:
+            for chunk in uploaded_file.chunks():
+                temp_file.write(chunk)
+            temp_file_path = Path(temp_file.name)
+        client = OpenAI()
+        # Use the saved file path with the OpenAI API
+        file = client.files.create(
+            file=temp_file_path,
+            purpose="assistants"
+        )
+        # Optionally delete the temporary file after use
+        temp_file_path.unlink()
+        run_in_thread(create_assistant, (file, serializer.data.get("chatbot_id")))
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class SendWhatsappMessage(generics.CreateAPIView):
+    pass
+
+
+class WhatsappWebhook(generics.ListCreateAPIView):
+    serializer_class = []
+    authentication_classes = [HMACAuthentication]
+
+    @staticmethod
+    def is_valid_whatsapp_message(body):
+        """
+        Check if the incoming webhook event has a valid WhatsApp message structure.
+        """
+        return (
+                body.get("object")
+                and body.get("entry")
+                and body["entry"][0].get("changes")
+                and body["entry"][0]["changes"][0].get("value")
+                and body["entry"][0]["changes"][0]["value"].get("messages")
+                and body["entry"][0]["changes"][0]["value"]["messages"][0]
+        )
+
+    def get(self, request, *args, **kwargs):
+        # Parse params from the webhook verification request
+        mode = request.query_params.get('hub.mode')
+        token = request.query_params.get('hub.verify_token')
+
+        if mode and token:
+            # Check the mode and token sent are correct
+            if mode == 'subscribe' and token == os.getenv("verify_token"):
+                # Respond with 200 OK and challenge token from the request
+                return HttpResponse(request.GET.get('hub.challenge'), status=status.HTTP_200_OK)
+            else:
+                # Responds with '403 Forbidden' if verify tokens do not match
+                return HttpResponse("Verification failed", status=403)
+        else:
+            # Responds with '400 Bad Request' if parameters are missing
+            return HttpResponse("Verification failed", status=400)
+
+
+    @staticmethod
+    def get_text_message_input(recipient, text):
+        return json.dumps(
+            {
+                "messaging_product": "whatsapp",
+                "recipient_type": "individual",
+                "to": recipient,
+                "type": "text",
+                "text": {"preview_url": False, "body": text},
+            }
+        )
+
+    def send_message(self, data1):
+        data1 = json.loads(data1)
+        print(data1)
+        headers = {
+            "Content-type": "application/json",
+            "Authorization": "Bearer {}".format(os.getenv("access_token")),
+        }
+
+        url = "https://graph.facebook.com/v17.0/217794034744867/messages"
+        data = {
+            "messaging_product": "whatsapp",
+            "recipient_type": "individual",
+            "to": data1["to"],
+            "type": "text",
+            "text":
+                {
+                    "preview_url": False,
+                    "body": "sorry we are closed"
+                }
+        }
+
+        try:
+            response = requests.post(
+                url, data=json.dumps(data), headers=headers, timeout=10
+            )
+            print(response.json())
+            # print(response.status_code)
+            # print(response.text)
+        except requests.Timeout:
+            return Response({"status": "error", "message": "Request timed out"}), 408
+        except (
+                requests.RequestException
+        ) as e:  # This will catch any general request exception
+            return Response({"status": "error", "message": "Failed to send message"}), 500
+        else:
+            print("else")
+            return response
+
+    def process_whatsapp_message(self, body):
+        print(body)
+        wa_id = body["entry"][0]["changes"][0]["value"]["contacts"][0]["wa_id"]
+        name = body["entry"][0]["changes"][0]["value"]["contacts"][0]["profile"]["name"]
+
+        message = body["entry"][0]["changes"][0]["value"]["messages"][0]
+        message_body = message["text"]["body"]
+
+        # TODO: implement custom function here
+        # response = generate_response(message_body)
+
+        # OpenAI Integration
+        # response = generate_response(message_body, wa_id, name)
+        # response = process_text_for_whatsapp(response)
+
+        data = self.get_text_message_input(wa_id, message)
+        self.send_message(data)
+
+    # @method_decorator(signature_required)
+    def post(self, request, *args, **kwargs):
+        try:
+            body = self.request.data
+            # print(body)
+
+            # Check if it's a WhatsApp status update
+            # if (
+            #         body.get("entry", [{}])[0]
+            #                 .get("changes", [{}])[0]
+            #                 .get("value", {})
+            #                 .get("statuses")
+            # ):
+            #     return Response({"status": "ok"}, status=status.HTTP_200_OK)
+
+            if self.is_valid_whatsapp_message(body):
+                self.process_whatsapp_message(body)
+                return Response({"status": "ok"}, status=status.HTTP_200_OK)
+            else:
+                # if the request is not a WhatsApp API event, return an error
+                return Response(
+                    {"status": "error", "message": "Not a WhatsApp API event"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+        except json.JSONDecodeError:
+            return Response(
+                {"status": "error", "message": "Invalid JSON provided"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class ChatbotDelUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
+    parser_classes = (MultiPartParser, FormParser)
+    serializer_class = ChatbotAPIViewSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        try:
+            return Chatbots.objects.get(
+                chatbot_id=self.request.query_params.get("chatbot_id", None), user=self.request.user)
+        except Exception as e:
+            raise ValidationError({"error": str(e)})
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', True)
+        serializer = self.get_serializer(self.get_object(), data=self.request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self, request, *args, **kwargs):
+        self.get_object().delete()
+        return Response({"msg": "Chatbot Deleted Successfully"})

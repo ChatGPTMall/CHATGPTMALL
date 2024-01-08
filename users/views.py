@@ -1634,3 +1634,6 @@ class ProfileViewV2(generics.RetrieveUpdateAPIView):
                 "error": "Ah oh, there was some issue with the backend! Please contact admin!"
             }), status=500)
 
+
+def privacy(request):
+    return render(request, "privacy.html")
