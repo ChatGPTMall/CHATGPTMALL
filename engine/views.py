@@ -895,10 +895,6 @@ class ChatbotAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         data = self.request.data
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(user=self.request.user)
-
         uploaded_file = data.get("file")
         # Save the uploaded file temporarily
         with tempfile.NamedTemporaryFile(delete=False, suffix=Path(uploaded_file.name).suffix) as temp_file:
@@ -913,7 +909,12 @@ class ChatbotAPIView(generics.ListCreateAPIView):
         )
         # Optionally delete the temporary file after use
         temp_file_path.unlink()
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=self.request.user)
+
         run_in_thread(create_assistant, (file, serializer.data.get("chatbot_id")))
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -976,8 +977,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             "Content-type": "application/json",
             "Authorization": "Bearer {}".format(os.getenv("access_token")),
         }
-
-        url = "https://graph.facebook.com/v17.0/217794034744867/messages"
+        url = "https://graph.facebook.com/v17.0/228333153686422/messages"
         data = {
             "messaging_product": "whatsapp",
             "recipient_type": "individual",
