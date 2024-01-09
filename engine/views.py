@@ -42,7 +42,7 @@ from PIL import Image, ImageDraw, ImageFont
 from rest_framework.response import Response
 from django.shortcuts import render, redirect
 from engine.models import ImagesDB, ImageAnalysisDB, Items, Category, KeyManagement, Community, CommunityPosts, \
-    BankAccounts, CouponCode, FeedLikes, Purchases, Chatbots
+    BankAccounts, CouponCode, FeedLikes, Purchases, Chatbots, WhatsappConfiguration
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
@@ -1081,7 +1081,7 @@ class ChatbotDelUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
         return Response({"msg": "Chatbot Deleted Successfully"})
 
 
-class WhatsappConfiguration(generics.CreateAPIView):
+class WhatsappConfigurationView(generics.ListCreateAPIView):
     serializer_class = WhatsappConfigurationSerializer
     permission_classes = [IsAuthenticated]
 
@@ -1090,6 +1090,7 @@ class WhatsappConfiguration(generics.CreateAPIView):
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         chatbot = data.get("chatbot", None)
-        chatbot = WhatsappConfiguration.objects.get(chatbot=chatbot)
+        print(chatbot)
+        chatbot = Chatbots.objects.get(chatbot_id=str(chatbot))
         serializer.save(chatbot=chatbot)
         return Response({"msg": "Chatbot Integrated with whatsapp successfully"}, status=status.HTTP_201_CREATED)

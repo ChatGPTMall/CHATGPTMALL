@@ -25,7 +25,7 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView, ItemCreateCheckoutSessionView, GetTaobaoItems, \
     GetCurrencies, GrowthNetworkFilters, RedeemCouponView, ItemPurchases, PostLikeView, PostCommentView, GetPostsView, \
     PostDetailView, NetworkPostItemSessionCheckout, ChatbotAPIView, SendWhatsappMessage, WhatsappWebhook, \
-    ChatbotDelUpdateAPIView, WhatsappConfiguration
+    ChatbotDelUpdateAPIView, WhatsappConfigurationView
 from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory, \
     CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
@@ -266,7 +266,7 @@ urlpatterns = [
     path('api/v1/chatbot/', ChatbotDelUpdateAPIView.as_view(), name="ChatbotDelUpdateAPIView"),
     path('api/v1/send_whatsapp_message/', SendWhatsappMessage.as_view(), name="SendWhatsappMessage"),
     path("webhook", WhatsappWebhook.as_view(), name="WhatsappWebhook"),
-    path('api/v1/whatsapp/configuration/', WhatsappConfiguration.as_view(), name="WhatsappConfiguration")
+    path('api/v1/whatsapp/configuration/', WhatsappConfigurationView.as_view(), name="WhatsappConfiguration")
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
