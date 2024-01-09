@@ -25,7 +25,7 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView, ItemCreateCheckoutSessionView, GetTaobaoItems, \
     GetCurrencies, GrowthNetworkFilters, RedeemCouponView, ItemPurchases, PostLikeView, PostCommentView, GetPostsView, \
     PostDetailView, NetworkPostItemSessionCheckout, ChatbotAPIView, SendWhatsappMessage, WhatsappWebhook, \
-    ChatbotDelUpdateAPIView
+    ChatbotDelUpdateAPIView, WhatsappConfiguration
 from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory, \
     CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
