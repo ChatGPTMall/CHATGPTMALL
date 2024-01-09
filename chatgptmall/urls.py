@@ -264,7 +264,7 @@ urlpatterns = [
     path('privacy/', privacy, name="privacy"),
     path('api/v1/chatbots/', ChatbotAPIView.as_view(), name="ChatbotAPIView"),
     path('api/v1/chatbot/', ChatbotDelUpdateAPIView.as_view(), name="ChatbotDelUpdateAPIView"),
-    path('api/v1/send_whatsapp_message/', SendWhatsappMessage.as_view, name="SendWhatsappMessage"),
+    path('api/v1/send_whatsapp_message/', SendWhatsappMessage.as_view(), name="SendWhatsappMessage"),
     path("webhook", WhatsappWebhook.as_view(), name="WhatsappWebhook"),
     path('api/v1/whatsapp/configuration/', WhatsappConfiguration.as_view(), name="WhatsappConfiguration")
 
