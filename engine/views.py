@@ -1092,4 +1092,4 @@ class WhatsappConfiguration(generics.CreateAPIView):
         chatbot = data.get("chatbot", None)
         chatbot = WhatsappConfiguration.objects.get(chatbot=chatbot)
         serializer.save(chatbot=chatbot)
-        return Response("Chatbot Integrated with whatsapp successfully", status=status.HTTP_201_CREATED)
+        return Response({"msg": "Chatbot Integrated with whatsapp successfully"}, status=status.HTTP_201_CREATED)
