@@ -48,7 +48,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
     ShopCategoriesViewSerializer, GetItemsViewSerializer, TextToTexTMicrosoftViewSerializer, TranscribeAudioSerializer, \
     TextToTexTViewImageSerializer, VisionViewSerializer, PostLikeViewSerializer, PostCommentViewSerializer, \
-    GetPostsViewSerializer, NetworkPostItemSessionCheckoutSerializer, ChatbotAPIViewSerializer
+    GetPostsViewSerializer, NetworkPostItemSessionCheckoutSerializer, ChatbotAPIViewSerializer, \
+    WhatsappConfigurationSerializer
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
@@ -1078,3 +1079,17 @@ class ChatbotDelUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     def delete(self, request, *args, **kwargs):
         self.get_object().delete()
         return Response({"msg": "Chatbot Deleted Successfully"})
+
+
+class WhatsappConfiguration(generics.CreateAPIView):
+    serializer_class = WhatsappConfigurationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        data = self.request.data
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        chatbot = data.get("chatbot", None)
+        chatbot = WhatsappConfiguration.objects.get(chatbot=chatbot)
+        serializer.save(chatbot=chatbot)
+        return Response("Chatbot Integrated with whatsapp successfully", status=status.HTTP_201_CREATED)

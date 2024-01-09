@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from engine.models import Category, Items, FeedComments, CommunityPosts, Chatbots
+from engine.models import Category, Items, FeedComments, CommunityPosts, Chatbots, WhatsappConfiguration
 from homelinked.serializers import ItemShortSerializer
 
 
@@ -114,4 +114,12 @@ class ChatbotAPIViewSerializer(serializers.ModelSerializer):
         exclude = (
             "id",
             "user"
+        )
+
+
+class WhatsappConfigurationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WhatsappConfiguration
+        exclude = (
+            "chatbot",
         )

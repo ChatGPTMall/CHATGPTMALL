@@ -549,6 +549,7 @@ class Chatbots(models.Model):
 class WhatsappConfiguration(models.Model):
     chatbot = models.ForeignKey(Chatbots, related_name="configurations", on_delete=models.CASCADE)
     version = models.CharField(max_length=60, null=True, blank=True)
+    phone_no = models.CharField(max_length=30)
     phone_no_id = models.CharField(max_length=200)
     access_token = models.TextField()
     app_id = models.TextField()
