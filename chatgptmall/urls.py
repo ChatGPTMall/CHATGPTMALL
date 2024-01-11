@@ -25,7 +25,7 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView, ItemCreateCheckoutSessionView, GetTaobaoItems, \
     GetCurrencies, GrowthNetworkFilters, RedeemCouponView, ItemPurchases, PostLikeView, PostCommentView, GetPostsView, \
     PostDetailView, NetworkPostItemSessionCheckout, ChatbotAPIView, SendWhatsappMessage, WhatsappWebhook, \
-    ChatbotDelUpdateAPIView, WhatsappConfigurationView
+    ChatbotDelUpdateAPIView, WhatsappConfigurationView, ItemsBulkCreate
 from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory, \
     CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
@@ -259,6 +259,7 @@ urlpatterns = [
     path('api/v1/posts/<str:network_id>/', GetPostsView.as_view(), name="GetPostsView"),
     path('api/v1/post/detail/', PostDetailView.as_view(), name="PostDetailView"),
     path('api/v1/item/checkout/', NetworkPostItemSessionCheckout.as_view(), name="NetworkPostItemSessionCheckout"),
+    path('api/v1/items/bulk_create/', ItemsBulkCreate.as_view(), name="ItemsBulkCreate"),
 
     # chatbots
     path('privacy/', privacy, name="privacy"),

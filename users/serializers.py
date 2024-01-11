@@ -48,7 +48,6 @@ class UserSerializer(serializers.ModelSerializer):
             'groups',
             'user_permissions',
             'reset_token',
-            'premium',
             "access",
             "purchased_on",
             "room",

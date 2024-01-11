@@ -49,7 +49,7 @@ from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerial
     ShopCategoriesViewSerializer, GetItemsViewSerializer, TextToTexTMicrosoftViewSerializer, TranscribeAudioSerializer, \
     TextToTexTViewImageSerializer, VisionViewSerializer, PostLikeViewSerializer, PostCommentViewSerializer, \
     GetPostsViewSerializer, NetworkPostItemSessionCheckoutSerializer, ChatbotAPIViewSerializer, \
-    WhatsappConfigurationSerializer
+    WhatsappConfigurationSerializer, ItemsBulkCreateSerializer
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
@@ -839,6 +839,25 @@ class PostDetailView(generics.ListAPIView):
         return Response(serializer.data)
 
 
+class ItemsBulkCreate(generics.CreateAPIView):
+    serializer_class = GetItemsViewSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        data = self.request.data
+        communities = self.request.data.get("communities")
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(vendor=self.request.user, vendor_email=self.request.user.email)
+        item_instance = Items.objects.get(id=serializer.data.get("id"))
+        if isinstance(communities, str):
+            communities = json.loads(communities)
+        for community_id in communities:
+            community = Community.objects.get(community_id=community_id)
+            CommunityPosts.objects.create(community=community, user=self.request.user, item=item_instance)
+        return Response({"msg": "Item Uploaded Successfully in all communities"}, status=status.HTTP_200_OK)
+
+
 class NetworkPostItemSessionCheckout(generics.CreateAPIView):
     serializer_class = NetworkPostItemSessionCheckoutSerializer
     permission_classes = [IsAuthenticated]
@@ -912,7 +931,7 @@ class ChatbotAPIView(generics.ListCreateAPIView):
         temp_file_path.unlink()
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(user=self.request.user)
+        serializer.save(user=self.request.user, file_id=file.id)
 
         run_in_thread(create_assistant, (file, serializer.data.get("chatbot_id")))
 
@@ -971,23 +990,63 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             }
         )
 
-    def send_message(self, data1):
+    def get_openai_response(self, input_, phone_no):
+        client = OpenAI()
+        configuration = WhatsappConfiguration.objects.filter(phone_no=phone_no).first()
+        if configuration:
+            thread = client.beta.threads.create()
+            message = client.beta.threads.messages.create(
+                thread_id=thread.id,
+                role="user",
+                content=input_
+            )
+            assistant_id = configuration.chatbot.assistant_id
+            run = client.beta.threads.runs.create(
+                thread_id=thread.id,
+                assistant_id=assistant_id,
+                instructions="Please address the user as Faisal Ahmad. The user has a premium account."
+            )
+            run = client.beta.threads.runs.retrieve(
+                thread_id=thread.id,
+                run_id=run.id
+            )
+            messages = client.beta.threads.messages.list(
+                thread_id=thread.id
+            )
+            print(messages)
+        response = client.completions.create(
+            model="gpt-3.5-turbo-instruct",
+            prompt=input_,
+            max_tokens=int(500),
+            stop=None,
+        )
+        for object in response:
+            if "choices" in object:
+                response2 = object[1][0]
+                for object2 in response2:
+                    if "text" in object2:
+                        result = object2[1]
+
+        return result
+
+    def send_message(self, data1, body):
         data1 = json.loads(data1)
-        print(data1)
+        phone_no = data1["to"]
+        res = self.get_openai_response(body, phone_no)
         headers = {
             "Content-type": "application/json",
             "Authorization": "Bearer {}".format(os.getenv("access_token")),
         }
-        url = "https://graph.facebook.com/v17.0/228333153686422/messages"
+        url = "https://graph.facebook.com/v17.0/217794034744867/messages"
         data = {
             "messaging_product": "whatsapp",
             "recipient_type": "individual",
-            "to": data1["to"],
+            "to": phone_no,
             "type": "text",
             "text":
                 {
                     "preview_url": False,
-                    "body": "sorry we are closed"
+                    "body": res
                 }
         }
 
@@ -995,52 +1054,25 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             response = requests.post(
                 url, data=json.dumps(data), headers=headers, timeout=10
             )
-            print(response.json())
-            # print(response.status_code)
-            # print(response.text)
         except requests.Timeout:
             return Response({"status": "error", "message": "Request timed out"}), 408
-        except (
-                requests.RequestException
-        ) as e:  # This will catch any general request exception
+        except Exception as e:
             return Response({"status": "error", "message": "Failed to send message"}), 500
         else:
-            print("else")
             return response
 
     def process_whatsapp_message(self, body):
-        print(body)
         wa_id = body["entry"][0]["changes"][0]["value"]["contacts"][0]["wa_id"]
         name = body["entry"][0]["changes"][0]["value"]["contacts"][0]["profile"]["name"]
 
         message = body["entry"][0]["changes"][0]["value"]["messages"][0]
         message_body = message["text"]["body"]
-
-        # TODO: implement custom function here
-        # response = generate_response(message_body)
-
-        # OpenAI Integration
-        # response = generate_response(message_body, wa_id, name)
-        # response = process_text_for_whatsapp(response)
-
         data = self.get_text_message_input(wa_id, message)
-        self.send_message(data)
+        self.send_message(data, message_body)
 
-    # @method_decorator(signature_required)
     def post(self, request, *args, **kwargs):
         try:
             body = self.request.data
-            # print(body)
-
-            # Check if it's a WhatsApp status update
-            # if (
-            #         body.get("entry", [{}])[0]
-            #                 .get("changes", [{}])[0]
-            #                 .get("value", {})
-            #                 .get("statuses")
-            # ):
-            #     return Response({"status": "ok"}, status=status.HTTP_200_OK)
-
             if self.is_valid_whatsapp_message(body):
                 self.process_whatsapp_message(body)
                 return Response({"status": "ok"}, status=status.HTTP_200_OK)
@@ -1090,7 +1122,6 @@ class WhatsappConfigurationView(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         chatbot = data.get("chatbot", None)
-        print(chatbot)
         chatbot = Chatbots.objects.get(chatbot_id=str(chatbot))
         serializer.save(chatbot=chatbot)
         return Response({"msg": "Chatbot Integrated with whatsapp successfully"}, status=status.HTTP_201_CREATED)

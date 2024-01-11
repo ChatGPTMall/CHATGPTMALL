@@ -101,6 +101,19 @@ class GetPostsViewSerializer(serializers.Serializer):
         return ItemShortSerializer(post.item).data
 
 
+class ItemsBulkCreateSerializer(serializers.Serializer):
+    item_type = serializers.CharField(required=True)
+    title = serializers.CharField(required=True)
+    description = serializers.CharField(required=True)
+    image = serializers.ImageField(required=True)
+    price = serializers.FloatField(required=True)
+    location = serializers.CharField(required=True)
+    stock = serializers.IntegerField(required=True)
+    public_bank = serializers.IntegerField(required=True)
+    category = serializers.IntegerField(required=True)
+
+
+
 class NetworkPostItemSessionCheckoutSerializer(serializers.Serializer):
     item_id = serializers.UUIDField(required=True)
     total_price = serializers.IntegerField(required=True)

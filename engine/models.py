@@ -534,6 +534,7 @@ class Chatbots(models.Model):
     instructions = models.TextField()
     description = models.TextField()
     file = models.FileField(upload_to="chatbots/training_data")
+    file_id = models.CharField(max_length=70, null=True)
     image = models.ImageField(upload_to="chatbots")
     created_on = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
