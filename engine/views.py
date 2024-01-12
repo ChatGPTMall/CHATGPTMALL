@@ -850,8 +850,12 @@ class ItemsBulkCreate(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save(vendor=self.request.user, vendor_email=self.request.user.email)
         item_instance = Items.objects.get(id=serializer.data.get("id"))
+
         if isinstance(communities, str):
-            communities = json.loads(communities)
+            try:
+                communities = json.loads(communities)
+            except JSONDecodeError:
+                communities = communities.split(",")
         for community_id in communities:
             community = Community.objects.get(community_id=community_id)
             CommunityPosts.objects.create(community=community, user=self.request.user, item=item_instance)
