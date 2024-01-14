@@ -558,7 +558,8 @@ class GetItemsView(generics.ListCreateAPIView):
             community = Community.objects.get(community_id=community_id)
             serializer = self.get_serializer(data=data)
             serializer.is_valid(raise_exception=True)
-            if data.get("public_bank", None):
+            is_bank = data.get("public_bank", None)
+            if not is_bank:
                 stripe_private_key = data.get("stripe_private_key")
                 stripe_public_key = data.get("stripe_public_key")
                 stripe_webhook_key = data.get("stripe_webhook_key")
