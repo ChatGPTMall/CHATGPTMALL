@@ -42,7 +42,7 @@ from PIL import Image, ImageDraw, ImageFont
 from rest_framework.response import Response
 from django.shortcuts import render, redirect
 from engine.models import ImagesDB, ImageAnalysisDB, Items, Category, KeyManagement, Community, CommunityPosts, \
-    BankAccounts, CouponCode, FeedLikes, Purchases, Chatbots, WhatsappConfiguration
+    BankAccounts, CouponCode, FeedLikes, Purchases, Chatbots, WhatsappConfiguration, PrivateBankAccounts
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
@@ -553,11 +553,23 @@ class GetItemsView(generics.ListCreateAPIView):
 
     def post(self, request, *args, **kwargs):
         try:
+            data = request.data
             community_id = self.request.query_params.get("community_id")
             community = Community.objects.get(community_id=community_id)
-            serializer = self.get_serializer(data=request.data)
+            serializer = self.get_serializer(data=data)
             serializer.is_valid(raise_exception=True)
-            serializer.save(vendor=self.request.user, vendor_email=self.request.user.email)
+            if data.get("public_bank", None):
+                stripe_private_key = data.get("stripe_private_key")
+                stripe_public_key = data.get("stripe_public_key")
+                stripe_webhook_key = data.get("stripe_webhook_key")
+                instance, created = PrivateBankAccounts.objects.get_or_create(
+                    private_key=stripe_private_key, public_key=stripe_public_key, webhook_key=stripe_webhook_key
+                )
+                serializer.save(
+                    vendor=self.request.user, vendor_email=self.request.user.email, private_bank=instance
+                )
+            else:
+                serializer.save(vendor=self.request.user, vendor_email=self.request.user.email)
             item_instance = Items.objects.get(id=serializer.data.get("id"))
             CommunityPosts.objects.create(community=community, user=self.request.user, item=item_instance)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
