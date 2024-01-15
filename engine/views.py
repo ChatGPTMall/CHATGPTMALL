@@ -3,6 +3,7 @@ import json
 import os
 import ast
 import tempfile
+import time
 import urllib
 from json import JSONDecodeError
 from pathlib import Path
@@ -562,9 +563,10 @@ class GetItemsView(generics.ListCreateAPIView):
             if not is_bank:
                 stripe_private_key = data.get("stripe_private_key")
                 stripe_public_key = data.get("stripe_public_key")
-                stripe_webhook_key = data.get("stripe_webhook_key")
+                stripe_webhook_key = data.get("stripe_webhook_key", "None")
                 instance, created = PrivateBankAccounts.objects.get_or_create(
-                    private_key=stripe_private_key, public_key=stripe_public_key, webhook_key=stripe_webhook_key
+                    user=self.request.user, private_key=stripe_private_key,
+                    public_key=stripe_public_key, webhook_key=stripe_webhook_key
                 )
                 serializer.save(
                     vendor=self.request.user, vendor_email=self.request.user.email, private_bank=instance
@@ -1007,30 +1009,35 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             }
         )
 
-    def get_openai_response(self, input_, phone_no):
+    def get_openai_response(self, input_, phone_number_id):
+
         client = OpenAI()
-        configuration = WhatsappConfiguration.objects.filter(phone_no=phone_no).first()
+        configuration = WhatsappConfiguration.objects.filter(phone_no_id=phone_number_id).first()
+        print(configuration, phone_number_id)
         if configuration:
+            file_id = configuration.chatbot.file_id
             thread = client.beta.threads.create()
+            assistant_id = configuration.chatbot.assistant_id
             message = client.beta.threads.messages.create(
                 thread_id=thread.id,
                 role="user",
-                content=input_
+                content=input_,
+                file_ids=[file_id]
             )
-            assistant_id = configuration.chatbot.assistant_id
             run = client.beta.threads.runs.create(
                 thread_id=thread.id,
                 assistant_id=assistant_id,
                 instructions="Please address the user as Faisal Ahmad. The user has a premium account."
             )
-            run = client.beta.threads.runs.retrieve(
-                thread_id=thread.id,
-                run_id=run.id
-            )
-            messages = client.beta.threads.messages.list(
-                thread_id=thread.id
-            )
-            print(messages)
+            # Wait for completion
+            while run.status != "completed":
+                # Be nice to the API
+                time.sleep(0.5)
+                run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
+            messages = client.beta.threads.messages.list(thread_id=thread.id)
+            response = messages.data[0].content[0].text.value
+            return response
+
         response = client.completions.create(
             model="gpt-3.5-turbo-instruct",
             prompt=input_,
@@ -1046,10 +1053,10 @@ class WhatsappWebhook(generics.ListCreateAPIView):
 
         return result
 
-    def send_message(self, data1, body):
+    def send_message(self, data1, body, client_phone_no):
         data1 = json.loads(data1)
         phone_no = data1["to"]
-        res = self.get_openai_response(body, phone_no)
+        res = self.get_openai_response(body, client_phone_no)
         headers = {
             "Content-type": "application/json",
             "Authorization": "Bearer {}".format(os.getenv("access_token")),
@@ -1083,9 +1090,10 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         name = body["entry"][0]["changes"][0]["value"]["contacts"][0]["profile"]["name"]
 
         message = body["entry"][0]["changes"][0]["value"]["messages"][0]
+        client_phone_no = body["entry"][0]["changes"][0]["value"]["metadata"]["phone_number_id"]
         message_body = message["text"]["body"]
         data = self.get_text_message_input(wa_id, message)
-        self.send_message(data, message_body)
+        self.send_message(data, message_body, client_phone_no)
 
     def post(self, request, *args, **kwargs):
         try:

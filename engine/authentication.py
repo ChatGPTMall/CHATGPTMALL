@@ -72,7 +72,6 @@ def create_sha256_signature(payload, signature):
     hmac_object = hmac.new(os.getenv("APP_SECRET").encode('utf-8'), payload_bytes.encode('utf-8'), hashlib.sha256)
     # Generate the hex digest of the HMAC object
     generated_signature = hmac_object.hexdigest()
-    print(generated_signature, signature)
     return generated_signature == signature
 
 
@@ -85,9 +84,6 @@ class HMACAuthentication(authentication.BaseAuthentication):
         # We'll get the token from header with key 'Authorization'
         # We are expecting token to be in format: "Token (Actual encrypted key)"
         token = request.META.get('HTTP_X_HUB_SIGNATURE_256')
-
-        print(token)
         # print(request.data)
         signature = token[7:]
-        print(signature)
         create_sha256_signature(request.data, signature)

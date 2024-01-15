@@ -43,9 +43,10 @@ class BankAccounts(models.Model):
 
 
 class PrivateBankAccounts(models.Model):
+    user = models.ForeignKey(User, related_name="private_accounts", on_delete=models.PROTECT, null=True)
     private_key = models.CharField(_("Stripe Private Key"), unique=True, max_length=200)
     public_key = models.CharField(_("Stripe Public Key"), unique=True, max_length=200)
-    webhook_key = models.CharField(_("Stripe Webhook Key"), unique=True, max_length=200)
+    webhook_key = models.CharField(_("Stripe Webhook Key"), null=True, blank=True, max_length=200)
     added_on = models.DateTimeField(auto_now_add=True)
 
 
