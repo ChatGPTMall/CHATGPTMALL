@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from engine.models import PlanType, Community, CommunityPosts, Items, Purchases
-from homelinked.models import HomePlans, HomepageNewFeature, CreditsHistory
+from homelinked.models import HomePlans, HomepageNewFeature, CreditsHistory, WeChatAccounts
 
 
 class HomePlansAPIViewSerializer(serializers.ModelSerializer):
@@ -134,6 +134,16 @@ class ItemPurchasesSerializer(serializers.ModelSerializer):
         model = Purchases
         exclude = (
             "updated_on",
+            "user",
+            "id",
+        )
+
+
+class WeChatAPIViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WeChatAccounts
+        exclude = (
+            "added_on",
             "user",
             "id",
         )

@@ -6,10 +6,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import filters
 from engine.models import Community, CommunityMembers, Items
-from homelinked.models import HomePlans, HomepageNewFeature
+from homelinked.models import HomePlans, HomepageNewFeature, WeChatAccounts
 from homelinked.serializers import HomePlansAPIViewSerializer, HomepageNewFeatureViewSerializer, \
     CommunitiesViewSerializer, GetCreditsHistorySerializer, CommunitiesJoinViewSerializer, GrowthNetworkSerializer, \
-    ItemShortSerializer
+    ItemShortSerializer, WeChatAPIViewSerializer
 
 
 # Create your views here.
@@ -132,3 +132,23 @@ class UploadCapabilityPost(generics.CreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Items.DoesNotExist:
             return Response({"error": "Invalid item_id provided"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class WeChatAPIView(generics.CreateAPIView, generics.DestroyAPIView):
+    serializer_class = WeChatAPIViewSerializer
+
+    def get_object(self):
+        try:
+            return WeChatAccounts.objects.get(wechat_id=self.request.query_params.get("wechat_id", None))
+        except Exception as e:
+            return None
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        self.get_object().delete()
+        return Response({"msg": "WeChat Account Successfully"}, status=status.HTTP_200_OK)

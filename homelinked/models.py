@@ -92,3 +92,16 @@ class CreditsHistory(models.Model):
     @staticmethod
     def create_credits(user, tokens, feature):
         CreditsHistory.objects.create(user=user, tokens=tokens, feature=feature)
+
+
+class WeChatAccounts(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="wechat_accounts")
+    wechat_id = models.CharField(max_length=128)
+    app_id = models.CharField(max_length=200)
+    secret = models.CharField(max_length=200)
+    access_token = models.CharField(max_length=200)
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("WeChat Account")
+        verbose_name_plural = _("Add WeChat Accounts")

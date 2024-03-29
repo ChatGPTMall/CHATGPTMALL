@@ -27,7 +27,7 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
     PostDetailView, NetworkPostItemSessionCheckout, ChatbotAPIView, SendWhatsappMessage, WhatsappWebhook, \
     ChatbotDelUpdateAPIView, WhatsappConfigurationView, ItemsBulkCreate
 from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory, \
-    CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost
+    CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost, WeChatAPIView
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
     CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \
@@ -267,7 +267,10 @@ urlpatterns = [
     path('api/v1/chatbot/', ChatbotDelUpdateAPIView.as_view(), name="ChatbotDelUpdateAPIView"),
     path('api/v1/send_whatsapp_message/', SendWhatsappMessage.as_view(), name="SendWhatsappMessage"),
     path("webhook", WhatsappWebhook.as_view(), name="WhatsappWebhook"),
-    path('api/v1/whatsapp/configuration/', WhatsappConfigurationView.as_view(), name="WhatsappConfiguration")
+    path('api/v1/whatsapp/configuration/', WhatsappConfigurationView.as_view(), name="WhatsappConfiguration"),
+
+    # wechat APIs
+    path("api/wechat/", WeChatAPIView.as_view(), name="WeChatAPIView"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
