@@ -963,7 +963,7 @@ class SendWhatsappMessage(generics.CreateAPIView):
 
 class WhatsappWebhook(generics.ListCreateAPIView):
     serializer_class = []
-    authentication_classes = [HMACAuthentication]
+    # authentication_classes = [HMACAuthentication]
 
     @staticmethod
     def is_valid_whatsapp_message(body):
@@ -1061,7 +1061,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             "Content-type": "application/json",
             "Authorization": "Bearer {}".format(os.getenv("access_token")),
         }
-        url = "https://graph.facebook.com/v17.0/217794034744867/messages"
+        url = "https://graph.facebook.com/v19.0/291096477411186/messages"
         data = {
             "messaging_product": "whatsapp",
             "recipient_type": "individual",
@@ -1086,6 +1086,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             return response
 
     def process_whatsapp_message(self, body):
+        print(body)
         wa_id = body["entry"][0]["changes"][0]["value"]["contacts"][0]["wa_id"]
         name = body["entry"][0]["changes"][0]["value"]["contacts"][0]["profile"]["name"]
 
