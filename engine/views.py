@@ -983,18 +983,19 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         # Parse params from the webhook verification request
         mode = request.query_params.get('hub.mode')
         token = request.query_params.get('hub.verify_token')
+        return HttpResponse(request.GET.get('hub.challenge'), status=status.HTTP_200_OK)
 
-        if mode and token:
-            # Check the mode and token sent are correct
-            if mode == 'subscribe' and token == os.getenv("verify_token"):
-                # Respond with 200 OK and challenge token from the request
-                return HttpResponse(request.GET.get('hub.challenge'), status=status.HTTP_200_OK)
-            else:
-                # Responds with '403 Forbidden' if verify tokens do not match
-                return HttpResponse("Verification failed", status=403)
-        else:
-            # Responds with '400 Bad Request' if parameters are missing
-            return HttpResponse("Verification failed", status=400)
+        # if mode and token:
+        #     # Check the mode and token sent are correct
+        #     if mode == 'subscribe' and token == os.getenv("verify_token"):
+        #         # Respond with 200 OK and challenge token from the request
+        #         return HttpResponse(request.GET.get('hub.challenge'), status=status.HTTP_200_OK)
+        #     else:
+        #         # Responds with '403 Forbidden' if verify tokens do not match
+        #         return HttpResponse("Verification failed", status=403)
+        # else:
+        #     # Responds with '400 Bad Request' if parameters are missing
+        #     return HttpResponse("Verification failed", status=400)
 
 
     @staticmethod
