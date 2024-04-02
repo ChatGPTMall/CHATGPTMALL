@@ -1010,7 +1010,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             }
         )
 
-    def get_openai_response(self, input_, phone_number_id):
+    def get_openai_response(self, input_, phone_number_id, name):
 
         client = OpenAI()
         configuration = WhatsappConfiguration.objects.filter(phone_no_id=phone_number_id).first()
@@ -1028,7 +1028,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             run = client.beta.threads.runs.create(
                 thread_id=thread.id,
                 assistant_id=assistant_id,
-                instructions="Please address the user as Faisal Ahmad. The user has a premium account."
+                instructions="Please address the user as {}. The user has a premium account.".format(name)
             )
             # Wait for completion
             while run.status != "completed":
@@ -1054,10 +1054,10 @@ class WhatsappWebhook(generics.ListCreateAPIView):
 
         return result
 
-    def send_message(self, data1, body, client_phone_no):
+    def send_message(self, data1, body, client_phone_no, name):
         data1 = json.loads(data1)
         phone_no = data1["to"]
-        res = self.get_openai_response(body, client_phone_no)
+        res = self.get_openai_response(body, client_phone_no, name)
         headers = {
             "Content-type": "application/json",
             "Authorization": "Bearer {}".format(os.getenv("access_token")),
@@ -1095,7 +1095,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         client_phone_no = body["entry"][0]["changes"][0]["value"]["metadata"]["phone_number_id"]
         message_body = message["text"]["body"]
         data = self.get_text_message_input(wa_id, message)
-        self.send_message(data, message_body, client_phone_no)
+        self.send_message(data, message_body, client_phone_no, name)
 
     def post(self, request, *args, **kwargs):
         try:
