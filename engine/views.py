@@ -1041,7 +1041,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                             created = False
                             if User.objects.filter(email=input_).exists():
                                 User.objects.filter(email=input_).update(phone_no=phone_no)
-                                message = "Phone No Updated Successfully"
+                                message = "Phone Number Updated Successfully"
                             else:
                                 user = User.objects.create(email=input_, phone_no=phone_no, first_name=name)
                                 password = self.random_password_generator(16)
