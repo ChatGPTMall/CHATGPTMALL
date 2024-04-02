@@ -4,10 +4,8 @@ import random
 from django.db import models
 from django.core.mail import send_mail
 from django.core.exceptions import ValidationError
-from django.db.models import Sum, F, Q
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django.core.validators import MinValueValidator, MinLengthValidator
+from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
 from skybrain.models import Room
@@ -113,6 +111,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(_('last name'), max_length=150, null=True)
     email = LowercaseEmailField(_('email address'), unique=True)
     access = models.CharField(choices=AccessTypes.choices, max_length=30, default="TEXT_TO_TEXT")
+    phone_no = PhoneNumberField(null=True, default=None, blank=True, unique=True)
     is_staff = models.BooleanField(_('staff status'), default=False)
     is_superuser = models.BooleanField(_('superuser'), default=False)
     is_active = models.BooleanField(_('active'), default=True)

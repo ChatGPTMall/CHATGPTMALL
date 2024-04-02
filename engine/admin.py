@@ -6,7 +6,8 @@ from django.contrib import admin
 from engine.models import Items, Category, ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, \
     Jobs, Capabilities, Community, CommunityMembers, CommunityPosts, CouponCode, UploadCoupons, Subscriptions, \
     UploadTeams, ImageAnalysisDB, VoiceCommands, KeyManagement, RestrictedKeywords, FreeSubscriptions, CapturedImages, \
-    BankAccounts, Purchases, FeedComments, FeedLikes, Chatbots, WhatsappConfiguration
+    BankAccounts, Purchases, FeedComments, FeedLikes, Chatbots, WhatsappConfiguration, ChatBotHistory, \
+    WhatsappAccountRequest
 
 
 # Register your models here.
@@ -119,6 +120,14 @@ class ChatbotsAdmin(admin.ModelAdmin):
     search_fields = ("user__email",)
 
 
+class ChatBotHistoryAdmin(admin.ModelAdmin):
+    list_display = ("chatbot", "user", "query", "added_on")
+
+
+class WhatsappAccountRequestAdmin(admin.ModelAdmin):
+    list_display = ("phone_no", "account_created", "added_on")
+
+
 admin.site.register(Category)
 admin.site.register(Items)
 admin.site.register(ResponsesDB)
@@ -148,5 +157,7 @@ admin.site.register(FeedComments, FeedCommentsAdmin)
 admin.site.register(FeedLikes, FeedLikesAdmin)
 admin.site.register(Chatbots, ChatbotsAdmin)
 admin.site.register(WhatsappConfiguration)
+admin.site.register(ChatBotHistory, ChatBotHistoryAdmin)
+admin.site.register(WhatsappAccountRequest, WhatsappAccountRequestAdmin)
 
 

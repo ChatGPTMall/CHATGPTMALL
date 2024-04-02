@@ -2,6 +2,9 @@ import base64
 import json
 import os
 import ast
+import random
+import re
+import string
 import tempfile
 import time
 import urllib
@@ -43,7 +46,8 @@ from PIL import Image, ImageDraw, ImageFont
 from rest_framework.response import Response
 from django.shortcuts import render, redirect
 from engine.models import ImagesDB, ImageAnalysisDB, Items, Category, KeyManagement, Community, CommunityPosts, \
-    BankAccounts, CouponCode, FeedLikes, Purchases, Chatbots, WhatsappConfiguration, PrivateBankAccounts
+    BankAccounts, CouponCode, FeedLikes, Purchases, Chatbots, WhatsappConfiguration, PrivateBankAccounts, \
+    WhatsappAccountRequest
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
@@ -1010,34 +1014,62 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             }
         )
 
-    def get_openai_response(self, input_, phone_number_id, name):
+    def is_valid_email(self, email):
+        pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        return re.match(pattern, email) is not None
 
+    def random_password_generator(self, length):
+        characters = string.ascii_letters + string.digits + string.punctuation
+        password = ''.join(random.choice(characters) for i in range(length))
+        return password
+
+    def get_openai_response(self, input_, phone_number_id, name, phone_no):
         client = OpenAI()
         configuration = WhatsappConfiguration.objects.filter(phone_no_id=phone_number_id).first()
-        print(configuration, phone_number_id)
         if configuration:
-            file_id = configuration.chatbot.file_id
-            thread = client.beta.threads.create()
-            assistant_id = configuration.chatbot.assistant_id
-            message = client.beta.threads.messages.create(
-                thread_id=thread.id,
-                role="user",
-                content=input_,
-                file_ids=[file_id]
-            )
-            run = client.beta.threads.runs.create(
-                thread_id=thread.id,
-                assistant_id=assistant_id,
-                instructions="Please address the user as {}. The user has a premium account.".format(name)
-            )
-            # Wait for completion
-            while run.status != "completed":
-                # Be nice to the API
-                time.sleep(0.5)
-                run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
-            messages = client.beta.threads.messages.list(thread_id=thread.id)
-            response = messages.data[0].content[0].text.value
-            return response
+            if not User.objects.filter(phone_no=phone_no).exists():
+                try:
+                    account_request = WhatsappAccountRequest.objects.get(phone_no=phone_no, account_created=True)
+                    if self.is_valid_email(input_):
+                        user = User.objects.create(email=input_, phone_no=phone_no, first_name=name)
+                        password = self.random_password_generator(16)
+                        user.set_password(password)
+                        user.save()
+                        account_request.account_created = True
+                        account_request.save()
+                        return ("Account Created Succesfully \n"
+                                "Email: {}"
+                                "Password: {}"
+                                "Url: {}".format(input_, password, settings.DEPLOYED_HOST))
+                    else:
+                        return "Invalid Email Provided Please Enter Valid Email"
+                except WhatsappAccountRequest.DoesNotExist:
+                    message = ("Hi {} it looks like you you don't have account created with us "
+                               "please enter you email to create account".format(name))
+                    return message
+            else:
+                file_id = configuration.chatbot.file_id
+                thread = client.beta.threads.create()
+                assistant_id = configuration.chatbot.assistant_id
+                message = client.beta.threads.messages.create(
+                    thread_id=thread.id,
+                    role="user",
+                    content=input_,
+                    file_ids=[file_id]
+                )
+                run = client.beta.threads.runs.create(
+                    thread_id=thread.id,
+                    assistant_id=assistant_id,
+                    instructions="Please address the user as {}. The user has a premium account.".format(name)
+                )
+                # Wait for completion
+                while run.status != "completed":
+                    # Be nice to the API
+                    time.sleep(0.5)
+                    run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
+                messages = client.beta.threads.messages.list(thread_id=thread.id)
+                response = messages.data[0].content[0].text.value
+                return response
 
         response = client.completions.create(
             model="gpt-3.5-turbo-instruct",
@@ -1057,7 +1089,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
     def send_message(self, data1, body, client_phone_no, name):
         data1 = json.loads(data1)
         phone_no = data1["to"]
-        res = self.get_openai_response(body, client_phone_no, name)
+        res = self.get_openai_response(body, client_phone_no, name, phone_no)
         headers = {
             "Content-type": "application/json",
             "Authorization": "Bearer {}".format(os.getenv("access_token")),

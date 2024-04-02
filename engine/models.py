@@ -563,3 +563,25 @@ class WhatsappConfiguration(models.Model):
         verbose_name = _("Chatbot Configuration")
         verbose_name_plural = _("Chatbot Configurations")
 
+
+class ChatBotHistory(models.Model):
+    chatbot = models.ForeignKey(Chatbots, related_name="chatbot_history", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name="user_chatbot_history", on_delete=models.CASCADE)
+    query = models.TextField()
+    response = models.TextField()
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Chatbot History")
+        verbose_name_plural = _("Chatbot History")
+
+
+class WhatsappAccountRequest(models.Model):
+    phone_no = models.CharField(max_length=30, unique=True)
+    account_created = models.BooleanField(default=False)
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Whatsapp Account Request")
+        verbose_name_plural = _("Whatsapp Account Request")
+

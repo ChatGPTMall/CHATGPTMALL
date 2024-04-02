@@ -51,13 +51,14 @@ INSTALLED_APPS = [
     'users',
     'engine',
     'skybrain',
-    'homelinked'
+    'homelinked',
+    'phonenumber_field',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ORIGIN_ALLOW_ALL = True
 
-DEPLOYED_HOST = os.getenv("DEPLOYED_HOST", "https://skybrain.org/")
+DEPLOYED_HOST = os.getenv("DEPLOYED_HOST", "https://homelinked.tech/")
 
 try:
     CSRF_TRUSTED_ORIGINS = json.loads(os.getenv("CSRF_TRUSTED_ORIGINS", []))
