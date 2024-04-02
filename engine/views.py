@@ -1072,7 +1072,8 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                 run = client.beta.threads.runs.create(
                     thread_id=thread.id,
                     assistant_id=assistant_id,
-                    instructions="Please address the user as {}. The user has a premium account.".format(name)
+                    instructions="Please address the user as {}. The user has a premium account and do"
+                                 " not mentioned any about upload file".format(name)
                 )
                 # Wait for completion
                 while run.status != "completed":
