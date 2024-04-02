@@ -1029,33 +1029,36 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         if configuration:
             if not User.objects.filter(phone_no=phone_no).exists():
                 try:
-                    if self.is_valid_email(input_):
-                        created = False
-                        account_request = WhatsappAccountRequest.objects.get(phone_no=phone_no)
-                        if User.objects.filter(email=input_).exists():
-                            User.objects.filter(email=input_).update(phone_no=phone_no)
-                            message = "Phone Updated Successfully"
-                        else:
-                            user = User.objects.create(email=input_, phone_no=phone_no, first_name=name)
-                            password = self.random_password_generator(16)
-                            user.set_password(password)
-                            user.save()
-                            message = "Account Created Successfully"
-                            created = True
-                        password_text = "Password" if created else "NewPassword"
-                        account_request.account_created = True
-                        account_request.save()
-                        return ("{} \n"
-                                "Email: {}"
-                                "{}: {}"
-                                "Url: {}".format(message, input_, password_text, password, settings.DEPLOYED_HOST))
-                    else:
-                        return "Invalid Email Provided Please Enter Valid Email"
+                    account_request = WhatsappAccountRequest.objects.get(phone_no=phone_no, account_created=True)
                 except WhatsappAccountRequest.DoesNotExist:
-                    WhatsappAccountRequest.objects.create(phone_no=phone_no)
-                    message = ("Hi {} it looks like you you don't have account created with us "
-                               "please enter you email to create account".format(name))
-                    return message
+                    account, created = WhatsappAccountRequest.objects.get_or_create(phone_no=phone_no)
+                    if created:
+                        message = ("Hi {} it looks like you you don't have account created with us "
+                                   "please enter you email to create account".format(name))
+                        return message
+                    else:
+                        if self.is_valid_email(input_):
+                            created = False
+                            if User.objects.filter(email=input_).exists():
+                                User.objects.filter(email=input_).update(phone_no=phone_no)
+                                message = "Phone Updated Successfully"
+                            else:
+                                user = User.objects.create(email=input_, phone_no=phone_no, first_name=name)
+                                password = self.random_password_generator(16)
+                                user.set_password(password)
+                                user.save()
+                                message = "Account Created Successfully"
+                                created = True
+                            password_text = "Password" if created else "NewPassword"
+                            account_request.account_created = True
+                            account_request.save()
+                            return ("{} \n"
+                                    "Email: {}"
+                                    "{}: {}"
+                                    "Url: {}".format(message, input_, password_text, password, settings.DEPLOYED_HOST))
+                        else:
+                            return "Invalid Email Provided Please Enter Valid Email"
+
             else:
                 file_id = configuration.chatbot.file_id
                 thread = client.beta.threads.create()
