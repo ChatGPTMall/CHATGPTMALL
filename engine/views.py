@@ -1029,13 +1029,12 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         if configuration:
             if not User.objects.filter(phone_no=phone_no).exists():
                 try:
-                    account_request = WhatsappAccountRequest.objects.get(phone_no=phone_no, account_created=True)
                     if self.is_valid_email(input_):
                         created = False
+                        account_request = WhatsappAccountRequest.objects.get(phone_no=phone_no)
                         if User.objects.filter(email=input_).exists():
                             User.objects.filter(email=input_).update(phone_no=phone_no)
                             message = "Phone Updated Successfully"
-
                         else:
                             user = User.objects.create(email=input_, phone_no=phone_no, first_name=name)
                             password = self.random_password_generator(16)
