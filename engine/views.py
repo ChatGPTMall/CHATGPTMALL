@@ -1073,7 +1073,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                     thread_id=thread.id,
                     assistant_id=assistant_id,
                     instructions="Please address the user as {}. The user has a premium account and do"
-                                 " not mention anything about upload file".format(name)
+                                 " not mention anything about uploaded file".format(name)
                 )
                 # Wait for completion
                 while run.status != "completed":
