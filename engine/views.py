@@ -1040,20 +1040,20 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                         if self.is_valid_email(input_):
                             created = False
                             if User.objects.filter(email=input_).exists():
-                                User.objects.filter(email=input_).update(phone_no=phone_no)
+                                user = User.objects.filter(email=input_).update(phone_no=phone_no)
                                 message = "Phone Number Updated Successfully"
                             else:
                                 user = User.objects.create(email=input_, phone_no=phone_no, first_name=name)
-                                password = self.random_password_generator(16)
-                                user.set_password(password)
-                                user.save()
                                 message = "Account Created Successfully"
                                 created = True
+                            password = self.random_password_generator(16)
+                            user.set_password(password)
+                            user.save()
                             password_text = "Password" if created else "NewPassword"
                             WhatsappAccountRequest.objects.filter(phone_no=phone_no).update(account_created=True)
                             return ("{} \n"
-                                    "Email: {}"
-                                    "{}: {}"
+                                    "Email: {} \n"
+                                    "{}: {} \n"
                                     "Url: {}".format(message, input_, password_text, password, settings.DEPLOYED_HOST))
                         else:
                             return "Invalid Email Provided Please Enter Valid Email"
