@@ -1044,6 +1044,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                     else:
                         return "Invalid Email Provided Please Enter Valid Email"
                 except WhatsappAccountRequest.DoesNotExist:
+                    WhatsappAccountRequest.objects.create(phone_no=phone_no)
                     message = ("Hi {} it looks like you you don't have account created with us "
                                "please enter you email to create account".format(name))
                     return message
