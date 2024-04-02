@@ -56,6 +56,15 @@ from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerial
     GetPostsViewSerializer, NetworkPostItemSessionCheckoutSerializer, ChatbotAPIViewSerializer, \
     WhatsappConfigurationSerializer, ItemsBulkCreateSerializer
 
+from django.http import HttpResponse
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from io import BytesIO
+from PIL import Image
+from engine.models import Items
+
 stripe.api_key = settings.STRIPE_SECRET_KEY
 endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
 
@@ -1197,3 +1206,58 @@ class WhatsappConfigurationView(generics.ListCreateAPIView):
         chatbot = Chatbots.objects.get(chatbot_id=str(chatbot))
         serializer.save(chatbot=chatbot)
         return Response({"msg": "Chatbot Integrated with whatsapp successfully"}, status=status.HTTP_201_CREATED)
+
+
+def DumpItems(request):
+    # Query all items from the Items table
+    items = Items.objects.all()
+
+    # Create a BytesIO buffer to hold the PDF
+    buffer = BytesIO()
+
+    # Create a new PDF document
+    pdf = SimpleDocTemplate(buffer, pagesize=letter)
+    elements = []
+
+    # Define styles for the PDF
+    styles = getSampleStyleSheet()
+    question_style = styles["Heading1"]
+    answer_style = styles["Normal"]
+
+    # Iterate through each item
+    for item in items:
+        # Add the title as a question
+        elements.append(Paragraph(f"<u>{item.title}</u>", question_style))
+
+        # Add the rest of the item's data as the answer
+        item_data = [
+            ["Vendor Email:", item.vendor_email],
+            ["Category:", item.category.title],
+            ["Description:", item.description],
+            ["Price:", f"${item.price}"],
+            ["Location:", item.location],
+            ["Stock:", str(item.stock)],
+            ["Image:", str(item.image.url)] if item.image else [],
+            ["qr_code:", str(item.qr_code.url)],
+        ]
+
+        # Add the item data as a table
+        table = Table(item_data, colWidths=[100, 300])
+        table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.grey)]))
+        elements.append(table)
+
+        # Add spacing between items
+        elements.append(Paragraph("<br/><br/>", answer_style))
+
+    # Build the PDF document
+    pdf.build(elements)
+
+    # Get the value of the BytesIO buffer and reset the buffer
+    pdf_data = buffer.getvalue()
+    buffer.close()
+
+    # Create an HTTP response with the PDF data
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="items_data.pdf"'
+    response.write(pdf_data)
+    return response
