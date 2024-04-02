@@ -1050,8 +1050,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                                 message = "Account Created Successfully"
                                 created = True
                             password_text = "Password" if created else "NewPassword"
-                            account_request.account_created = True
-                            account_request.save()
+                            WhatsappAccountRequest.objects.filter(phone_no=phone_no).update(account_created=True)
                             return ("{} \n"
                                     "Email: {}"
                                     "{}: {}"
