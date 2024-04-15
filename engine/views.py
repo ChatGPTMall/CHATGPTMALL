@@ -47,7 +47,7 @@ from rest_framework.response import Response
 from django.shortcuts import render, redirect
 from engine.models import ImagesDB, ImageAnalysisDB, Items, Category, KeyManagement, Community, CommunityPosts, \
     BankAccounts, CouponCode, FeedLikes, Purchases, Chatbots, WhatsappConfiguration, PrivateBankAccounts, \
-    WhatsappAccountRequest
+    WhatsappAccountRequest, ChatBotHistory
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
@@ -1035,6 +1035,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
     def get_openai_response(self, input_, phone_number_id, name, phone_no):
         client = OpenAI()
         configuration = WhatsappConfiguration.objects.filter(phone_no_id=phone_number_id).first()
+        user = User.objects.filter(phone_no=phone_no)
         if configuration:
             if not User.objects.filter(phone_no=phone_no).exists():
                 try:
@@ -1091,6 +1092,9 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                     run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
                 messages = client.beta.threads.messages.list(thread_id=thread.id)
                 response = messages.data[0].content[0].text.value
+                if user.last():
+                    ChatBotHistory.objects.create(
+                        user=user.last(), chatbot=configuration.chatbot, query=input_, response=response)
                 return response
 
         response = client.completions.create(
