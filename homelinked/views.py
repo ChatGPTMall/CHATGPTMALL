@@ -152,3 +152,8 @@ class WeChatAPIView(generics.CreateAPIView, generics.DestroyAPIView):
     def delete(self, request, *args, **kwargs):
         self.get_object().delete()
         return Response({"msg": "WeChat Account Successfully"}, status=status.HTTP_200_OK)
+
+
+def GetWechatEvents(request):
+    print("hiiiiiiiiiiii")
+    pass

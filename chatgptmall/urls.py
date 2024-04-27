@@ -27,7 +27,7 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
     PostDetailView, NetworkPostItemSessionCheckout, ChatbotAPIView, SendWhatsappMessage, WhatsappWebhook, \
     ChatbotDelUpdateAPIView, WhatsappConfigurationView, ItemsBulkCreate, DumpItems
 from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory, \
-    CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost, WeChatAPIView
+    CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost, WeChatAPIView, GetWechatEvents
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
     CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \
@@ -272,6 +272,7 @@ urlpatterns = [
 
     # wechat APIs
     path("api/wechat/", WeChatAPIView.as_view(), name="WeChatAPIView"),
+    path("wechat/events/", GetWechatEvents, name="GetWechatEvents")
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
