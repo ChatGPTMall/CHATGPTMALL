@@ -1,5 +1,9 @@
+import hashlib
+
 from django.db.models import Count, Case, When, Value, BooleanField, Exists, OuterRef
+from django.http import HttpResponse
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
@@ -154,6 +158,32 @@ class WeChatAPIView(generics.CreateAPIView, generics.DestroyAPIView):
         return Response({"msg": "WeChat Account Successfully"}, status=status.HTTP_200_OK)
 
 
+@csrf_exempt
 def GetWechatEvents(request):
-    print("hiiiiiiiiiiii")
-    pass
+    if request.method == 'GET':
+        # Handle the verification of the server address from Weixin
+        signature = request.GET.get('signature')
+        timestamp = request.GET.get('timestamp')
+        nonce = request.GET.get('nonce')
+        token = 'scanpen2024'
+
+        # Create a list of the token, timestamp, and nonce
+        data = [token, timestamp, nonce]
+        # Sort it
+        data.sort()
+        # Concatenate into a single string
+        temp = ''.join(data)
+        # Create a hash object
+        hash_obj = hashlib.sha1(temp.encode('utf-8'))
+        # Get the hash digest
+        hashcode = hash_obj.hexdigest()
+        # If it's the same as the signature, return the echostr
+        if hashcode == signature:
+            return HttpResponse(request.GET.get('echostr', ''), content_type="text/plain")
+
+    if request.method == 'POST':
+        # Here, you would handle incoming messages or events
+        # and possibly respond to them
+        pass
+
+    return HttpResponse("Invalid Request", status=403)
