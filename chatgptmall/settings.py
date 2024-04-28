@@ -344,56 +344,43 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 TAOBAO_KEY = os.getenv("TAOBAO_KEY")
 
 
-# LOGGING = {
-#         'version': 1,
-#         'disable_existing_loggers': False,
-#         'formatters': {
-#             'verbose': {
-#                 'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s',
-#                 'datefmt': '%Y-%m-%d %H:%M:%S'
-#             },
-#             'simple': {
-#                 'format': '%(asctime)s - %(levelname)s - %(name)s : %(message)s',
-#                 'datefmt': '%Y-%m-%d %H:%M:%S'
-#             },
-#         },
-#         'handlers': {
-#             'console': {
-#                 'class': 'logging.StreamHandler',
-#                 'formatter': 'simple',
-#                 'level': 'INFO',
-#             },
-#             'mobileLogs': {
-#                 'class': 'logging.FileHandler',
-#                 'formatter': 'simple',
-#                 'filename': os.path.join(BASE_DIR, 'logs', 'server.log'),
-#                 'level': 'INFO',
-#             }
-#         },
-#         'loggers': {
-#             'django': {
-#                 'handlers': ['console', 'chatgptmall'],
-#                 'level': 'INFO',
-#                 'propagate': True,
-#             },
-#             'engine': {
-#                 'handlers': ['console', 'chatgptmall'],
-#                 'level': 'INFO',
-#                 'propagate': True,
-#             },
-#             'skybrain': {
-#                 'handlers': ['console', 'mobchatgptmallileLogs'],
-#                 'level': 'INFO',
-#                 'propagate': True,
-#             },
-#             'homelinked': {
-#                 'handlers': ['console', 'mobchatgptmallileLogs'],
-#                 'level': 'INFO',
-#                 'propagate': True,
-#             }
-#         }
-#     }
-
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://sys.stdout',  # Directs logs to standard output
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'skybrain': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'users': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'engine': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'homelinked': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_STORAGE_BUCKET_NAME = 'madeinthai'

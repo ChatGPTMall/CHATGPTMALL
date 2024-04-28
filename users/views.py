@@ -1618,6 +1618,7 @@ class ProfileViewV2(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
+        print("hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii")
         return self.request.user
 
     @swagger_auto_schema(tags=["Authentication APIs"])
