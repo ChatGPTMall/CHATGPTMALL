@@ -347,6 +347,16 @@ TAOBAO_KEY = os.getenv("TAOBAO_KEY")
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+            'verbose': {
+                'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s',
+                'datefmt': '%Y-%m-%d %H:%M:%S'
+            },
+            'simple': {
+                'format': '%(asctime)s - %(levelname)s - %(name)s : %(message)s',
+                'datefmt': '%Y-%m-%d %H:%M:%S'
+            },
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
