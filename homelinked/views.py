@@ -185,12 +185,8 @@ def GetWechatEvents(request):
     if request.method == 'POST':
         # Here, you would handle incoming messages or events
         # and possibly respond to them
-        WechatMessages.objects.create(text=request.body)
-        try:
-            xml_data = etree.fromstring(request.body)
-            WechatMessages.objects.create(text=xml_data)
-        except Exception as e:
-            pass
+        xml_data = etree.fromstring(request.body)
+        WechatMessages.objects.create(text=xml_data)
         return HttpResponse("Message Received", status=status.HTTP_201_CREATED)
 
     return HttpResponse("Invalid Request", status=403)
