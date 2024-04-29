@@ -7,7 +7,7 @@ from engine.models import Items, Category, ResponsesDB, VoiceToVoiceRequests, Im
     Jobs, Capabilities, Community, CommunityMembers, CommunityPosts, CouponCode, UploadCoupons, Subscriptions, \
     UploadTeams, ImageAnalysisDB, VoiceCommands, KeyManagement, RestrictedKeywords, FreeSubscriptions, CapturedImages, \
     BankAccounts, Purchases, FeedComments, FeedLikes, Chatbots, WhatsappConfiguration, ChatBotHistory, \
-    WhatsappAccountRequest
+    WhatsappAccountRequest, WechatMessages
 
 
 # Register your models here.
@@ -157,6 +157,7 @@ admin.site.register(FeedComments, FeedCommentsAdmin)
 admin.site.register(FeedLikes, FeedLikesAdmin)
 admin.site.register(Chatbots, ChatbotsAdmin)
 admin.site.register(WhatsappConfiguration)
+admin.site.register(WechatMessages)
 admin.site.register(ChatBotHistory, ChatBotHistoryAdmin)
 admin.site.register(WhatsappAccountRequest, WhatsappAccountRequestAdmin)
 
