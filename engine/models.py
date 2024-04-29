@@ -585,3 +585,7 @@ class WhatsappAccountRequest(models.Model):
         verbose_name = _("Whatsapp Account Request")
         verbose_name_plural = _("Whatsapp Account Request")
 
+
+class WechatMessages(models.Model):
+    text = models.TextField()
+

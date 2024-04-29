@@ -1,4 +1,5 @@
 import hashlib
+from xml import etree
 
 from django.db.models import Count, Case, When, Value, BooleanField, Exists, OuterRef
 from django.http import HttpResponse
@@ -9,7 +10,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import filters
-from engine.models import Community, CommunityMembers, Items
+from engine.models import Community, CommunityMembers, Items, WechatMessages
 from homelinked.models import HomePlans, HomepageNewFeature, WeChatAccounts
 from homelinked.serializers import HomePlansAPIViewSerializer, HomepageNewFeatureViewSerializer, \
     CommunitiesViewSerializer, GetCreditsHistorySerializer, CommunitiesJoinViewSerializer, GrowthNetworkSerializer, \
@@ -184,6 +185,12 @@ def GetWechatEvents(request):
     if request.method == 'POST':
         # Here, you would handle incoming messages or events
         # and possibly respond to them
-        pass
+        WechatMessages.objects.create(text=request.body)
+        try:
+            xml_data = etree.fromstring(request.body)
+            WechatMessages.objects.create(text=xml_data)
+        except Exception as e:
+            pass
+        return HttpResponse("Message Received", status=status.HTTP_201_CREATED)
 
     return HttpResponse("Invalid Request", status=403)
