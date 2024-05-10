@@ -1,15 +1,12 @@
 import hashlib
-from xml import etree
-
-from django.db.models import Count, Case, When, Value, BooleanField, Exists, OuterRef
+import xml.etree.ElementTree as ET
+from django.db.models import Count, Exists, OuterRef
 from django.http import HttpResponse
-from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import filters
 from engine.models import Community, CommunityMembers, Items, WechatMessages
 from homelinked.models import HomePlans, HomepageNewFeature, WeChatAccounts
 from homelinked.serializers import HomePlansAPIViewSerializer, HomepageNewFeatureViewSerializer, \
@@ -186,7 +183,31 @@ def GetWechatEvents(request):
         # Here, you would handle incoming messages or events
         # and possibly respond to them
         # xml_data = etree.fromstring(request.body)
-        WechatMessages.objects.create(text=request.body)
+        request_data = request.body
+
+        # Parse the XML data
+        root = ET.fromstring(request_data)
+
+        # Extract image URL and WeChat ID
+        pic_url = root.findtext('.//PicUrl')
+        wechat_id = root.findtext('.//FromUserName')
+        text_content = root.findtext('.//Content')
+        msg_type = root.findtext('.//MsgType')
+        event_type = root.findtext('.//Event')
+        latitude = root.findtext('.//Latitude')
+        longitude = root.findtext('.//Longitude')
+        precision = root.findtext('.//Precision')
+        data = {
+            "pic_url": pic_url,
+            "wechat_id": wechat_id,
+            "text": text_content,
+            "msg_type": msg_type,
+            "event_type": event_type,
+            "latitude": latitude,
+            "longitude": longitude,
+            "precision": precision
+        }
+        WechatMessages.objects.create(text=data)
         return HttpResponse("Message Received", status=status.HTTP_201_CREATED)
 
     return HttpResponse("Invalid Request", status=403)

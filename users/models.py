@@ -127,6 +127,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     city = models.TextField(null=True, blank=True)
     country = models.CharField(null=True, blank=True, max_length=100)
     postal_code = models.CharField(null=True, blank=True, max_length=100)
+    wechat_ids = models.JSONField(default=list)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
 

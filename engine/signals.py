@@ -5,8 +5,6 @@ from engine.models import Chatbots
 
 
 @receiver(post_save, sender=Chatbots)
-def chatbot_created(sender, instance, created, **kwargs):
+def wechat_message_recieved(sender, instance, created, **kwargs):
     if created:
-        # print(instance.file)
-        # create_assistant(instance)
-        pass
+        print(instance)
