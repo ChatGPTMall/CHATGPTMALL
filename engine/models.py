@@ -300,7 +300,7 @@ class Community(models.Model):
     name = models.CharField(_("Community Name"), max_length=250)
     logo = models.ImageField(upload_to="Communities/Logo", null=True, blank=True)
     leader = models.ForeignKey(User, related_name='community_leaders',
-                               on_delete=models.CASCADE, default=1, null=True, blank=True)
+                               on_delete=models.CASCADE, null=True, blank=True)
     priority = models.IntegerField(default=0)
     added_on = models.DateTimeField(auto_now_add=True)
 
