@@ -48,7 +48,7 @@ from users.views import HomepageView, LoginView, RegisterView, VoiceToImage, Upl
     text2VoicePlanDetail, text2TextPlanDetail, text2ImagePlanDetail, image2ImagePlanDetail, \
     object_detectPlanDetail, voice2commandPlanDetail, text2commandPlanDetail, OcrPlanDetail, imageAnalysisPlanDetail, \
     RetailBotsView, ShopCheckout, ItemPaymentSuccess, RegisterViewV2, LoginViewV2, ProfileViewV2, GetUserItemData, \
-    LogoutViewV2, privacy
+    LogoutViewV2, privacy, WechatListing
 
 admin.site.site_header = 'CHATGPTMALL'  # default: "Django Administration"
 admin.site.index_title = 'CHATGPTMALL Admin Area'  # default: "Site administration"
@@ -133,6 +133,7 @@ urlpatterns = [
 
     # Shop
     path("api/v1/shop/text/", ShopWithText, name="ShopWithText"),
+    path("wechat/listing.", WechatListing, name="wechatlisting"),
     path("shop/item/checkout/<uuid:item_id>/", ShopCheckout, name="ShopCheckout"),
     path("item/user/info/<uuid:item_id>/", GetUserItemData, name="GetUserItemData"),
     path("item/how_to_use/<int:item_id>/", ItemHowToUse, name="ItemHowToUse"),

@@ -56,11 +56,18 @@ class ItemType(models.TextChoices):
     SERVICE = "SERVICE", _('Service')
 
 
+class ListingType(models.TextChoices):
+    GENERAL = "GENERAL", _('General')
+    WECHAT = "WECHAT", _('Wechat')
+    WHATSAPP = "WHATSAPP", _('Whatsapp')
+
+
 class Items(models.Model):
     vendor = models.ForeignKey(User, on_delete=models.PROTECT, related_name="vendor_items", null=True)
     vendor_email = models.EmailField(null=True)
     item_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     item_type = models.CharField(choices=ItemType.choices, default="PHYSICAL", max_length=10)
+    listing = models.CharField(choices=ListingType.choices, default="GENERAL", max_length=20)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="items")
     title = models.CharField(max_length=200)
     description = models.TextField(null=True)

@@ -46,7 +46,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from engine.models import ResponsesDB, VoiceToVoiceRequests, ImagesDB, ShopAccess, Plans, Industries, Capabilities, \
     Jobs, Community, CommunityMembers, CommunityPosts, CouponCode, Subscriptions, Items, ImageAnalysisDB, Category, \
-    VoiceCommands, KeyManagement, FreeSubscriptions, CapturedImages, BankAccounts, PrivateBankAccounts, Purchases
+    VoiceCommands, KeyManagement, FreeSubscriptions, CapturedImages, BankAccounts, PrivateBankAccounts, Purchases, \
+    ListingType
 from rest_framework import generics, status
 
 from users.serializers import UserCreateSerializer, UserSerializer
@@ -1141,8 +1142,13 @@ def ShopWithText(request):
     if q:
         items = Items.objects.filter(title__icontains=q)
     else:
-        items = []
+        items = Items.objects.all()
     return render(request, "text_shop.html", context={"items": items})
+
+
+def WechatListing(request):
+    items = Items.objects.filter(listing=ListingType.WECHAT)
+    return render(request, "wechatlisting.html", context={"items": items})
 
 
 def ShopCheckout(request, item_id):
