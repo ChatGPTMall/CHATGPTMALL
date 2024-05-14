@@ -552,7 +552,7 @@ class Chatbots(models.Model):
         verbose_name_plural = _("Chatbots")
 
     def __str__(self):
-        return str(self.chatbot_id)
+        return str(self.title)
 
 
 class WhatsappConfiguration(models.Model):
