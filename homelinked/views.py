@@ -188,7 +188,7 @@ def GetWechatEvents(request):
         # Parse the XML data
         root = ET.fromstring(request_data)
 
-        # Extract image URL and WeChat ID
+        official_account_id = root.findtext('.//ToUserName')
         pic_url = root.findtext('.//PicUrl')
         wechat_id = root.findtext('.//FromUserName')
         text_content = root.findtext('.//Content')
@@ -198,14 +198,15 @@ def GetWechatEvents(request):
         longitude = root.findtext('.//Longitude')
         precision = root.findtext('.//Precision')
         data = {
-            "pic_url": pic_url,
-            "wechat_id": wechat_id,
-            "text": text_content,
-            "msg_type": msg_type,
-            "event_type": event_type,
-            "latitude": latitude,
-            "longitude": longitude,
-            "precision": precision
+            "pic_url": pic_url if pic_url else "",
+            "wechat_id": wechat_id if wechat_id else "",
+            "official_account_id": official_account_id if official_account_id else "",
+            "text": text_content if text_content else "",
+            "msg_type": msg_type if msg_type else "",
+            "event_type": event_type if event_type else "",
+            "latitude": latitude if latitude else "",
+            "longitude": longitude if longitude else "",
+            "precision": precision if precision else ""
         }
         WechatMessages.objects.create(text=data)
         return HttpResponse("Message Received", status=status.HTTP_201_CREATED)

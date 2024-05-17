@@ -594,5 +594,9 @@ class WhatsappAccountRequest(models.Model):
 
 
 class WechatMessages(models.Model):
-    text = models.TextField()
+    text = models.JSONField(default=dict)
 
+
+class InternalExceptions(models.Model):
+    text = models.TextField()
+    added_on = models.DateTimeField(auto_now_add=True)
