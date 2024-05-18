@@ -91,7 +91,7 @@ def upload_new_wechat_listing(url):
         response.raise_for_status()  # Check if the request was successful
 
         # Get the filename from the URL
-        filename = category + ".jpg"
+        filename = category.title + ".jpg"
 
         # Save the image to the model instance
         item.image.save(filename, ContentFile(response.content), save=True)
