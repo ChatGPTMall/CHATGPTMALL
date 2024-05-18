@@ -48,6 +48,8 @@
               <div class="card-img" style="display: flex;justify-content: center;">
                 {% if item.image %}
                 <img src="{{item.image.url}}" style="height:160px;" alt="" class="img-fluid">
+                <img src="{{item.qr_code.url}}" style="position: absolute;height: 89px;width: 89px;top: 21%;left: 64%;
+                     background-color: red;" alt="" class="img-fluid">
                 {% else %}
                 <img src="https://www.bedfordcentre.com/plugins/noveldesign-store-directory/images/default-shop.jpg" style="height:160px;" alt="" class="img-fluid">
                 {% endif %}
