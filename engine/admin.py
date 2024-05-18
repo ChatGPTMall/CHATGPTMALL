@@ -133,6 +133,10 @@ class ItemsAdmin(admin.ModelAdmin):
     list_filter = ("listing", "added_on")
 
 
+class WechatMessagesAdmin(admin.ModelAdmin):
+    list_display = ('wechat_id', 'msg_type', 'event_type', 'latitude', 'longitude')
+
+
 admin.site.register(Category)
 admin.site.register(Items, ItemsAdmin)
 admin.site.register(ResponsesDB)
@@ -162,7 +166,7 @@ admin.site.register(FeedComments, FeedCommentsAdmin)
 admin.site.register(FeedLikes, FeedLikesAdmin)
 admin.site.register(Chatbots, ChatbotsAdmin)
 admin.site.register(WhatsappConfiguration)
-admin.site.register(WechatMessages)
+admin.site.register(WechatMessages, WechatMessagesAdmin)
 admin.site.register(InternalExceptions)
 admin.site.register(ChatBotHistory, ChatBotHistoryAdmin)
 admin.site.register(WhatsappAccountRequest, WhatsappAccountRequestAdmin)

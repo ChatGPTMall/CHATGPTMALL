@@ -208,7 +208,10 @@ def GetWechatEvents(request):
             "longitude": longitude if longitude else "",
             "precision": precision if precision else ""
         }
-        WechatMessages.objects.create(text=data)
+        try:
+            WechatMessages.objects.create(**data)
+        except Exception as e:
+            pass
         return HttpResponse("Message Received", status=status.HTTP_201_CREATED)
 
     return HttpResponse("Invalid Request", status=403)
