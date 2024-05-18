@@ -600,9 +600,9 @@ class WechatMessages(models.Model):
     text = models.TextField(blank=True, null=True)
     msg_type = models.CharField(max_length=50, blank=True, null=True)
     event_type = models.CharField(max_length=50, blank=True, null=True)
-    latitude = models.FloatField(blank=True, null=True)
-    longitude = models.FloatField(blank=True, null=True)
-    precision = models.FloatField(blank=True, null=True)
+    latitude = models.CharField(blank=True, null=True)
+    longitude = models.CharField(blank=True, null=True)
+    precision = models.CharField(blank=True, null=True)
 
     class Meta:
         verbose_name = _("Wechat Message")
