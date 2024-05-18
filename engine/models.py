@@ -594,7 +594,7 @@ class WhatsappAccountRequest(models.Model):
 
 
 class WechatMessages(models.Model):
-    pic_url = models.CharField(max_length=255, blank=True, null=True)
+    pic_url = models.CharField(max_length=255, unique=True, blank=True, null=True)
     wechat_id = models.CharField(max_length=255, blank=True, null=True)
     official_account_id = models.CharField(max_length=255, blank=True, null=True)
     text = models.TextField(blank=True, null=True)
@@ -607,7 +607,7 @@ class WechatMessages(models.Model):
     class Meta:
         verbose_name = _("Wechat Message")
         verbose_name_plural = _("Wechat Messages")
-        unique_together = (("pic_url", "wechat_id",),)
+        # unique_together = (("pic_url", "wechat_id",),)
 
 
 class InternalExceptions(models.Model):
