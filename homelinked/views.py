@@ -209,10 +209,10 @@ def GetWechatEvents(request):
             "precision": precision if precision else ""
         }
         try:
-            WechatMessages.objects.create(**data)
+            if pic_url:
+                WechatMessages.objects.create(**data)
         except Exception as e:
             InternalExceptions.objects.create(text=str(e))
-            InternalExceptions.objects.create(text=data)
         return HttpResponse("Message Received", status=status.HTTP_201_CREATED)
 
     return HttpResponse("Invalid Request", status=403)
