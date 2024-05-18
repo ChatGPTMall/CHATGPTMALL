@@ -7,7 +7,7 @@ from rest_framework import generics, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from engine.models import Community, CommunityMembers, Items, WechatMessages
+from engine.models import Community, CommunityMembers, Items, WechatMessages, InternalExceptions
 from homelinked.models import HomePlans, HomepageNewFeature, WeChatAccounts
 from homelinked.serializers import HomePlansAPIViewSerializer, HomepageNewFeatureViewSerializer, \
     CommunitiesViewSerializer, GetCreditsHistorySerializer, CommunitiesJoinViewSerializer, GrowthNetworkSerializer, \
@@ -211,7 +211,8 @@ def GetWechatEvents(request):
         try:
             WechatMessages.objects.create(**data)
         except Exception as e:
-            pass
+            InternalExceptions.objects.create(text=str(e))
+            InternalExceptions.objects.create(text=data)
         return HttpResponse("Message Received", status=status.HTTP_201_CREATED)
 
     return HttpResponse("Invalid Request", status=403)
