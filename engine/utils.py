@@ -7,12 +7,14 @@ from engine.models import InternalExceptions, KeyManagement, Items, ListingType,
 
 
 def send_wechat_message_reply(instance):
-    from_user_name = instance.text["wechat_id"]
+    from_user_name = instance.wechat_id
+    url = instance.pic_url
+    title = generate_item_content(url, "Tell me about this image")
     reply_message = {
         "touser": from_user_name,  # Use the 'FromUserName' you received in the incoming message
         "msgtype": "text",
         "text": {
-            "content": "Hello! This is a reply message."
+            "content": title
         }
     }
 
@@ -23,16 +25,17 @@ def send_wechat_message_reply(instance):
         response1 = requests.post(
             'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={}&secret={}'.format(
                 appid, appsecret))
-        print(response1.json())
-        InternalExceptions.objects.create(text=response1.json())
+        try:
+            token = response1.json()["access_token"]
+            response = requests.post('https://api.weixin.qq.com/cgi-bin/message/custom/send',
+                                     params={'access_token': token},
+                                     json=reply_message)
+            InternalExceptions.objects.create(text=response.json())
+            print(response.json())
+        except KeyError:
+            pass
     except Exception as e:
         InternalExceptions.objects.create(text=str(e))
-
-    # Send the message using the WeChat API
-    # response = requests.post('https://api.weixin.qq.com/cgi-bin/message/custom/send',
-    #                          params={'access_token': "your_access_token"},
-    #                          json=reply_message)
-    # print(response.json())
 
 
 def get_as_base64_url(url):
