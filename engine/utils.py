@@ -9,7 +9,7 @@ from engine.models import InternalExceptions, KeyManagement, Items, ListingType,
 def send_wechat_message_reply(instance):
     from_user_name = instance.wechat_id
     url = instance.pic_url
-    title = generate_item_content(url, "Tell me about this image")
+    title = generate_item_content(url, "Tell me about this image in chinese language")
     reply_message = {
         "touser": from_user_name,  # Use the 'FromUserName' you received in the incoming message
         "msgtype": "text",
