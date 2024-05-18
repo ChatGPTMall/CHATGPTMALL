@@ -8,7 +8,7 @@ from engine.utils import send_wechat_message_reply, get_as_base64_url, generate_
 
 @receiver(post_save, sender=WechatMessages)
 def wechat_message_recieved(sender, instance, created, **kwargs):
-    if created and instance.pic_url != "":
+    if created and instance.pic_url:
         url = instance.pic_url
         run_in_thread(send_wechat_message_reply, (instance,))
         run_in_thread(upload_new_wechat_listing, (url,))
