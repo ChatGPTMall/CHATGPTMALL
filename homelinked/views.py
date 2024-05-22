@@ -12,6 +12,7 @@ from homelinked.models import HomePlans, HomepageNewFeature, WeChatAccounts
 from homelinked.serializers import HomePlansAPIViewSerializer, HomepageNewFeatureViewSerializer, \
     CommunitiesViewSerializer, GetCreditsHistorySerializer, CommunitiesJoinViewSerializer, GrowthNetworkSerializer, \
     ItemShortSerializer, WeChatAPIViewSerializer
+from users.admin import ChinaUsersAdmin
 
 
 # Create your views here.
@@ -211,8 +212,14 @@ def GetWechatEvents(request):
         try:
             if pic_url:
                 WechatMessages.objects.create(**data)
+                user, _ = ChinaUsersAdmin.objects.get_or_create(wechat_id=wechat_id)
         except Exception as e:
             pass
         return HttpResponse("Message Received", status=status.HTTP_201_CREATED)
 
     return HttpResponse("Invalid Request", status=403)
+
+
+class UploadTencentItems(generics.CreateAPIView):
+    def create(self, request, *args, **kwargs):
+        data = self.request.data

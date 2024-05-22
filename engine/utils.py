@@ -3,7 +3,8 @@ import base64
 import requests
 from django.core.files.base import ContentFile
 
-from engine.models import InternalExceptions, KeyManagement, Items, ListingType, Category
+from engine.models import InternalExceptions, KeyManagement, Items, ListingType, Category, Community, CommunityPosts
+from engine.thread_functions import run_in_thread
 
 
 def send_wechat_message_reply(instance):
@@ -95,5 +96,11 @@ def upload_new_wechat_listing(url):
 
         # Save the image to the model instance
         item.image.save(filename, ContentFile(response.content), save=True)
+        run_in_thread(upload_community_posts, (item, ))
     except Exception as e:
         InternalExceptions.objects.create(text=str(e))
+
+
+def upload_community_posts(item):
+    for community in Community.objects.all():
+        CommunityPosts.objects.get_or_create(community=community, item=item)

@@ -1147,7 +1147,7 @@ def ShopWithText(request):
 
 
 def WechatListing(request):
-    items = Items.objects.filter(listing=ListingType.WECHAT)
+    items = Items.objects.filter(listing=ListingType.WECHAT).order_by("-added_on")
     return render(request, "wechatlisting.html", context={"items": items})
 
 

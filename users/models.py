@@ -168,6 +168,26 @@ class User(AbstractBaseUser, PermissionsMixin):
             has_access = True
 
 
+class ChinaUsers(models.Model):
+    user_id = models.UUIDField(default=uuid.uuid4, unique=True)
+    wechat_id = models.CharField(_("WeChat ID"), unique=True, max_length=100)
+    joined_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('China User')
+        verbose_name_plural = _('China User')
+
+
+class WechatOfficialAccount(models.Model):
+    user_id = models.UUIDField(default=uuid.uuid4, unique=True)
+    official_id = models.CharField(_("Official ID"), unique=True, max_length=100)
+    joined_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('Wechat Official Account')
+        verbose_name_plural = _('Wechat Official Accounts')
+
+
 class UploadUsers(models.Model):
     file = models.FileField(upload_to="Users")
 
