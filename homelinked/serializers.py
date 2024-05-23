@@ -81,7 +81,7 @@ class ItemShortSerializer(serializers.ModelSerializer):
         )
 
     def get_name(self, item):
-        return item.vendor.get_full_name()
+        return item.vendor.get_full_name() if item.vendor else "Benny Liao"
 
 
 class GrowthNetworkSerializer(serializers.ModelSerializer):
