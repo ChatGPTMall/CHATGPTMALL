@@ -98,7 +98,7 @@ def upload_new_wechat_listing(url):
         item.image.save(filename, ContentFile(response.content), save=True)
         run_in_thread(upload_community_posts, (item, ))
     except Exception as e:
-        InternalExceptions.objects.create(text=str(e))
+        InternalExceptions.objects.create(text=e)
 
 
 def upload_community_posts(item):
