@@ -5,9 +5,12 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, status
 from rest_framework.exceptions import ValidationError
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from engine.models import Community, CommunityMembers, Items, WechatMessages, InternalExceptions
+from engine.models import Community, CommunityMembers, Items, WechatMessages, InternalExceptions, ListingType, \
+    WechatOfficialAccount
+from engine.serializers import WeChatListingAPIViewSerializer
 from homelinked.models import HomePlans, HomepageNewFeature, WeChatAccounts
 from homelinked.serializers import HomePlansAPIViewSerializer, HomepageNewFeatureViewSerializer, \
     CommunitiesViewSerializer, GetCreditsHistorySerializer, CommunitiesJoinViewSerializer, GrowthNetworkSerializer, \
@@ -139,22 +142,32 @@ class UploadCapabilityPost(generics.CreateAPIView):
 
 class WeChatAPIView(generics.CreateAPIView, generics.DestroyAPIView):
     serializer_class = WeChatAPIViewSerializer
+    parser_classes = (MultiPartParser, FormParser)
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         try:
-            return WeChatAccounts.objects.get(wechat_id=self.request.query_params.get("wechat_id", None))
+            return WechatOfficialAccount.objects.get(user_id=self.request.query_params.get("user_id", None))
         except Exception as e:
             return None
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        print(self.request.data)
+        try:
+            if self.request.data.get("community"):
+                community = Community.objects.get(community_id=self.request.data.get("community", None))
+                serializer.save(created_by=self.request.user, community=community)
+            else:
+                serializer.save(created_by=self.request.user)
+        except Exception as e:
+            raise ValidationError({"error": str(e)})
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         self.get_object().delete()
-        return Response({"msg": "WeChat Account Successfully"}, status=status.HTTP_200_OK)
+        return Response({"msg": "Official Account Deleted Successfully"}, status=status.HTTP_200_OK)
 
 
 @csrf_exempt
@@ -223,3 +236,12 @@ def GetWechatEvents(request):
 class UploadTencentItems(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         data = self.request.data
+
+
+class WeChatListingAPIView(generics.ListAPIView):
+    serializer_class = WeChatListingAPIViewSerializer
+    authentication_classes = []
+    permission_classes = []
+
+    def get_queryset(self):
+        return Items.objects.filter(listing=ListingType.WECHAT)

@@ -613,3 +613,18 @@ class WechatMessages(models.Model):
 class InternalExceptions(models.Model):
     text = models.TextField()
     added_on = models.DateTimeField(auto_now_add=True)
+
+
+class WechatOfficialAccount(models.Model):
+    user_id = models.UUIDField(default=uuid.uuid4, unique=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="official_accounts", null=True)
+    official_id = models.CharField(_("Official ID"), unique=True, max_length=100)
+    title = models.CharField(max_length=80)
+    image = models.ImageField(upload_to="official_accounts")
+    community = models.OneToOneField(
+        Community, on_delete=models.CASCADE, related_name="wechat_official_account", null=True)
+    joined_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('Wechat Official Account')
+        verbose_name_plural = _('Wechat Official Accounts')

@@ -1,6 +1,7 @@
 import pandas as pd
 from django.contrib import admin
-from users.models import User, UploadUsers, ChinaUsers, WechatOfficialAccount
+from users.models import User, UploadUsers, ChinaUsers
+from engine.models import WechatOfficialAccount
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 # Register your models here.
 
@@ -64,7 +65,7 @@ class ChinaUsersAdmin(admin.ModelAdmin):
 
 
 class WechatOfficialAccountAdmin(admin.ModelAdmin):
-    list_display = ("user_id", "official_id", "joined_on")
+    list_display = ("user_id", "created_by", "official_id", "community", "joined_on")
 
 
 admin.site.register(User, UserAdmin)

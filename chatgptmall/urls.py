@@ -28,7 +28,7 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
     ChatbotDelUpdateAPIView, WhatsappConfigurationView, ItemsBulkCreate, DumpItems
 from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory, \
     CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost, WeChatAPIView, GetWechatEvents, \
-    UploadTencentItems
+    UploadTencentItems, WeChatListingAPIView
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
     CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \
@@ -273,9 +273,10 @@ urlpatterns = [
     path('api/v1/whatsapp/configuration/', WhatsappConfigurationView.as_view(), name="WhatsappConfiguration"),
 
     # wechat APIs
-    path("api/wechat/", WeChatAPIView.as_view(), name="WeChatAPIView"),
     path("wechat/events/", GetWechatEvents, name="GetWechatEvents"),
-    path("wechat/tencent/item_upload/", UploadTencentItems.as_view(), name="UploadTencentItems")
+    path("wechat/tencent/item_upload/", UploadTencentItems.as_view(), name="UploadTencentItems"),
+    path("api/wechat/listing/", WeChatListingAPIView.as_view(), name="WeChatListingAPIView"),
+    path("api/chatbots/wechat/", WeChatAPIView.as_view(), name="WeChatAPIView"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

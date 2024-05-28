@@ -136,3 +136,11 @@ class WhatsappConfigurationSerializer(serializers.ModelSerializer):
         exclude = (
             "chatbot",
         )
+
+
+class WeChatListingAPIViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Items
+        exclude = (
+            "id",
+        )
