@@ -140,10 +140,13 @@ class UploadCapabilityPost(generics.CreateAPIView):
             return Response({"error": "Invalid item_id provided"}, status=status.HTTP_404_NOT_FOUND)
 
 
-class WeChatAPIView(generics.CreateAPIView, generics.DestroyAPIView):
+class WeChatAPIView(generics.ListCreateAPIView, generics.DestroyAPIView):
     serializer_class = WeChatAPIViewSerializer
     parser_classes = (MultiPartParser, FormParser)
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return WechatOfficialAccount.objects.filter(created_by=self.request.user)
 
     def get_object(self):
         try:
