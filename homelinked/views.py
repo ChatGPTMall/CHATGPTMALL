@@ -147,12 +147,11 @@ class WeChatAPIView(generics.CreateAPIView, generics.DestroyAPIView):
 
     def get_object(self):
         try:
-            return WechatOfficialAccount.objects.get(user_id=self.request.query_params.get("user_id", None))
+            return WechatOfficialAccount.objects.get(official_id=self.request.query_params.get("official_id", None))
         except Exception as e:
             return None
 
     def perform_create(self, serializer):
-        print(self.request.data)
         try:
             if self.request.data.get("community"):
                 community = Community.objects.get(community_id=self.request.data.get("community", None))
