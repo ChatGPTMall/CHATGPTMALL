@@ -149,7 +149,7 @@ class WeChatAPIView(generics.CreateAPIView, generics.DestroyAPIView):
         try:
             return WechatOfficialAccount.objects.get(official_id=self.request.query_params.get("official_id", None))
         except Exception as e:
-            return None
+            raise ValidationError({"error": str(e)})
 
     def perform_create(self, serializer):
         try:
