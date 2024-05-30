@@ -3,26 +3,40 @@ import base64
 import requests
 from django.core.files.base import ContentFile
 
-from engine.models import InternalExceptions, KeyManagement, Items, ListingType, Category, Community, CommunityPosts
+from engine.models import InternalExceptions, KeyManagement, Items, ListingType, Category, Community, CommunityPosts, \
+    WechatOfficialAccount
 from engine.thread_functions import run_in_thread
 
 
-def send_wechat_message_reply(instance):
+def send_wechat_message_reply(instance, item):
     from_user_name = instance.wechat_id
     url = instance.pic_url
     title = generate_item_content(url, "Tell me about this image")
-    reply_message = {
-        "touser": from_user_name,  # Use the 'FromUserName' you received in the incoming message
-        "msgtype": "text",
-        "text": {
-            "content": title
+    appid = ""
+    appsecret = ""
+    try:
+        reply_message = {
+            "touser": from_user_name,  # Use the 'FromUserName' you received in the incoming message
+            "msgtype": "text",
+            "text": {
+                "content": f"{title}\n\n{item.image.url if item.image else item.qr_code.url}"  # Include the URL in the message content
+            }
         }
-    }
-
+        official_account = WechatOfficialAccount.objects.get(official_id=instance.official_account_id)
+        if hasattr(official_account, "official_account"):
+            appid = official_account.official_account.app_id
+            appsecret = official_account.official_account.secret_id
+    except Exception as e:
+        reply_message = {
+            "touser": from_user_name,  # Use the 'FromUserName' you received in the incoming message
+            "msgtype": "text",
+            "text": {
+                "content": "Account Not Registered With Us!!!"
+            }
+        }
     # Send the message using the WeChat API
     try:
-        appid = "wx7ca28a877b5f606d"
-        appsecret = "e80ccba43de5e0ac70dfdd61ab2ee9ed"
+
         response1 = requests.post(
             'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={}&secret={}'.format(
                 appid, appsecret))
@@ -32,7 +46,6 @@ def send_wechat_message_reply(instance):
                                      params={'access_token': token},
                                      json=reply_message)
             InternalExceptions.objects.create(text=response.json())
-            print(response.json())
         except KeyError:
             pass
     except Exception as e:
@@ -77,7 +90,7 @@ def generate_item_content(url, input_):
         return response.json()["choices"][0]["message"]["content"]
 
 
-def upload_new_wechat_listing(url):
+def upload_new_wechat_listing(url, instance):
     try:
         title_prompt = "generate title for this"
         description_prompt = "generate description for this"
@@ -94,13 +107,16 @@ def upload_new_wechat_listing(url):
         # Get the filename from the URL
         filename = category.title + ".jpg"
 
+        # official_id = instance.
         # Save the image to the model instance
         item.image.save(filename, ContentFile(response.content), save=True)
-        run_in_thread(upload_community_posts, (item, ))
+        run_in_thread(send_wechat_message_reply, (instance, item))
+        run_in_thread(upload_community_posts, (item, instance))
     except Exception as e:
         InternalExceptions.objects.create(text=e)
 
 
-def upload_community_posts(item):
-    for community in Community.objects.all():
-        CommunityPosts.objects.get_or_create(community=community, item=item)
+def upload_community_posts(item, instance):
+    official_account = WechatOfficialAccount.objects.get(official_id=instance.official_account_id)
+    if official_account.community:
+        CommunityPosts.objects.get_or_create(community=official_account.community, item=item)

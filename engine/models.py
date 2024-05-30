@@ -625,6 +625,23 @@ class WechatOfficialAccount(models.Model):
         Community, on_delete=models.CASCADE, related_name="wechat_official_account", null=True)
     joined_on = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.official_id
+
     class Meta:
         verbose_name = _('Wechat Official Account')
         verbose_name_plural = _('Wechat Official Accounts')
+
+
+class WeChatOfficialConfiguration(models.Model):
+    official_id = models.OneToOneField(
+        WechatOfficialAccount, related_name="official_account",
+        on_delete=models.CASCADE, to_field="official_id"
+    )
+    app_id = models.CharField(max_length=200)
+    secret_id = models.CharField(max_length=200)
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('Wechat Official Configuration')
+        verbose_name_plural = _('Wechat Official Configurations')

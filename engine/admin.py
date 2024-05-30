@@ -7,7 +7,7 @@ from engine.models import Items, Category, ResponsesDB, VoiceToVoiceRequests, Im
     Jobs, Capabilities, Community, CommunityMembers, CommunityPosts, CouponCode, UploadCoupons, Subscriptions, \
     UploadTeams, ImageAnalysisDB, VoiceCommands, KeyManagement, RestrictedKeywords, FreeSubscriptions, CapturedImages, \
     BankAccounts, Purchases, FeedComments, FeedLikes, Chatbots, WhatsappConfiguration, ChatBotHistory, \
-    WhatsappAccountRequest, WechatMessages, InternalExceptions
+    WhatsappAccountRequest, WechatMessages, InternalExceptions, WeChatOfficialConfiguration
 
 
 # Register your models here.
@@ -137,6 +137,10 @@ class WechatMessagesAdmin(admin.ModelAdmin):
     list_display = ('wechat_id', 'msg_type', 'event_type', 'latitude', 'longitude')
 
 
+class WeChatOfficialConfigurationAdmin(admin.ModelAdmin):
+    list_display = ('official_id', 'app_id', 'secret_id', 'added_on')
+
+
 admin.site.register(Category)
 admin.site.register(Items, ItemsAdmin)
 admin.site.register(ResponsesDB)
@@ -170,5 +174,6 @@ admin.site.register(WechatMessages, WechatMessagesAdmin)
 admin.site.register(InternalExceptions)
 admin.site.register(ChatBotHistory, ChatBotHistoryAdmin)
 admin.site.register(WhatsappAccountRequest, WhatsappAccountRequestAdmin)
+admin.site.register(WeChatOfficialConfiguration, WeChatOfficialConfigurationAdmin)
 
 

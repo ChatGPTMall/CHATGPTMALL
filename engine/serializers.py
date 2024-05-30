@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from engine.models import Category, Items, FeedComments, CommunityPosts, Chatbots, WhatsappConfiguration
+from engine.models import Category, Items, FeedComments, CommunityPosts, Chatbots, WhatsappConfiguration, \
+    WeChatOfficialConfiguration
 from homelinked.serializers import ItemShortSerializer
 
 
@@ -141,6 +142,14 @@ class WhatsappConfigurationSerializer(serializers.ModelSerializer):
 class WeChatListingAPIViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Items
+        exclude = (
+            "id",
+        )
+
+
+class WeChatConfigurationAPIViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WeChatOfficialConfiguration
         exclude = (
             "id",
         )

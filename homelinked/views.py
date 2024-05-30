@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from engine.models import Community, CommunityMembers, Items, WechatMessages, InternalExceptions, ListingType, \
     WechatOfficialAccount
-from engine.serializers import WeChatListingAPIViewSerializer
+from engine.serializers import WeChatListingAPIViewSerializer, WeChatConfigurationAPIViewSerializer
 from homelinked.models import HomePlans, HomepageNewFeature, WeChatAccounts
 from homelinked.serializers import HomePlansAPIViewSerializer, HomepageNewFeatureViewSerializer, \
     CommunitiesViewSerializer, GetCreditsHistorySerializer, CommunitiesJoinViewSerializer, GrowthNetworkSerializer, \
@@ -170,6 +170,13 @@ class WeChatAPIView(generics.ListCreateAPIView, generics.DestroyAPIView):
     def delete(self, request, *args, **kwargs):
         self.get_object().delete()
         return Response({"msg": "Official Account Deleted Successfully"}, status=status.HTTP_200_OK)
+
+
+class WeChatConfigurationAPIView(generics.CreateAPIView):
+    serializer_class = WeChatConfigurationAPIViewSerializer
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 @csrf_exempt
