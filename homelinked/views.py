@@ -253,4 +253,4 @@ class WeChatListingAPIView(generics.ListAPIView):
     permission_classes = []
 
     def get_queryset(self):
-        return Items.objects.filter(listing=ListingType.WECHAT)
+        return Items.objects.filter(listing=ListingType.WECHAT).order_by("-added_on")
