@@ -106,7 +106,11 @@ class GrowthNetwork(generics.ListAPIView):
 
     def get_object(self):
         try:
-            return Community.objects.get(community_id=self.kwargs['network_id'])
+            try:
+                comm_id = self.kwargs['network_id'].split(":")[1]
+            except IndexError:
+                comm_id = self.kwargs['network_id']
+            return Community.objects.get(community_id=comm_id)
         except Exception as e:
             raise ValidationError("Invalid network_id provided")
 
