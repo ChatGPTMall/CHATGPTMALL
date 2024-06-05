@@ -61,11 +61,11 @@ class UploadUsersAdmin(admin.ModelAdmin):
 
 
 class ChinaUsersAdmin(admin.ModelAdmin):
-    list_display = ("user_id", "wechat_id", "joined_on")
+    list_display = ("user_id", "wechat_id", "room", "joined_on")
 
 
 class WechatOfficialAccountAdmin(admin.ModelAdmin):
-    list_display = ("user_id", "created_by", "official_id", "community", "joined_on")
+    list_display = ("user_id", "created_by", "official_id", "joined_on")
 
 
 admin.site.register(User, UserAdmin)

@@ -9,7 +9,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from engine.models import Community, CommunityMembers, Items, WechatMessages, InternalExceptions, ListingType, \
-    WechatOfficialAccount
+    WechatOfficialAccount, VoiceCommands
 from engine.serializers import WeChatListingAPIViewSerializer, WeChatConfigurationAPIViewSerializer
 from homelinked.models import HomePlans, HomepageNewFeature, WeChatAccounts
 from homelinked.serializers import HomePlansAPIViewSerializer, HomepageNewFeatureViewSerializer, \
@@ -160,11 +160,7 @@ class WeChatAPIView(generics.ListCreateAPIView, generics.DestroyAPIView):
 
     def perform_create(self, serializer):
         try:
-            if self.request.data.get("community"):
-                community = Community.objects.get(community_id=self.request.data.get("community", None))
-                serializer.save(created_by=self.request.user, community=community)
-            else:
-                serializer.save(created_by=self.request.user)
+            serializer.save(created_by=self.request.user)
         except Exception as e:
             raise ValidationError({"error": str(e)})
 
@@ -238,9 +234,8 @@ def GetWechatEvents(request):
         try:
             if pic_url:
                 WechatMessages.objects.create(**data)
-                user, _ = ChinaUsersAdmin.objects.get_or_create(wechat_id=wechat_id)
         except Exception as e:
-            pass
+            InternalExceptions.objects.create(text=e)
         return HttpResponse("Message Received", status=status.HTTP_201_CREATED)
 
     return HttpResponse("Invalid Request", status=403)
@@ -258,3 +253,16 @@ class WeChatListingAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         return Items.objects.filter(listing=ListingType.WECHAT).order_by("-added_on")
+
+
+class TextToCommandAPIView(generics.RetrieveAPIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            query = self.request.query_params.get("query")
+            command = VoiceCommands.objects.get(input=query)
+            return Response({"image": command.image.url})
+        except Exception as e:
+            return Response({"error": str(e)})

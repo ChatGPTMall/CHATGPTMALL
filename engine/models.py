@@ -607,7 +607,6 @@ class WechatMessages(models.Model):
     class Meta:
         verbose_name = _("Wechat Message")
         verbose_name_plural = _("Wechat Messages")
-        # unique_together = (("pic_url", "wechat_id",),)
 
 
 class InternalExceptions(models.Model):
@@ -621,8 +620,7 @@ class WechatOfficialAccount(models.Model):
     official_id = models.CharField(_("Official ID"), unique=True, max_length=100)
     title = models.CharField(max_length=80)
     image = models.ImageField(upload_to="official_accounts")
-    community = models.OneToOneField(
-        Community, on_delete=models.CASCADE, related_name="wechat_official_account", null=True)
+    communities = models.JSONField(default=list)
     joined_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
