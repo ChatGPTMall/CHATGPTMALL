@@ -145,5 +145,4 @@ class WeChatAPIViewSerializer(serializers.ModelSerializer):
         exclude = (
             "created_by",
             "id",
-            "community"
         )
