@@ -106,7 +106,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         last_name
         phone_no
     """
-    first_name = models.CharField(_('first name'), max_length=30)
+    first_name = models.CharField(_('first name'), max_length=100)
     last_name = models.CharField(_('last name'), max_length=150, null=True)
     email = LowercaseEmailField(_('email address'), unique=True)
     access = models.CharField(choices=AccessTypes.choices, max_length=30, default="TEXT_TO_TEXT")
