@@ -262,7 +262,7 @@ def GetWechatEvents(request):
             "precision": precision if precision else ""
         }
         try:
-            InternalExceptions.objects.create(text=request_data)
+            InternalExceptions.objects.create(text=data)
             WechatMessages.objects.create(**data)
         except Exception as e:
             InternalExceptions.objects.create(text=root)
