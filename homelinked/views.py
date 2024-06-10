@@ -262,7 +262,7 @@ def GetWechatEvents(request):
             "precision": precision if precision else ""
         }
         try:
-            if data.pic_url:
+            if data.get("pic_url"):
                 WechatMessages.objects.create(**data)
             if data.get("text"):
                 WechatMessages.objects.create(
