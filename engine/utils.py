@@ -1,12 +1,13 @@
 import base64
+import uuid
 
 import requests
 from django.core.files.base import ContentFile
 
 from engine.models import InternalExceptions, KeyManagement, Items, ListingType, Category, Community, CommunityPosts, \
-    WechatOfficialAccount
+    WechatOfficialAccount, RoomLoginRequests
 from engine.thread_functions import run_in_thread
-from users.models import ChinaUsers
+from users.models import ChinaUsers, User
 from skybrain.models import Room
 
 
@@ -134,6 +135,59 @@ def create_room_and_china_user(wechat_id):
         room = Room.objects.create(custom_instructions=False)
         wechat_user.room = room
         wechat_user.save()
+    if wechat_user.user is None:
+        user = User.objects.create(
+            first_name=str(uuid.uuid4()), email=str(wechat_user.wechat_user_id)+"@yopmail.com")
+        wechat_user.user = user
+        wechat_user.save()
+
+
+def send_login_otp_reply(instance):
+    try:
+        from_user_name = instance.wechat_id
+        user = ChinaUsers.objects.get(wechat_id=from_user_name)
+        RoomLoginRequests.objects.filter(user=user).update(is_expired=True)
+        request = RoomLoginRequests.objects.create(user=user)
+        appid = ""
+        appsecret = ""
+        try:
+            reply_message = {
+                "touser": from_user_name,  # Use the 'FromUserName' you received in the incoming message
+                "msgtype": "text",
+                "text": {
+                    "content": f"Room Login OTP is: {request.otp}"
+                }
+            }
+            official_account = WechatOfficialAccount.objects.get(official_id=instance.official_account_id)
+            if hasattr(official_account, "official_account"):
+                appid = official_account.official_account.app_id
+                appsecret = official_account.official_account.secret_id
+        except Exception as e:
+            reply_message = {
+                "touser": from_user_name,  # Use the 'FromUserName' you received in the incoming message
+                "msgtype": "text",
+                "text": {
+                    "content": "Account Not Registered With Us!!!"
+                }
+            }
+        # Send the message using the WeChat API
+        try:
+
+            response1 = requests.post(
+                'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={}&secret={}'.format(
+                    appid, appsecret))
+            try:
+                token = response1.json()["access_token"]
+                response = requests.post('https://api.weixin.qq.com/cgi-bin/message/custom/send',
+                                         params={'access_token': token},
+                                         json=reply_message)
+                InternalExceptions.objects.create(text=response.json())
+            except KeyError:
+                pass
+        except Exception as e:
+            InternalExceptions.objects.create(text=str(e))
+    except Exception as e:
+        InternalExceptions.objects.create(text=str(e))
 
 
 def send_wechat_room_reply(instance):

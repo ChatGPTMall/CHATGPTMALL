@@ -1,15 +1,19 @@
 import hashlib
 import xml.etree.ElementTree as ET
+from datetime import timedelta
+
 from django.db.models import Count, Exists, OuterRef
 from django.http import HttpResponse
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, status
+from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from engine.models import Community, CommunityMembers, Items, WechatMessages, InternalExceptions, ListingType, \
-    WechatOfficialAccount, VoiceCommands
+    WechatOfficialAccount, VoiceCommands, RoomLoginRequests
 from engine.serializers import WeChatListingAPIViewSerializer, WeChatConfigurationAPIViewSerializer
 from homelinked.models import HomePlans, HomepageNewFeature, WeChatAccounts
 from homelinked.serializers import HomePlansAPIViewSerializer, HomepageNewFeatureViewSerializer, \
@@ -177,6 +181,32 @@ class WeChatConfigurationAPIView(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+class WechatLogin(generics.CreateAPIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request, *args, **kwargs):
+        otp = request.data.get("otp", None)
+        if otp is None:
+            return Response({"error": "otp field is required!!!"})
+        try:
+            # Calculate the threshold time (one hour ago from now)
+            one_hour_ago = timezone.now() - timedelta(hours=1)
+            request = RoomLoginRequests.objects.get(
+                otp=otp, added_on__gt=one_hour_ago, is_expired=False
+            )
+            token, _ = Token.objects.get_or_create(user=request.user.user)
+
+            return Response({
+                "token": str(token),
+                "room_id": str(request.user.room.room_id),
+                "room_key": str(request.user.room.room_key)
+            })
+        except Exception as e:
+            print(e)
+            return Response({"error": "Otp expired/Invalid"})
 
 
 @csrf_exempt

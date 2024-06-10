@@ -168,10 +168,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class ChinaUsers(models.Model):
-    user_id = models.UUIDField(default=uuid.uuid4, unique=True)
+    user = models.ForeignKey(User, related_name="china_users", on_delete=models.PROTECT, null=True, blank=True)
+    wechat_user_id = models.UUIDField(default=uuid.uuid4, unique=True)
     room = models.ForeignKey(Room, related_name="wechat_room", on_delete=models.PROTECT, null=True, blank=True)
     wechat_id = models.CharField(_("WeChat ID"), unique=True, max_length=100)
     joined_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.wechat_id
 
     class Meta:
         verbose_name = _('China User')

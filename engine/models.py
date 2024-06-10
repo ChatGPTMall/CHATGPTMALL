@@ -4,7 +4,9 @@ import string
 import uuid
 
 from django.db import models
-from users.models import User
+from django.utils import timezone
+
+from users.models import User, ChinaUsers
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator
 from django.utils.translation import gettext_lazy as _
@@ -603,6 +605,7 @@ class WechatMessages(models.Model):
     latitude = models.CharField(blank=True, null=True, max_length=255)
     longitude = models.CharField(blank=True, null=True, max_length=255)
     precision = models.CharField(blank=True, null=True, max_length=255)
+    added_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = _("Wechat Message")
@@ -643,3 +646,19 @@ class WeChatOfficialConfiguration(models.Model):
     class Meta:
         verbose_name = _('Wechat Official Configuration')
         verbose_name_plural = _('Wechat Official Configurations')
+
+
+class RoomLoginRequests(models.Model):
+    user = models.ForeignKey(ChinaUsers, related_name="login_requests", on_delete=models.CASCADE)
+    otp = models.CharField(max_length=6, null=True, blank=True)
+    is_expired = models.BooleanField(default=False)
+    added_on = models.DateTimeField(default=timezone.now())
+
+    def save(self, *args, **kwargs):
+        if not self.otp:
+            self.otp = f"{random.randint(100000, 999999)}"
+        super(RoomLoginRequests, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = _('Wechat Login Request')
+        verbose_name_plural = _('Wechat Login Requests')

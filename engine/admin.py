@@ -7,7 +7,7 @@ from engine.models import Items, Category, ResponsesDB, VoiceToVoiceRequests, Im
     Jobs, Capabilities, Community, CommunityMembers, CommunityPosts, CouponCode, UploadCoupons, Subscriptions, \
     UploadTeams, ImageAnalysisDB, VoiceCommands, KeyManagement, RestrictedKeywords, FreeSubscriptions, CapturedImages, \
     BankAccounts, Purchases, FeedComments, FeedLikes, Chatbots, WhatsappConfiguration, ChatBotHistory, \
-    WhatsappAccountRequest, WechatMessages, InternalExceptions, WeChatOfficialConfiguration
+    WhatsappAccountRequest, WechatMessages, InternalExceptions, WeChatOfficialConfiguration, RoomLoginRequests
 
 
 # Register your models here.
@@ -134,11 +134,17 @@ class ItemsAdmin(admin.ModelAdmin):
 
 
 class WechatMessagesAdmin(admin.ModelAdmin):
-    list_display = ('wechat_id', 'msg_type', 'event_type', 'latitude', 'longitude')
+    list_display = ('wechat_id', 'msg_type', 'event_type', 'added_on')
+    list_filter = ("added_on",)
 
 
 class WeChatOfficialConfigurationAdmin(admin.ModelAdmin):
     list_display = ('official_id', 'app_id', 'secret_id', 'added_on')
+
+
+class RoomLoginRequestsAdmin(admin.ModelAdmin):
+    list_display = ("user", "otp", "is_expired", "added_on")
+    list_filter = ("is_expired", "added_on")
 
 
 admin.site.register(Category)
@@ -175,5 +181,6 @@ admin.site.register(InternalExceptions)
 admin.site.register(ChatBotHistory, ChatBotHistoryAdmin)
 admin.site.register(WhatsappAccountRequest, WhatsappAccountRequestAdmin)
 admin.site.register(WeChatOfficialConfiguration, WeChatOfficialConfigurationAdmin)
+admin.site.register(RoomLoginRequests, RoomLoginRequestsAdmin)
 
 

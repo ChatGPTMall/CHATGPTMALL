@@ -61,7 +61,7 @@ class UploadUsersAdmin(admin.ModelAdmin):
 
 
 class ChinaUsersAdmin(admin.ModelAdmin):
-    list_display = ("user_id", "wechat_id", "room", "joined_on")
+    list_display = ("wechat_user_id", "user", "wechat_id", "room", "joined_on")
 
 
 class WechatOfficialAccountAdmin(admin.ModelAdmin):
