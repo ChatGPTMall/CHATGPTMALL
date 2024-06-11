@@ -190,7 +190,7 @@ class WechatLogin(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         otp = request.data.get("otp", None)
         if otp is None:
-            return Response({"error": "otp field is required!!!"})
+            return Response({"error": "otp field is required!!!"}, status=status.HTTP_400_BAD_REQUEST)
         try:
             # Calculate the threshold time (one hour ago from now)
             one_hour_ago = timezone.now() - timedelta(hours=1)
