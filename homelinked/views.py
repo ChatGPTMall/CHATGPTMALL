@@ -205,8 +205,7 @@ class WechatLogin(generics.CreateAPIView):
                 "room_key": str(request.user.room.room_key)
             })
         except Exception as e:
-            print(e)
-            return Response({"error": "Otp expired/Invalid"})
+            return Response({"error": "Otp expired/Invalid"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @csrf_exempt
