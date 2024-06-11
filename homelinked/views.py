@@ -290,6 +290,18 @@ class WeChatListingAPIView(generics.ListAPIView):
         return Items.objects.filter(listing=ListingType.WECHAT).order_by("-added_on")
 
 
+class WeChatProductDetail(generics.RetrieveAPIView):
+    serializer_class = WeChatListingAPIViewSerializer
+    authentication_classes = []
+    permission_classes = []
+
+    def get_object(self):
+        try:
+            return Items.objects.get(item_id=self.kwargs.get("item_id"))
+        except Items.DoesNotExist:
+            raise ValidationError({"error": "Invalid item_id provided"})
+
+
 class TextToCommandAPIView(generics.RetrieveAPIView):
     authentication_classes = []
     permission_classes = []
