@@ -8,7 +8,7 @@ from engine.models import InternalExceptions, KeyManagement, Items, ListingType,
     WechatOfficialAccount, RoomLoginRequests
 from engine.thread_functions import run_in_thread
 from users.models import ChinaUsers, User
-from skybrain.models import Room
+from skybrain.models import Room, RoomItems
 
 
 def send_wechat_message_reply(instance, item):
@@ -113,6 +113,15 @@ def upload_new_wechat_listing(url, instance):
         # official_id = instance.
         # Save the image to the model instance
         item.image.save(filename, ContentFile(response.content), save=True)
+        try:
+            wechat_user, _ = ChinaUsers.objects.get(wechat_id=instance.wechat_id)
+            room_item = RoomItems.objects.create(
+                category=category_title, price=10, name=title, description=description,
+                room=wechat_user.room
+            )
+            room_item.image.save(filename, ContentFile(response.content), save=True)
+        except Exception as e:
+            pass
         run_in_thread(send_wechat_message_reply, (instance, item))
         run_in_thread(upload_community_posts, (item, instance))
     except Exception as e:

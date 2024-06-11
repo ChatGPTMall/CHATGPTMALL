@@ -80,7 +80,7 @@ class RoomItems(models.Model):
     description = models.TextField(null=True)
     price = models.IntegerField(default=0)
     is_private = models.BooleanField(default=False)
-    category = models.CharField(max_length=100)
+    category = models.CharField(max_length=200)
     added_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
