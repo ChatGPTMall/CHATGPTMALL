@@ -10,7 +10,7 @@ from engine.utils import upload_new_wechat_listing, \
 @receiver(post_save, sender=WechatMessages)
 def wechat_message_recieved(sender, instance, created, **kwargs):
     create_room_and_china_user(instance.wechat_id)
-    if instance.msg_type == "text" and instance.msg_type.upper() == "ROOM LOGIN":
+    if instance.msg_type == "text" and instance.text.upper() == "ROOM LOGIN":
         send_login_otp_reply(instance)
     else:
         run_in_thread(send_wechat_room_reply, (instance, ))
