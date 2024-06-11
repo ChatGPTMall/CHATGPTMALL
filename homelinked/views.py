@@ -266,7 +266,7 @@ def GetWechatEvents(request):
                 WechatMessages.objects.create(**data)
             if data.get("text"):
                 WechatMessages.objects.create(
-                    text=data.get("text"), wechat_id=data.get("text"),
+                    text=data.get("text"), wechat_id=data.get("wechat_id"),
                     official_account_id=data.get("official_account_id"),
                     msg_type=data.get("text"), event_type=data.get("event_type")
                 )
