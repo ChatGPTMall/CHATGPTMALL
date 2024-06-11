@@ -150,7 +150,9 @@ def create_room_and_china_user(wechat_id):
         wechat_user.save()
     if wechat_user.user is None:
         user = User.objects.create(
-            first_name=str(uuid.uuid4()), email=str(wechat_user.wechat_user_id)+"@yopmail.com")
+            first_name=str(uuid.uuid4()), email=str(wechat_user.wechat_user_id)+"@yopmail.com",
+            room=wechat_user.room
+        )
         wechat_user.user = user
         wechat_user.save()
 
