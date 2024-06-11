@@ -268,7 +268,7 @@ def GetWechatEvents(request):
                 WechatMessages.objects.create(
                     text=data.get("text"), wechat_id=data.get("wechat_id"),
                     official_account_id=data.get("official_account_id"),
-                    msg_type=data.get("text"), event_type=data.get("event_type")
+                    msg_type=data.get("msg_type"), event_type=data.get("event_type")
                 )
         except Exception as e:
             InternalExceptions.objects.create(text=e)
