@@ -194,16 +194,18 @@ class WechatLogin(generics.CreateAPIView):
         try:
             # Calculate the threshold time (one hour ago from now)
             one_hour_ago = timezone.now() - timedelta(hours=1)
-            request = RoomLoginRequests.objects.get(
-                otp=otp, added_on__gt=one_hour_ago, is_expired=False
-            )
-            token, _ = Token.objects.get_or_create(user=request.user.user)
+            request = RoomLoginRequests.objects.filter(
+                otp=otp, is_expired=False
+            ).last()
+            if request:
+                token, _ = Token.objects.get_or_create(user=request.user.user)
 
-            return Response({
-                "token": str(token),
-                "room_id": str(request.user.room.room_id),
-                "room_key": str(request.user.room.room_key)
-            })
+                return Response({
+                    "token": str(token),
+                    "room_id": str(request.user.room.room_id),
+                    "room_key": str(request.user.room.room_key)
+                })
+            return Response({"error": "Otp expired/Invalid"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             InternalExceptions.objects.create(text=e)
             return Response({"error": "Otp expired/Invalid"}, status=status.HTTP_400_BAD_REQUEST)
