@@ -205,6 +205,7 @@ class WechatLogin(generics.CreateAPIView):
                 "room_key": str(request.user.room.room_key)
             })
         except Exception as e:
+            InternalExceptions.objects.create(text=e)
             return Response({"error": "Otp expired/Invalid"}, status=status.HTTP_400_BAD_REQUEST)
 
 
