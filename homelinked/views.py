@@ -270,7 +270,7 @@ def GetWechatEvents(request):
                 today = timezone.now()
                 two_minutes = today.date() - timedelta(minutes=2)
                 if not WechatMessages.objects.filter(
-                        added__on__gte=two_minutes,
+                        added_on__gte=two_minutes,
                         text=data.get("text"), wechat_id=data.get("wechat_id"),
                         official_account_id=data.get("official_account_id"),
                         msg_type=data.get("msg_type"), event_type=data.get("event_type")
