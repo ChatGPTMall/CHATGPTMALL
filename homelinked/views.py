@@ -267,11 +267,19 @@ def GetWechatEvents(request):
             if data.get("pic_url"):
                 WechatMessages.objects.create(**data)
             if data.get("text"):
-                WechatMessages.objects.create(
-                    text=data.get("text"), wechat_id=data.get("wechat_id"),
-                    official_account_id=data.get("official_account_id"),
-                    msg_type=data.get("msg_type"), event_type=data.get("event_type")
-                )
+                today = timezone.now()
+                two_minutes = today.date() - timedelta(minutes=2)
+                if not WechatMessages.objects.filter(
+                        added__on__gte=two_minutes,
+                        text=data.get("text"), wechat_id=data.get("wechat_id"),
+                        official_account_id=data.get("official_account_id"),
+                        msg_type=data.get("msg_type"), event_type=data.get("event_type")
+                ).exists():
+                    WechatMessages.objects.create(
+                        text=data.get("text"), wechat_id=data.get("wechat_id"),
+                        official_account_id=data.get("official_account_id"),
+                        msg_type=data.get("msg_type"), event_type=data.get("event_type")
+                    )
         except Exception as e:
             InternalExceptions.objects.create(text=e)
         return HttpResponse("Message Received", status=status.HTTP_201_CREATED)

@@ -426,7 +426,11 @@ class ImageAnalysisDB(models.Model):
 
 class VoiceCommands(models.Model):
     input = models.TextField()
-    image = models.ImageField(upload_to="Commands/Images")
+    on_image = models.ImageField(upload_to="Commands/Images", null=True, blank=True)
+    off_image = models.ImageField(upload_to="Commands/Images", null=True, blank=True)
+    switch = models.BooleanField(default=True)
+    added_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.input
@@ -593,6 +597,7 @@ class WhatsappAccountRequest(models.Model):
     class Meta:
         verbose_name = _("Whatsapp Account Request")
         verbose_name_plural = _("Whatsapp Account Request")
+        verbose_name_plural = _("Whatsapp Account Request")
 
 
 class WechatMessages(models.Model):
@@ -662,3 +667,19 @@ class RoomLoginRequests(models.Model):
     class Meta:
         verbose_name = _('Wechat Login Request')
         verbose_name_plural = _('Wechat Login Requests')
+
+
+class GeneralRoomLoginRequests(models.Model):
+    user = models.ForeignKey(User, related_name="general_login_requests", on_delete=models.CASCADE)
+    otp = models.CharField(max_length=6, null=True, blank=True)
+    is_expired = models.BooleanField(default=False)
+    added_on = models.DateTimeField(default=timezone.now())
+
+    def save(self, *args, **kwargs):
+        if not self.otp:
+            self.otp = f"{random.randint(100000, 999999)}"
+        super(GeneralRoomLoginRequests, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = _('Whatsapp Login Request')
+        verbose_name_plural = _('Whatsapp Login Requests')

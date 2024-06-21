@@ -121,13 +121,11 @@ def upload_new_wechat_listing(url, instance):
             )
             room_item.image.save(filename, ContentFile(response.content), save=True)
         except Exception as e:
-            print("hiiiiiiiiiii")
             print(e)
             InternalExceptions.objects.create(text=e)
         run_in_thread(send_wechat_message_reply, (instance, item))
         run_in_thread(upload_community_posts, (item, instance))
     except Exception as e:
-        print("outer exxxxxx")
         print(e)
         InternalExceptions.objects.create(text=e)
 

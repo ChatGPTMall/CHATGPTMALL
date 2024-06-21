@@ -47,7 +47,7 @@ from rest_framework.response import Response
 from django.shortcuts import render, redirect
 from engine.models import ImagesDB, ImageAnalysisDB, Items, Category, KeyManagement, Community, CommunityPosts, \
     BankAccounts, CouponCode, FeedLikes, Purchases, Chatbots, WhatsappConfiguration, PrivateBankAccounts, \
-    WhatsappAccountRequest, ChatBotHistory
+    WhatsappAccountRequest, ChatBotHistory, ListingType, GeneralRoomLoginRequests
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
@@ -1032,14 +1032,39 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         password = ''.join(random.choice(characters) for i in range(length))
         return password
 
+    def update_whatsapp_listing(self, user, title, description):
+        # Define the default paths for image and video
+        default_image_path = os.path.join(settings.BASE_DIR, 'logo.jpg')
+        default_video_path = os.path.join(settings.BASE_DIR, 'item_video.mp4')
+        category = Category.objects.create(title=title)
+
+        Items.objects.create(
+            vendor=user, listing=ListingType.WHATSAPP, title=title,
+            description=description, price=10, category=category,
+            image=default_image_path,  # Set default image path
+            video=default_video_path  # Set default video path
+        )
+
+    def assign_room(self, user):
+        if user.room is None:
+            room = Room.objects.create(custom_instructions=False)
+            user.room = room
+            user.save()
+
     def get_openai_response(self, input_, phone_number_id, name, phone_no):
         client = OpenAI()
         configuration = WhatsappConfiguration.objects.filter(phone_no_id=phone_number_id).first()
         user = User.objects.filter(phone_no=phone_no)
+        self.assign_room(user)
+        if input_.upper() == "ROOM LOGIN":
+            GeneralRoomLoginRequests.objects.filter(user=user).update(is_expired=True)
+            room_request = GeneralRoomLoginRequests.objects.create(user=user)
+            return f"Room Login OTP is: {room_request.otp}"
+
         if configuration:
             if not User.objects.filter(phone_no=phone_no).exists():
                 try:
-                    account_request = WhatsappAccountRequest.objects.get(phone_no=phone_no, account_created=True)
+                    WhatsappAccountRequest.objects.get(phone_no=phone_no, account_created=True)
                 except WhatsappAccountRequest.DoesNotExist:
                     account, created = WhatsappAccountRequest.objects.get_or_create(phone_no=phone_no)
                     if created:
@@ -1095,6 +1120,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                 if user.last():
                     ChatBotHistory.objects.create(
                         user=user.last(), chatbot=configuration.chatbot, query=input_, response=response)
+                run_in_thread(self.update_whatsapp_listing, (user, input_, response))
                 return response
 
         response = client.completions.create(
@@ -1110,6 +1136,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                     if "text" in object2:
                         result = object2[1]
 
+        run_in_thread(self.update_whatsapp_listing, (user, input_, result))
         return result
 
     def send_message(self, data1, body, client_phone_no, name):

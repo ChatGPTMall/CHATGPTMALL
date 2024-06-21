@@ -7,7 +7,8 @@ from engine.models import Items, Category, ResponsesDB, VoiceToVoiceRequests, Im
     Jobs, Capabilities, Community, CommunityMembers, CommunityPosts, CouponCode, UploadCoupons, Subscriptions, \
     UploadTeams, ImageAnalysisDB, VoiceCommands, KeyManagement, RestrictedKeywords, FreeSubscriptions, CapturedImages, \
     BankAccounts, Purchases, FeedComments, FeedLikes, Chatbots, WhatsappConfiguration, ChatBotHistory, \
-    WhatsappAccountRequest, WechatMessages, InternalExceptions, WeChatOfficialConfiguration, RoomLoginRequests
+    WhatsappAccountRequest, WechatMessages, InternalExceptions, WeChatOfficialConfiguration, RoomLoginRequests, \
+    GeneralRoomLoginRequests
 
 
 # Register your models here.
@@ -147,6 +148,15 @@ class RoomLoginRequestsAdmin(admin.ModelAdmin):
     list_filter = ("is_expired", "added_on")
 
 
+class GeneralRoomLoginRequestsAdmin(admin.ModelAdmin):
+    list_display = ("user", "otp", "is_expired", "added_on")
+    list_filter = ("is_expired", "added_on")
+
+
+class VoiceCommandsAdmin(admin.ModelAdmin):
+    list_display = ("input", "switch", "added_on", "updated_on")
+
+
 admin.site.register(Category)
 admin.site.register(Items, ItemsAdmin)
 admin.site.register(ResponsesDB)
@@ -166,7 +176,7 @@ admin.site.register(FreeSubscriptions)
 admin.site.register(VoiceToVoiceRequests, VoiceToVoiceRequestsAdmin)
 admin.site.register(CommunityMembers, CommunityMembersAdmin)
 admin.site.register(ImageAnalysisDB)
-admin.site.register(VoiceCommands)
+admin.site.register(VoiceCommands, VoiceCommandsAdmin)
 admin.site.register(KeyManagement)
 admin.site.register(RestrictedKeywords)
 admin.site.register(CapturedImages)
@@ -182,5 +192,6 @@ admin.site.register(ChatBotHistory, ChatBotHistoryAdmin)
 admin.site.register(WhatsappAccountRequest, WhatsappAccountRequestAdmin)
 admin.site.register(WeChatOfficialConfiguration, WeChatOfficialConfigurationAdmin)
 admin.site.register(RoomLoginRequests, RoomLoginRequestsAdmin)
+admin.site.register(GeneralRoomLoginRequests, GeneralRoomLoginRequestsAdmin)
 
 
