@@ -29,7 +29,7 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
 from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory, \
     CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost, WeChatAPIView, GetWechatEvents, \
     UploadTencentItems, WeChatListingAPIView, WeChatConfigurationAPIView, TextToCommandAPIView, WechatLogin, \
-    WeChatProductDetail
+    WeChatProductDetail, WhatsAppLogin
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
     CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \
@@ -273,6 +273,7 @@ urlpatterns = [
     path('api/v1/send_whatsapp_message/', SendWhatsappMessage.as_view(), name="SendWhatsappMessage"),
     path("webhook", WhatsappWebhook.as_view(), name="WhatsappWebhook"),
     path('api/v1/whatsapp/configuration/', WhatsappConfigurationView.as_view(), name="WhatsappConfiguration"),
+    path("api/v1/whatsapp/login/", WhatsAppLogin.as_view(), name="WhatsAppLogin"),
 
     # wechat APIs
     path("wechat/events/", GetWechatEvents, name="GetWechatEvents"),

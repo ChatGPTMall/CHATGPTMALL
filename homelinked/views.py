@@ -13,7 +13,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from engine.models import Community, CommunityMembers, Items, WechatMessages, InternalExceptions, ListingType, \
-    WechatOfficialAccount, VoiceCommands, RoomLoginRequests
+    WechatOfficialAccount, VoiceCommands, RoomLoginRequests, GeneralRoomLoginRequests
 from engine.serializers import WeChatListingAPIViewSerializer, WeChatConfigurationAPIViewSerializer
 from homelinked.models import HomePlans, HomepageNewFeature, WeChatAccounts
 from homelinked.serializers import HomePlansAPIViewSerializer, HomepageNewFeatureViewSerializer, \
@@ -181,6 +181,34 @@ class WeChatConfigurationAPIView(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+class WhatsAppLogin(generics.CreateAPIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request, *args, **kwargs):
+        otp = request.data.get("otp", None)
+        if otp is None:
+            return Response({"error": "otp field is required!!!"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            # Calculate the threshold time (one hour ago from now)
+            one_hour_ago = timezone.now() - timedelta(hours=1)
+            room_request = GeneralRoomLoginRequests.objects.filter(
+                otp=otp, is_expired=False
+            ).last()
+            if request:
+                token, _ = Token.objects.get_or_create(user=room_request.user)
+
+                return Response({
+                    "token": str(token),
+                    "room_id": str(room_request.user.room.room_id),
+                    "room_key": str(room_request.user.room.room_key)
+                })
+            return Response({"error": "Otp expired/Invalid"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            InternalExceptions.objects.create(text=e)
+            return Response({"error": "Otp expired/Invalid"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class WechatLogin(generics.CreateAPIView):
