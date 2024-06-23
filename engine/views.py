@@ -1054,12 +1054,13 @@ class WhatsappWebhook(generics.ListCreateAPIView):
     def get_openai_response(self, input_, phone_number_id, name, phone_no):
         client = OpenAI()
         configuration = WhatsappConfiguration.objects.filter(phone_no_id=phone_number_id).first()
-        user = User.objects.filter(phone_no=phone_no)
-        self.assign_room(user)
-        if input_.upper() == "ROOM LOGIN":
-            GeneralRoomLoginRequests.objects.filter(user=user).update(is_expired=True)
-            room_request = GeneralRoomLoginRequests.objects.create(user=user)
-            return f"Room Login OTP is: {room_request.otp}"
+        user = User.objects.filter(phone_no=phone_no).last()
+        if user:
+            self.assign_room(user)
+            if input_.upper() == "ROOM LOGIN":
+                GeneralRoomLoginRequests.objects.filter(user=user).update(is_expired=True)
+                room_request = GeneralRoomLoginRequests.objects.create(user=user)
+                return f"Room Login OTP is: {room_request.otp}"
 
         if configuration:
             if not User.objects.filter(phone_no=phone_no).exists():
