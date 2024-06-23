@@ -347,8 +347,19 @@ class TextToCommandAPIView(generics.RetrieveAPIView):
 
     def retrieve(self, request, *args, **kwargs):
         try:
-            query = self.request.query_params.get("query")
-            command = VoiceCommands.objects.get(input=query)
-            return Response({"image": command.image.url})
+            on_image = None
+            off_image = None
+            text = self.request.query_params.get("text")
+            obj = VoiceCommands.objects.get(input=text)
+            command = self.request.query_params.get("command")
+            if command.upper() == "ON":
+                on_image = obj.on_image.url
+            else:
+                off_image = obj.off_image.url
+            return Response({
+                "on_image": on_image,
+                "off_image": off_image,
+                "switch": obj.switch
+            })
         except Exception as e:
             return Response({"error": str(e)})

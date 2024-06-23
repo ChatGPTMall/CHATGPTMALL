@@ -215,7 +215,7 @@ class ItemsRoomView(generics.ListAPIView):
                     return RoomItems.objects.filter(room__room_key=room_key, is_private=True)
                 if int(is_private) == 0:
                     return RoomItems.objects.filter(room__room_key=room_key, is_private=False)
-            return RoomItems.objects.filter(room__room_key=room_key)
+            return RoomItems.objects.filter(room__room_key=room_key).order_by("-added_on")
         except Exception as e:
             raise ValidationError(dict({"error": "invalid room_id provided"}))
 
@@ -232,7 +232,6 @@ class ItemsRoomView(generics.ListAPIView):
 
 
 class ItemsRoomDetailView(generics.ListAPIView):
-    
 
     def get_object(self):
         item_id = self.request.query_params.get("item_id", None)

@@ -440,6 +440,18 @@ class VoiceCommands(models.Model):
         verbose_name_plural = _("Voice Commands")
 
 
+class VoiceCommandsHistory(models.Model):
+    voice = models.ForeignKey(VoiceCommands, on_delete=models.CASCADE, related_name="voice_history")
+    data = models.TextField(max_length=128)
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Voice Command History")
+        verbose_name_plural = _("Voice Commands History")
+
+
+
+
 class PlatformChoices(models.TextChoices):
     OPENAI = "OPENAI", _('OPENAI')
     MICROSOFT = "MICROSOFT", _('MICROSOFT')

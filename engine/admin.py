@@ -8,7 +8,7 @@ from engine.models import Items, Category, ResponsesDB, VoiceToVoiceRequests, Im
     UploadTeams, ImageAnalysisDB, VoiceCommands, KeyManagement, RestrictedKeywords, FreeSubscriptions, CapturedImages, \
     BankAccounts, Purchases, FeedComments, FeedLikes, Chatbots, WhatsappConfiguration, ChatBotHistory, \
     WhatsappAccountRequest, WechatMessages, InternalExceptions, WeChatOfficialConfiguration, RoomLoginRequests, \
-    GeneralRoomLoginRequests
+    GeneralRoomLoginRequests, VoiceCommandsHistory
 
 
 # Register your models here.
@@ -165,6 +165,7 @@ admin.site.register(ShopAccess)
 admin.site.register(Plans)
 admin.site.register(Industries)
 admin.site.register(Jobs)
+admin.site.register(VoiceCommandsHistory)
 admin.site.register(Capabilities)
 admin.site.register(Community, CommunityAdmin)
 admin.site.register(CommunityPosts, CommunityPostsAdmin)
