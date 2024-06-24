@@ -1118,9 +1118,9 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                     run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
                 messages = client.beta.threads.messages.list(thread_id=thread.id)
                 response = messages.data[0].content[0].text.value
-                if user.last():
+                if user:
                     ChatBotHistory.objects.create(
-                        user=user.last(), chatbot=configuration.chatbot, query=input_, response=response)
+                        user=user, chatbot=configuration.chatbot, query=input_, response=response)
                 run_in_thread(self.update_whatsapp_listing, (user, input_, response))
                 return response
 
