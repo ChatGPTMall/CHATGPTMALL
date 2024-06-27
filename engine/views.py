@@ -1193,7 +1193,10 @@ class WhatsappWebhook(generics.ListCreateAPIView):
 
         message = body["entry"][0]["changes"][0]["value"]["messages"][0]
         client_phone_no = body["entry"][0]["changes"][0]["value"]["metadata"]["phone_number_id"]
-        message_body = message["text"]["body"]
+        try:
+            message_body = message["text"]["body"]
+        except KeyError:
+            pass
         try:
             self.get_media_url(message["image"]["id"])
         except Exception as e:
