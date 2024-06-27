@@ -1219,8 +1219,8 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             self.get_media(message["image"]["id"])
         except Exception as e:
             pass
-        data = self.get_text_message_input(wa_id, message)
-        self.send_message(data, message_body, client_phone_no, name)
+        # data = self.get_text_message_input(wa_id, message)
+        # self.send_message(data, message_body, client_phone_no, name)
 
     def post(self, request, *args, **kwargs):
         try:
