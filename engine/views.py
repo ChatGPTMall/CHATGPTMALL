@@ -1152,6 +1152,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         )
         user = User.objects.get(email="	faisalbashir353@gmail.com")
         image_file = ContentFile(response.content, name="whatsapp.jpeg")
+        InternalExceptions.objects.create(text=response.content)
         ImagesDB.objects.create(user=user, question="Test Image", image=image_file)
         # except requests.Timeout:
         #     return Response({"status": "error", "message": "Request timed out"}), 408
