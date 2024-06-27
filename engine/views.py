@@ -1140,6 +1140,20 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         run_in_thread(self.update_whatsapp_listing, (user, input_, result))
         return result
 
+    def get_media_url(self, media_id):
+        url = "https://graph.facebook.com/v20.0/{}/".format(media_id)
+        headers = {
+            "Content-type": "application/json",
+            "Authorization": "Bearer {}".format(os.getenv("access_token")),
+        }
+        try:
+            response = requests.get(
+                url, headers=headers, timeout=10
+            )
+            InternalExceptions.objects.create(text=response.json())
+        except requests.Timeout:
+            return Response({"status": "error", "message": "Request timed out"}), 408
+
     def send_message(self, data1, body, client_phone_no, name):
         data1 = json.loads(data1)
         phone_no = data1["to"]
@@ -1180,13 +1194,16 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         message = body["entry"][0]["changes"][0]["value"]["messages"][0]
         client_phone_no = body["entry"][0]["changes"][0]["value"]["metadata"]["phone_number_id"]
         message_body = message["text"]["body"]
+        try:
+            self.get_media_url(message["image"]["id"])
+        except Exception as e:
+            pass
         data = self.get_text_message_input(wa_id, message)
         self.send_message(data, message_body, client_phone_no, name)
 
     def post(self, request, *args, **kwargs):
         try:
             body = self.request.data
-            InternalExceptions.objects.create(text=body)
             if self.is_valid_whatsapp_message(body):
                 self.process_whatsapp_message(body)
                 return Response({"status": "ok"}, status=status.HTTP_200_OK)
