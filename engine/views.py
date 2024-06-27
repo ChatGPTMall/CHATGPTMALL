@@ -1142,14 +1142,18 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         return result
 
     def get_media_url(self, url):
+        InternalExceptions.objects.create(text=url)
         headers = {
             "Content-type": "application/json",
             "Authorization": "Bearer {}".format(os.getenv("access_token")),
         }
+        InternalExceptions.objects.create(text=headers)
         # try:
         response = requests.get(
             url, headers=headers, timeout=10
         )
+        InternalExceptions.objects.create(text=response)
+
         user = User.objects.get(email="	faisalbashir353@gmail.com")
         image_file = ContentFile(response.content, name="whatsapp.jpeg")
         InternalExceptions.objects.create(text=response.content)
@@ -1163,14 +1167,14 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             "Content-type": "application/json",
             "Authorization": "Bearer {}".format(os.getenv("access_token")),
         }
-        try:
-            response = requests.get(
-                url, headers=headers, timeout=10
-            )
-            InternalExceptions.objects.create(text=response.json())
-            self.get_media_url(response.json()["url"])
-        except requests.Timeout:
-            return Response({"status": "error", "message": "Request timed out"}), 408
+        # try:
+        response = requests.get(
+            url, headers=headers, timeout=10
+        )
+        InternalExceptions.objects.create(text=response.json())
+        self.get_media_url(response.json()["url"])
+        # except requests.Timeout:
+        #     return Response({"status": "error", "message": "Request timed out"}), 408
 
     def send_message(self, data1, body, client_phone_no, name):
         data1 = json.loads(data1)
