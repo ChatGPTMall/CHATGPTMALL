@@ -47,7 +47,7 @@ from rest_framework.response import Response
 from django.shortcuts import render, redirect
 from engine.models import ImagesDB, ImageAnalysisDB, Items, Category, KeyManagement, Community, CommunityPosts, \
     BankAccounts, CouponCode, FeedLikes, Purchases, Chatbots, WhatsappConfiguration, PrivateBankAccounts, \
-    WhatsappAccountRequest, ChatBotHistory, ListingType, GeneralRoomLoginRequests
+    WhatsappAccountRequest, ChatBotHistory, ListingType, GeneralRoomLoginRequests, InternalExceptions
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
@@ -1186,6 +1186,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         try:
             body = self.request.data
+            InternalExceptions.objects.create(text=body)
             if self.is_valid_whatsapp_message(body):
                 self.process_whatsapp_message(body)
                 return Response({"status": "ok"}, status=status.HTTP_200_OK)
