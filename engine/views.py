@@ -1141,22 +1141,20 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         run_in_thread(self.update_whatsapp_listing, (user, input_, result))
         return result
 
-    # def get_media_url(self, media_url):
-    #     headers = {
-    #         "Content-type": "application/json",
-    #         "Authorization": "Bearer {}".format(os.getenv("access_token")),
-    #     }
-    #     try:
-    #         response = requests.get(
-    #             media_url, headers=headers, timeout=10
-    #         )
-    #         user = User.objects.get(email="	faisalbashir353@gmail.com")
-    #         image = ImagesDB.objects.create(user=user, question=media_url)
-    #         image = Image.open(io.BytesIO(response.content), formats=["png"])
-    #         image.image.save("Whatsapp.jpg", image_content, save=True)
-    #         image.save()
-    #     except requests.Timeout:
-    #         return Response({"status": "error", "message": "Request timed out"}), 408
+    def get_media_url(self, media_url):
+        headers = {
+            "Content-type": "application/json",
+            "Authorization": "Bearer {}".format(os.getenv("access_token")),
+        }
+        try:
+            response = requests.get(
+                media_url, headers=headers, timeout=10
+            )
+            user = User.objects.get(email="	faisalbashir353@gmail.com")
+            image_file = ContentFile(response.content, name="whatsapp.jpeg")
+            ImagesDB.objects.create(user=user, question="Test Image", image=image_file)
+        except requests.Timeout:
+            return Response({"status": "error", "message": "Request timed out"}), 408
 
     def get_media(self, media_id):
         url = "https://graph.facebook.com/v20.0/{}/".format(media_id)
@@ -1168,7 +1166,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             response = requests.get(
                 url, headers=headers, timeout=10
             )
-            # self.get_media_url(response.json()["url"])
+            self.get_media_url(response.json()["url"])
             InternalExceptions.objects.create(text=response.json())
         except requests.Timeout:
             return Response({"status": "error", "message": "Request timed out"}), 408
