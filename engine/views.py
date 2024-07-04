@@ -1034,7 +1034,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         password = ''.join(random.choice(characters) for i in range(length))
         return password
 
-    def update_whatsapp_listing(self, user, title, description):
+    def update_whatsapp_listing(self, user, title, description, image_path):
         # Define the default paths for image and video
         default_image_path = os.path.join(settings.BASE_DIR, 'logo.jpg')
         default_video_path = os.path.join(settings.BASE_DIR, 'item_video.mp4')
@@ -1042,8 +1042,8 @@ class WhatsappWebhook(generics.ListCreateAPIView):
 
         Items.objects.create(
             vendor=user, listing=ListingType.WHATSAPP, title=title,
-            description=description, price=10, category=category,
-            image=default_image_path,  # Set default image path
+            description=description, price=50, category=category,
+            image=image_path,
             video=default_video_path  # Set default video path
         )
 
@@ -1053,7 +1053,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             user.room = room
             user.save()
 
-    def get_openai_response(self, input_, phone_number_id, name, phone_no, image_url):
+    def get_openai_response(self, input_, phone_number_id, name, phone_no, image_url, image_path=None):
         client = OpenAI()
         configuration = WhatsappConfiguration.objects.filter(phone_no_id=phone_number_id).first()
         user = User.objects.filter(phone_no=phone_no).last()
@@ -1128,7 +1128,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
 
                 result = generate_item_content(image_url, input_)
 
-                run_in_thread(self.update_whatsapp_listing, (user, input_, result))
+                run_in_thread(self.update_whatsapp_listing, (user, input_, result, image_path))
                 return result
 
     def get_media_url(self, url, message, wa_id, client_phone_no, name):
@@ -1146,7 +1146,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         user = User.objects.get(email="faisalbashir353@gmail.com")
         image_file = ContentFile(response.content, name="whatsapp.jpeg")
         img = ImagesDB.objects.create(user=user, question="Test Image", image=image_file)
-        res = self.get_openai_response(message, client_phone_no, name, wa_id, img.image.url)
+        res = self.get_openai_response(message, client_phone_no, name, wa_id, img.image.url, image_file)
         headers = {
             "Content-type": "application/json",
             "Authorization": "Bearer {}".format(os.getenv("access_token")),
