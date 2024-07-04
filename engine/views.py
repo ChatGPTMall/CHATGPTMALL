@@ -1141,7 +1141,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         run_in_thread(self.update_whatsapp_listing, (user, input_, result))
         return result
 
-    def get_media_url(self, url):
+    def get_media_url(self, url, message):
         InternalExceptions.objects.create(text=url)
         headers = {
             "Content-type": "application/json",
@@ -1156,12 +1156,11 @@ class WhatsappWebhook(generics.ListCreateAPIView):
 
         user = User.objects.get(email="faisalbashir353@gmail.com")
         image_file = ContentFile(response.content, name="whatsapp.jpeg")
-        InternalExceptions.objects.create(text=response.content)
         ImagesDB.objects.create(user=user, question="Test Image", image=image_file)
         # except requests.Timeout:
         #     return Response({"status": "error", "message": "Request timed out"}), 408
 
-    def get_media(self, media_id):
+    def get_media(self, media_id, message):
         url = "https://graph.facebook.com/v20.0/{}/".format(media_id)
         headers = {
             "Content-type": "application/json",
@@ -1172,9 +1171,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             url, headers=headers, timeout=10
         )
         InternalExceptions.objects.create(text=response.json())
-        self.get_media_url(response.json()["url"])
-        # except requests.Timeout:
-        #     return Response({"status": "error", "message": "Request timed out"}), 408
+        self.get_media_url(response.json()["url"], message)
 
     def send_message(self, data1, body, client_phone_no, name):
         data1 = json.loads(data1)
@@ -1210,6 +1207,8 @@ class WhatsappWebhook(generics.ListCreateAPIView):
 
     def process_whatsapp_message(self, body):
         print(body)
+        InternalExceptions.objects.create(text=body)
+
         wa_id = body["entry"][0]["changes"][0]["value"]["contacts"][0]["wa_id"]
         name = body["entry"][0]["changes"][0]["value"]["contacts"][0]["profile"]["name"]
 
@@ -1218,9 +1217,9 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         try:
             message_body = message["text"]["body"]
         except KeyError:
-            pass
+            message_body = []
         try:
-            self.get_media(message["image"]["id"])
+            self.get_media(message["image"]["id"], message_body)
         except Exception as e:
             pass
         # data = self.get_text_message_input(wa_id, message)
