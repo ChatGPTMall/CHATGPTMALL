@@ -1174,7 +1174,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
     def send_message(self, data1, body, client_phone_no, name):
         data1 = json.loads(data1)
         phone_no = data1["to"]
-        res = self.get_openai_response(body, client_phone_no, name, phone_no)
+        res = self.get_openai_response(body, client_phone_no, name, phone_no, "")
         headers = {
             "Content-type": "application/json",
             "Authorization": "Bearer {}".format(os.getenv("access_token")),
