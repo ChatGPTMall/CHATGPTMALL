@@ -1142,7 +1142,6 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         response = requests.get(
             url, headers=headers, timeout=10
         )
-        InternalExceptions.objects.create(text=response)
 
         user = User.objects.get(email="faisalbashir353@gmail.com")
         image_file = ContentFile(response.content, name="whatsapp.jpeg")
@@ -1158,7 +1157,6 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         response = requests.get(
             url, headers=headers, timeout=10
         )
-        InternalExceptions.objects.create(text=response.json())
         self.get_media_url(response.json()["url"], message, wa_id, client_phone_no, name)
 
     def send_message(self, data1, body, client_phone_no, name):
@@ -1194,7 +1192,6 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             return response
 
     def process_whatsapp_message(self, body):
-        InternalExceptions.objects.create(text=body)
         wa_id = body["entry"][0]["changes"][0]["value"]["contacts"][0]["wa_id"]
         name = body["entry"][0]["changes"][0]["value"]["contacts"][0]["profile"]["name"]
 
