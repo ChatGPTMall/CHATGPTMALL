@@ -9,12 +9,10 @@ from engine.utils import upload_new_wechat_listing, \
 
 @receiver(post_save, sender=WechatMessages)
 def wechat_message_recieved(sender, instance, created, **kwargs):
-    create_room_and_china_user(instance.wechat_id)
+    create_room_and_china_user(instance.wechat_id, instance)
     if instance.msg_type == "text" and instance.text.upper() == "ROOM LOGIN":
         send_login_otp_reply(instance)
     else:
-        run_in_thread(send_wechat_room_reply, (instance, ))
-        # if created and instance.pic_url:
         url = instance.pic_url
         run_in_thread(upload_new_wechat_listing, (url, instance))
 

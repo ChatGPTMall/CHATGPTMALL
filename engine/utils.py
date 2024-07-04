@@ -141,12 +141,13 @@ def upload_community_posts(item, instance):
             InternalExceptions.objects.create(text=e)
 
 
-def create_room_and_china_user(wechat_id):
+def create_room_and_china_user(wechat_id, instance):
     wechat_user, created = ChinaUsers.objects.get_or_create(wechat_id=wechat_id)
     if created or wechat_user.room is None:
         room = Room.objects.create(custom_instructions=False)
         wechat_user.room = room
         wechat_user.save()
+        run_in_thread(send_wechat_room_reply, (instance,))
     if wechat_user.user is None:
         user = User.objects.create(
             first_name=str(uuid.uuid4()), email=str(wechat_user.wechat_user_id)+"@yopmail.com",
