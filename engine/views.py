@@ -1052,7 +1052,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             user.room = room
             user.save()
 
-    def get_openai_response(self, input_, phone_number_id, name, phone_no):
+    def get_openai_response(self, input_, phone_number_id, name, phone_no, image_url):
         client = OpenAI()
         configuration = WhatsappConfiguration.objects.filter(phone_no_id=phone_number_id).first()
         user = User.objects.filter(phone_no=phone_no).last()
@@ -1141,7 +1141,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         run_in_thread(self.update_whatsapp_listing, (user, input_, result))
         return result
 
-    def get_media_url(self, url, message):
+    def get_media_url(self, url, message, wa_id, client_phone_no, name):
         InternalExceptions.objects.create(text=url)
         headers = {
             "Content-type": "application/json",
@@ -1156,22 +1156,20 @@ class WhatsappWebhook(generics.ListCreateAPIView):
 
         user = User.objects.get(email="faisalbashir353@gmail.com")
         image_file = ContentFile(response.content, name="whatsapp.jpeg")
-        ImagesDB.objects.create(user=user, question="Test Image", image=image_file)
-        # except requests.Timeout:
-        #     return Response({"status": "error", "message": "Request timed out"}), 408
+        img = ImagesDB.objects.create(user=user, question="Test Image", image=image_file)
+        self.get_openai_response(message, client_phone_no, name, wa_id, img.image.url)
 
-    def get_media(self, media_id, message):
+    def get_media(self, media_id, message, wa_id, client_phone_no, name):
         url = "https://graph.facebook.com/v20.0/{}/".format(media_id)
         headers = {
             "Content-type": "application/json",
             "Authorization": "Bearer {}".format(os.getenv("access_token")),
         }
-        # try:
         response = requests.get(
             url, headers=headers, timeout=10
         )
         InternalExceptions.objects.create(text=response.json())
-        self.get_media_url(response.json()["url"], message)
+        self.get_media_url(response.json()["url"], message, wa_id, client_phone_no, name)
 
     def send_message(self, data1, body, client_phone_no, name):
         data1 = json.loads(data1)
@@ -1206,20 +1204,18 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             return response
 
     def process_whatsapp_message(self, body):
-        print(body)
         InternalExceptions.objects.create(text=body)
-
         wa_id = body["entry"][0]["changes"][0]["value"]["contacts"][0]["wa_id"]
         name = body["entry"][0]["changes"][0]["value"]["contacts"][0]["profile"]["name"]
 
         message = body["entry"][0]["changes"][0]["value"]["messages"][0]
         client_phone_no = body["entry"][0]["changes"][0]["value"]["metadata"]["phone_number_id"]
         try:
-            message_body = message["text"]["body"]
+            message_body = message["image"]["caption"]
         except KeyError:
             message_body = []
         try:
-            self.get_media(message["image"]["id"], message_body)
+            self.get_media(message["image"]["id"], message_body, wa_id, client_phone_no, name)
         except Exception as e:
             pass
         # data = self.get_text_message_input(wa_id, message)
