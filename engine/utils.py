@@ -90,6 +90,7 @@ def generate_item_content(url, input_):
         }
 
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+        InternalExceptions.objects.create(text=response.json())
         return response.json()["choices"][0]["message"]["content"]
 
 
