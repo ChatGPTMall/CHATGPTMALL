@@ -1146,7 +1146,34 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         user = User.objects.get(email="faisalbashir353@gmail.com")
         image_file = ContentFile(response.content, name="whatsapp.jpeg")
         img = ImagesDB.objects.create(user=user, question="Test Image", image=image_file)
-        self.get_openai_response(message, client_phone_no, name, wa_id, img.image.url)
+        res = self.get_openai_response(message, client_phone_no, name, wa_id, img.image.url)
+        headers = {
+            "Content-type": "application/json",
+            "Authorization": "Bearer {}".format(os.getenv("access_token")),
+        }
+        url = "https://graph.facebook.com/v19.0/291096477411186/messages"
+        data = {
+            "messaging_product": "whatsapp",
+            "recipient_type": "individual",
+            "to": wa_id,
+            "type": "text",
+            "text":
+                {
+                    "preview_url": False,
+                    "body": res
+                }
+        }
+
+        try:
+            response = requests.post(
+                url, data=json.dumps(data), headers=headers, timeout=10
+            )
+        except requests.Timeout:
+            return Response({"status": "error", "message": "Request timed out"}), 408
+        except Exception as e:
+            return Response({"status": "error", "message": "Failed to send message"}), 500
+        else:
+            return response
 
     def get_media(self, media_id, message, wa_id, client_phone_no, name):
         url = "https://graph.facebook.com/v20.0/{}/".format(media_id)
