@@ -1212,14 +1212,12 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         client_phone_no = body["entry"][0]["changes"][0]["value"]["metadata"]["phone_number_id"]
         try:
             message_body = message["image"]["caption"]
-        except KeyError:
-            message_body = []
-        try:
             self.get_media(message["image"]["id"], message_body, wa_id, client_phone_no, name)
-        except Exception as e:
-            pass
-        # data = self.get_text_message_input(wa_id, message)
-        # self.send_message(data, message_body, client_phone_no, name)
+        except KeyError:
+            message_body = message["text"]["body"]
+            data = self.get_text_message_input(wa_id, message)
+            self.send_message(data, message_body, client_phone_no, name)
+
 
     def post(self, request, *args, **kwargs):
         try:
