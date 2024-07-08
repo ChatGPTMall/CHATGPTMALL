@@ -29,7 +29,7 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
 from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory, \
     CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost, WeChatAPIView, GetWechatEvents, \
     UploadTencentItems, WeChatListingAPIView, WeChatConfigurationAPIView, TextToCommandAPIView, WechatLogin, \
-    WeChatProductDetail, WhatsAppLogin
+    WeChatProductDetail, WhatsAppLogin, WhatsappListingAPIView
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
     CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \
@@ -279,6 +279,7 @@ urlpatterns = [
     path("wechat/events/", GetWechatEvents, name="GetWechatEvents"),
     path("wechat/tencent/item_upload/", UploadTencentItems.as_view(), name="UploadTencentItems"),
     path("api/wechat/listing/", WeChatListingAPIView.as_view(), name="WeChatListingAPIView"),
+    path("api/whatsapp/listing/", WhatsappListingAPIView.as_view(), name="WhatsappListingAPIView"),
     path("api/v1/products/<uuid:item_id>/", WeChatProductDetail.as_view(), name="WeChatProductDetail"),
     path("api/chatbots/wechat/", WeChatAPIView.as_view(), name="WeChatAPIView"),
     path("api/chatbots/wechat/configure/", WeChatConfigurationAPIView.as_view(), name="WeChatConfigurationAPIView"),

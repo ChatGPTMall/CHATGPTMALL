@@ -329,6 +329,15 @@ class WeChatListingAPIView(generics.ListAPIView):
         return Items.objects.filter(listing=ListingType.WECHAT).order_by("-added_on")
 
 
+class WhatsappListingAPIView(generics.ListAPIView):
+    serializer_class = WeChatListingAPIViewSerializer
+    authentication_classes = []
+    permission_classes = []
+
+    def get_queryset(self):
+        return Items.objects.filter(listing=ListingType.WHATSAPP).order_by("-added_on")
+
+
 class WeChatProductDetail(generics.RetrieveAPIView):
     serializer_class = WeChatListingAPIViewSerializer
     authentication_classes = []
