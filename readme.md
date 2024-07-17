@@ -48,6 +48,8 @@ $ python manage.py runserver
 
 ```shell
 $ python manage.py test
+
+$ npm i  --legacy-peer-deps  
 ```
 
 

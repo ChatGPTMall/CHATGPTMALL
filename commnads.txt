@@ -1,0 +1,6 @@
+scp -i homelinked.pem db.json  ubuntu@ec2-3-0-101-25.ap-southeast-1.compute.amazonaws.com:~/CHATGPTMALL/
+
+Permissions:
+sudo chmod +x /home/ubuntu
+sudo chmod +x /home/ubuntu/CHATGPTMALL
+sudo chmod +x /home/ubuntu/CHATGPTMALL/static
