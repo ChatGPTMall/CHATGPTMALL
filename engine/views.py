@@ -1132,7 +1132,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                 return result
 
     def get_media_url(self, url, message, wa_id, client_phone_no, name):
-        InternalExceptions.objects.create(text=url)
+        InternalExceptions.objects.create(text="inside media function url")
         headers = {
             "Content-type": "application/json",
             "Authorization": "Bearer {}".format(os.getenv("access_token")),
@@ -1182,8 +1182,10 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             "Authorization": "Bearer {}".format(os.getenv("access_token")),
         }
         response = requests.get(
-            url, headers=headers, timeout=10
+            url, headers=headers, timeout=50
         )
+        InternalExceptions.objects.create(text=response.status_code)
+        InternalExceptions.objects.create(text="inside media function")
         self.get_media_url(response.json()["url"], message, wa_id, client_phone_no, name)
 
     def send_message(self, data1, body, client_phone_no, name):
