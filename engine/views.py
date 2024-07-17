@@ -1065,7 +1065,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                 return f"Room Login OTP is: {room_request.otp}"
 
         if configuration:
-            if not User.objects.filter(phone_no=phone_no).exists():
+            if not User.objects.filter(phone_no="+"+phone_no).exists():
                 try:
                     WhatsappAccountRequest.objects.get(phone_no=phone_no, account_created=True)
                 except WhatsappAccountRequest.DoesNotExist:
@@ -1098,33 +1098,6 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                             return "Invalid Email Provided Please Enter Valid Email"
 
             else:
-                # file_id = configuration.chatbot.file_id
-                # thread = client.beta.threads.create()
-                # assistant_id = configuration.chatbot.assistant_id
-                # message = client.beta.threads.messages.create(
-                #     thread_id=thread.id,
-                #     role="user",
-                #     content=input_,
-                #     file_ids=[file_id]
-                # )
-                # run = client.beta.threads.runs.create(
-                #     thread_id=thread.id,
-                #     assistant_id=assistant_id,
-                #     instructions="Please address the user as {}. The user has a premium account and do"
-                #                  " not mention anything about uploaded file".format(name)
-                # )
-                # # Wait for completion
-                # while run.status != "completed":
-                #     # Be nice to the API
-                #     time.sleep(0.5)
-                #     run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
-                # messages = client.beta.threads.messages.list(thread_id=thread.id)
-                # response = messages.data[0].content[0].text.value
-                # if user:
-                #     ChatBotHistory.objects.create(
-                #         user=user, chatbot=configuration.chatbot, query=input_, response=response)
-                # run_in_thread(self.update_whatsapp_listing, (user, input_, response))
-                # return response
 
                 result = generate_item_content(image_url, input_)
 
@@ -1159,7 +1132,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             "text":
                 {
                     "preview_url": False,
-                    "body": "Dummy Text Reply"
+                    "body": res
                 }
         }
         InternalExceptions.objects.create(text=data)
