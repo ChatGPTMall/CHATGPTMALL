@@ -1219,6 +1219,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             return response
 
     def process_whatsapp_message(self, body):
+        InternalExceptions.objects.create(text=body)
         wa_id = body["entry"][0]["changes"][0]["value"]["contacts"][0]["wa_id"]
         name = body["entry"][0]["changes"][0]["value"]["contacts"][0]["profile"]["name"]
 
@@ -1236,6 +1237,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         try:
             body = self.request.data
+            InternalExceptions.objects.create(text=body)
             if self.is_valid_whatsapp_message(body):
                 self.process_whatsapp_message(body)
                 return Response({"status": "ok"}, status=status.HTTP_200_OK)
