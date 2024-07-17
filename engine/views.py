@@ -1159,7 +1159,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             "text":
                 {
                     "preview_url": False,
-                    "body": res
+                    "body": "Dummy Text Reply"
                 }
         }
         InternalExceptions.objects.create(text=data)
