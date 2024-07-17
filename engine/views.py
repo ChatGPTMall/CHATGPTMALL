@@ -1228,10 +1228,10 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             message_body = message["image"]["caption"]
             self.get_media(message["image"]["id"], message_body, wa_id, client_phone_no, name)
         except KeyError:
+            InternalExceptions.objects.create(text=message)
             message_body = message["text"]["body"]
             data = self.get_text_message_input(wa_id, message)
             self.send_message(data, message_body, client_phone_no, name)
-
 
     def post(self, request, *args, **kwargs):
         try:
