@@ -1137,7 +1137,6 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             "Content-type": "application/json",
             "Authorization": "Bearer {}".format(os.getenv("access_token")),
         }
-        InternalExceptions.objects.create(text=headers)
         # try:
         response = requests.get(
             url, headers=headers, timeout=10
@@ -1163,17 +1162,17 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                     "body": res
                 }
         }
+        InternalExceptions.objects.create(text=data)
 
         try:
             response = requests.post(
                 url, data=json.dumps(data), headers=headers, timeout=10
             )
+            InternalExceptions.objects.create(text=response.status_code)
         except requests.Timeout:
             return Response({"status": "error", "message": "Request timed out"}), 408
         except Exception as e:
             return Response({"status": "error", "message": "Failed to send message"}), 500
-        else:
-            return response
 
     def get_media(self, media_id, message, wa_id, client_phone_no, name):
         url = "https://graph.facebook.com/v20.0/{}/".format(media_id)
@@ -1184,8 +1183,6 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         response = requests.get(
             url, headers=headers, timeout=50
         )
-        InternalExceptions.objects.create(text=response.status_code)
-        InternalExceptions.objects.create(text="inside media function")
         self.get_media_url(response.json()["url"], message, wa_id, client_phone_no, name)
 
     def send_message(self, data1, body, client_phone_no, name):
