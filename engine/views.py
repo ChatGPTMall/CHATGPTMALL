@@ -1037,14 +1037,14 @@ class WhatsappWebhook(generics.ListCreateAPIView):
     def update_whatsapp_listing(self, user, title, description, image_path):
         # Define the default paths for image and video
         default_image_path = os.path.join(settings.BASE_DIR, 'logo.jpg')
-        default_video_path = os.path.join(settings.BASE_DIR, 'item_video.mp4')
+        # default_video_path = os.path.join(settings.BASE_DIR, 'item_video.mp4')
         category = Category.objects.create(title=title)
 
         Items.objects.create(
             vendor=user, listing=ListingType.WHATSAPP, title=title,
             description=description, price=50, category=category,
             image=image_path,
-            video=default_video_path  # Set default video path
+            # video=default_video_path  # Set default video path
         )
 
     def assign_room(self, user):
@@ -1135,6 +1135,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                     "body": res
                 }
         }
+        InternalExceptions.objects.create(text=data)
 
         try:
             response = requests.post(
@@ -1176,6 +1177,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                     "body": res
                 }
         }
+        InternalExceptions.objects.create(text=data)
 
         try:
             response = requests.post(
