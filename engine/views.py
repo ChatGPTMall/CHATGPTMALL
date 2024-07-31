@@ -1135,7 +1135,6 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                     "body": res
                 }
         }
-        InternalExceptions.objects.create(text=data)
 
         try:
             response = requests.post(
@@ -1177,7 +1176,6 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                     "body": res
                 }
         }
-        InternalExceptions.objects.create(text=data)
 
         try:
             response = requests.post(
@@ -1196,7 +1194,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
 
         message = body["entry"][0]["changes"][0]["value"]["messages"][0]
         client_phone_no = body["entry"][0]["changes"][0]["value"]["metadata"]["phone_number_id"]
-        InternalExceptions.objects.create(text=body)
+
         try:
             message_body = message["image"]["caption"]
             self.get_media(message["image"]["id"], message_body, wa_id, client_phone_no, name)
