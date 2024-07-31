@@ -68,7 +68,7 @@ def generate_item_content(url, input_):
         }
 
         payload = {
-            "model": "gpt-4-vision-preview",
+            "model": "gpt-4o-mini",
             "messages": [
                 {
                     "role": "user",
