@@ -200,6 +200,7 @@ def send_login_otp_reply(instance):
                 InternalExceptions.objects.create(text=response.json())
             except KeyError as e:
                 InternalExceptions.objects.create(text=str(e))
+                InternalExceptions.objects.create(text=response1.json())
         except Exception as e:
             InternalExceptions.objects.create(text=str(e))
     except Exception as e:
