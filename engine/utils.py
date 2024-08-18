@@ -185,6 +185,7 @@ def send_login_otp_reply(instance):
                     "content": "Account Not Registered With Us!!!"
                 }
             }
+        InternalExceptions.objects.create(text=str(reply_message))
         # Send the message using the WeChat API
         try:
 
