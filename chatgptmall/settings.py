@@ -101,14 +101,25 @@ WSGI_APPLICATION = 'chatgptmall.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': os.getenv("MADEINTHAI_DB_NAME"),
+#         'USER': os.getenv("MADEINTHAI_DB_USER"),
+#         'PASSWORD': os.getenv("MADEINTHAI_DB_PASSWORD"),
+#         'HOST': os.getenv("MADEINTHAI_DB_HOST"),
+#         'PORT': os.getenv("MADEINTHAI_DB_PORT"),
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv("MADEINTHAI_DB_NAME"),
-        'USER': os.getenv("MADEINTHAI_DB_USER"),
-        'PASSWORD': os.getenv("MADEINTHAI_DB_PASSWORD"),
-        'HOST': os.getenv("MADEINTHAI_DB_HOST"),
-        'PORT': os.getenv("MADEINTHAI_DB_PORT"),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv("MYSQL_DB_NAME"),
+        'USER': os.getenv("MYSQL_DB_USER"),
+        'PASSWORD': os.getenv("MYSQL_DB_PASSWORD"),
+        'HOST': os.getenv("MYSQL_DB_HOST"),
+        'PORT': os.getenv("MYSQL_DB_PORT"),
     }
 }
 
