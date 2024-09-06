@@ -669,7 +669,7 @@ class RoomLoginRequests(models.Model):
     user = models.ForeignKey(ChinaUsers, related_name="login_requests", on_delete=models.CASCADE)
     otp = models.CharField(max_length=6, null=True, blank=True)
     is_expired = models.BooleanField(default=False)
-    added_on = models.DateTimeField(default=timezone.now())
+    added_on = models.DateTimeField(default=timezone.now)
 
     def save(self, *args, **kwargs):
         if not self.otp:
@@ -685,7 +685,7 @@ class GeneralRoomLoginRequests(models.Model):
     user = models.ForeignKey(User, related_name="general_login_requests", on_delete=models.CASCADE)
     otp = models.CharField(max_length=6, null=True, blank=True)
     is_expired = models.BooleanField(default=False)
-    added_on = models.DateTimeField(default=timezone.now())
+    added_on = models.DateTimeField(default=timezone.now)
 
     def save(self, *args, **kwargs):
         if not self.otp:
