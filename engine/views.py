@@ -1066,7 +1066,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                 community=Community.objects.first()
             )
             return CouponCode.objects.create(
-                community=community.community, provider=community.name,
+                community=community.community, provider=community.community.name,
                 code=self.generate_coupon_code(), start_date=timezone.now(),
                 end_date=timezone.now() + timedelta(days=30), price=10
             )
