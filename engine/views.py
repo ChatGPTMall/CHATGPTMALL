@@ -1063,7 +1063,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         try:
             community = CommunityMembers.objects.create(
                 user=user,
-                communty=Community.objects.first()
+                community=Community.objects.first()
             )
             return CouponCode.objects.create(
                 community=community.community, provider=community.name,
