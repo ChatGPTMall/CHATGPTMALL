@@ -1128,7 +1128,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                             return "Invalid Email Provided Please Enter Valid Email"
 
             else:
-
+                InternalExceptions.objects.create(text="Something happen point 2 {}".format(phone_no))
                 result = generate_item_content(image_url, input_)
 
                 run_in_thread(self.update_whatsapp_listing, (user, input_, result, image_path))
