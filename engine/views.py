@@ -1060,15 +1060,18 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         return code
 
     def create_coupon_codes(self, user):
-        community = CommunityMembers.objects.create(
-            user=user,
-            communty=Community.objects.first()
-        )
-        return CouponCode.objects.create(
-            community=community.community, provider=community.name,
-            code=self.generate_coupon_code(), start_date=timezone.now(),
-            end_date=timezone.now() + timedelta(days=30), price=10
-        )
+        try:
+            community = CommunityMembers.objects.create(
+                user=user,
+                communty=Community.objects.first()
+            )
+            return CouponCode.objects.create(
+                community=community.community, provider=community.name,
+                code=self.generate_coupon_code(), start_date=timezone.now(),
+                end_date=timezone.now() + timedelta(days=30), price=10
+            )
+        except Exception as e:
+            InternalExceptions.objects.create(text=str(e))
 
     def get_openai_response(self, input_, phone_number_id, name, phone_no, image_url, image_path=None):
         client = OpenAI()
