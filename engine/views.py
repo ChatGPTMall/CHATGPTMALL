@@ -1074,7 +1074,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         client = OpenAI()
         configuration = WhatsappConfiguration.objects.filter(phone_no_id=phone_number_id).first()
         user = User.objects.filter(phone_no="+"+phone_no).last()
-        InternalExceptions.objects.create(text="Something happen {}".format(phone_no))
+
         if user:
             self.assign_room(user)
             if input_.upper() == "ROOM LOGIN":
@@ -1108,9 +1108,9 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                             user.save()
                             password_text = "Password" if created else "NewPassword"
                             WhatsappAccountRequest.objects.filter(phone_no=phone_no).update(account_created=True)
-
+                            InternalExceptions.objects.create(text="Something happen Check 1 {}".format(phone_no))
                             coupon = self.create_coupon_codes(user)
-
+                            InternalExceptions.objects.create(text="Something happen Check 2 {}".format(phone_no))
                             return ("{} \n"
                                     "Email: {} \n"
                                     "{}: {} \n"
@@ -1128,7 +1128,6 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                             return "Invalid Email Provided Please Enter Valid Email"
 
             else:
-                InternalExceptions.objects.create(text="Something happen point 2 {}".format(phone_no))
                 result = generate_item_content(image_url, input_)
 
                 run_in_thread(self.update_whatsapp_listing, (user, input_, result, image_path))
@@ -1165,7 +1164,6 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                     "body": res
                 }
         }
-        InternalExceptions.objects.create(text=data)
 
         try:
             response = requests.post(
@@ -1207,7 +1205,6 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                     "body": res
                 }
         }
-        InternalExceptions.objects.create(text=data)
 
         try:
             response = requests.post(
@@ -1226,7 +1223,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
 
         message = body["entry"][0]["changes"][0]["value"]["messages"][0]
         client_phone_no = body["entry"][0]["changes"][0]["value"]["metadata"]["phone_number_id"]
-        InternalExceptions.objects.create(text=body)
+
         try:
             message_body = message["image"]["caption"]
             self.get_media(message["image"]["id"], message_body, wa_id, client_phone_no, name)
