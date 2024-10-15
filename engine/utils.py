@@ -185,7 +185,6 @@ def send_login_otp_reply(instance):
                     "content": "Account Not Registered With Us!!!"
                 }
             }
-        InternalExceptions.objects.create(text=str(reply_message))
         # Send the message using the WeChat API
         try:
 
@@ -197,10 +196,8 @@ def send_login_otp_reply(instance):
                 response = requests.post('https://api.weixin.qq.com/cgi-bin/message/custom/send',
                                          params={'access_token': token},
                                          json=reply_message)
-                InternalExceptions.objects.create(text=response.json())
             except KeyError as e:
                 InternalExceptions.objects.create(text=str(e))
-                InternalExceptions.objects.create(text=response1.json())
         except Exception as e:
             InternalExceptions.objects.create(text=str(e))
     except Exception as e:

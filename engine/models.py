@@ -343,10 +343,11 @@ class CommunityPosts(models.Model):
 
 
 class CouponCode(models.Model):
+    community = models.ForeignKey(Community, related_name="coupons", on_delete=models.CASCADE, null=True, blank=True)
     provider = models.CharField(_("Coupon Provider"), default="CHATGPTMALL", max_length=200)
-    currency = models.CharField(max_length=100)
+    currency = models.CharField(max_length=100, default="USD")
     code = models.CharField(_("Coupon Code"), max_length=35)
-    price = models.FloatField(_("Coupon Discount"), default=0)
+    price = models.FloatField(_("Coupon Discount"), default=10)
     is_expired = models.BooleanField(default=False)
     start_date = models.DateTimeField(null=False)
     end_date = models.DateTimeField(null=False)

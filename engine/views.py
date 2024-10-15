@@ -9,6 +9,7 @@ import string
 import tempfile
 import time
 import urllib
+from datetime import timedelta
 from json import JSONDecodeError
 from pathlib import Path
 
@@ -49,7 +50,7 @@ from rest_framework.response import Response
 from django.shortcuts import render, redirect
 from engine.models import ImagesDB, ImageAnalysisDB, Items, Category, KeyManagement, Community, CommunityPosts, \
     BankAccounts, CouponCode, FeedLikes, Purchases, Chatbots, WhatsappConfiguration, PrivateBankAccounts, \
-    WhatsappAccountRequest, ChatBotHistory, ListingType, GeneralRoomLoginRequests, InternalExceptions
+    WhatsappAccountRequest, ChatBotHistory, ListingType, GeneralRoomLoginRequests, InternalExceptions, CommunityMembers
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
@@ -1053,6 +1054,22 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             user.room = room
             user.save()
 
+    def generate_coupon_code(self):
+        characters = string.ascii_uppercase + string.digits
+        code = "NEW"+''.join(random.choices(characters, k=10))
+        return code
+
+    def create_coupon_codes(self, user):
+        community = CommunityMembers.objects.create(
+            user=user,
+            communty=Community.objects.first()
+        )
+        return CouponCode.objects.create(
+            community=community.community, provider=community.name,
+            code=self.generate_coupon_code(), start_date=timezone.now(),
+            end_date=timezone.now() + timedelta(days=30), price=10
+        )
+
     def get_openai_response(self, input_, phone_number_id, name, phone_no, image_url, image_path=None):
         client = OpenAI()
         configuration = WhatsappConfiguration.objects.filter(phone_no_id=phone_number_id).first()
@@ -1090,10 +1107,22 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                             user.save()
                             password_text = "Password" if created else "NewPassword"
                             WhatsappAccountRequest.objects.filter(phone_no=phone_no).update(account_created=True)
+
+                            coupon = self.create_coupon_codes(user)
+
                             return ("{} \n"
                                     "Email: {} \n"
                                     "{}: {} \n"
-                                    "Url: {}".format(message, input_, password_text, password, settings.DEPLOYED_HOST))
+                                    "Url: {} \n\n "
+                                    "Enjoy Your Coupons \n"
+                                    "Coupon Code: {} \n"
+                                    "Discount Price: {}$\n"
+                                    "Expires On : {} \n"
+                                    "{}".format(
+                                message, input_, password_text, password,
+                                settings.DEPLOYED_HOST, coupon.code, coupon.price, coupon.end_date.date(),
+                                settings.DEPLOYED_HOST + "supplychain/{}".format(coupon.community.community_id)
+                            ))
                         else:
                             return "Invalid Email Provided Please Enter Valid Email"
 
