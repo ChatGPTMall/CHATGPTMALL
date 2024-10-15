@@ -1071,6 +1071,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         )
 
     def get_openai_response(self, input_, phone_number_id, name, phone_no, image_url, image_path=None):
+        InternalExceptions.objects.create(text="Something happen")
         client = OpenAI()
         configuration = WhatsappConfiguration.objects.filter(phone_no_id=phone_number_id).first()
         user = User.objects.filter(phone_no="+"+phone_no).last()
