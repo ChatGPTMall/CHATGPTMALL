@@ -1119,21 +1119,36 @@ def ShareTeam(request, team_id):
 
 def DownloadTeams(request):
     uri = request.build_absolute_uri('/')
-    communities = list()
-    for community in Community.objects.all():
-        communities.append({
+
+    communities = [
+        {
             "name": community.name,
             "community_id": community.community_id,
-            "link": uri + "team/share/{}/".format(community.id)
-        })
-    dataframe = pd.DataFrame(communities, index=None)
+            "link": f"{uri}team/share/{community.id}/"
+        }
+        for community in Community.objects.all()
+    ]
+
+    # Create DataFrame from the communities list
+    dataframe = pd.DataFrame(communities)
+
+    # Use BytesIO for the in-memory Excel file
     excel_file = IO()
-    xl_writer = pd.ExcelWriter(excel_file, engine='xlsxwriter')
-    dataframe.to_excel(xl_writer, 'ActiveLicenses', index=False)
-    xl_writer.save()
+
+    # Use the correct Excel engine and context manager for writing
+    with pd.ExcelWriter(excel_file, engine='xlsxwriter') as xl_writer:
+        dataframe.to_excel(xl_writer, sheet_name='ActiveLicenses', index=False)
+
+    # Move the cursor to the beginning of the file
     excel_file.seek(0)
-    response = HttpResponse(excel_file.read(), content_type='application/ms-excel')
+
+    # Create the HTTP response with the generated Excel file
+    response = HttpResponse(
+        excel_file.read(),
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
     response['Content-Disposition'] = 'attachment; filename=all_team.xlsx'
+
     return response
 
 
