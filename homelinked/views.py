@@ -403,7 +403,7 @@ class CommunityItems(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            item = Items.objects.get(id=int(self.request.query_params.get("item_id", 1)))
+            item = Items.objects.get(item_id=self.request.data.get("item_id", 1))
             for community_id in self.request.data.get("communities"):
                 try:
                     community = self.get_communtiy(community_id)
