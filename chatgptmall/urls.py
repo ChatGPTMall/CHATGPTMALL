@@ -29,7 +29,7 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
 from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory, \
     CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost, WeChatAPIView, GetWechatEvents, \
     UploadTencentItems, WeChatListingAPIView, WeChatConfigurationAPIView, TextToCommandAPIView, WechatLogin, \
-    WeChatProductDetail, WhatsAppLogin, WhatsappListingAPIView
+    WeChatProductDetail, WhatsAppLogin, WhatsappListingAPIView, RoomItemsV2View
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
     CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \
@@ -265,6 +265,7 @@ urlpatterns = [
     path('api/v1/item/checkout/', NetworkPostItemSessionCheckout.as_view(), name="NetworkPostItemSessionCheckout"),
     path('api/v1/items/bulk_create/', ItemsBulkCreate.as_view(), name="ItemsBulkCreate"),
     path("dum_data/", DumpItems, name="DumpItems"),
+    path("api/v2/room/<uuid:room_key>/items/", RoomItemsV2View.as_view(), name="room_items_v2"),
 
     # chatbots
     path('privacy/', privacy, name="privacy"),

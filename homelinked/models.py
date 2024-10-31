@@ -2,6 +2,7 @@ import uuid
 
 from django.db import models
 
+from engine.models import Items, ListingType
 from skybrain.models import Room
 from django.utils.translation import gettext_lazy as _
 
@@ -105,3 +106,14 @@ class WeChatAccounts(models.Model):
     class Meta:
         verbose_name = _("WeChat Account")
         verbose_name_plural = _("Add WeChat Accounts")
+
+
+class RoomWhatsAppItems(models.Model):
+    item = models.ForeignKey(Items, related_name="room_whatsapp", on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, related_name="whatsapp_items", on_delete=models.CASCADE)
+    listing = models.CharField(choices=ListingType.choices, default="GENERAL", max_length=20)
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Room WhatsApp/Wechat Item")
+        verbose_name_plural = _("Room WhatsApp/Wechat Items")

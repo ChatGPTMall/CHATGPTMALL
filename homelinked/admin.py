@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from homelinked.models import HomePlans, HomePlanPurchases, HomepageNewFeature, CreditsHistory, WeChatAccounts
+from homelinked.models import HomePlans, HomePlanPurchases, HomepageNewFeature, CreditsHistory, WeChatAccounts, \
+    RoomWhatsAppItems
 
 
 class HomepageNewFeatureAdmin(admin.ModelAdmin):
@@ -15,9 +16,14 @@ class WeChatAccountsAdmin(admin.ModelAdmin):
     list_display = ("user", "wechat_id", "app_id", "secret", "access_token", "added_on")
 
 
+class RoomWhatsAppItemsAdmin(admin.ModelAdmin):
+    list_display = ("item", "room", "listing", "added_on")
+
+
 # Register your models here.
 admin.site.register(HomePlans)
 admin.site.register(HomePlanPurchases)
 admin.site.register(HomepageNewFeature, HomepageNewFeatureAdmin)
 admin.site.register(CreditsHistory, CreditsHistoryAdmin)
 admin.site.register(WeChatAccounts, WeChatAccountsAdmin)
+admin.site.register(RoomWhatsAppItems, RoomWhatsAppItemsAdmin)

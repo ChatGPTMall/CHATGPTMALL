@@ -1,12 +1,12 @@
 import hashlib
 import xml.etree.ElementTree as ET
 from datetime import timedelta
-
+from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Count, Exists, OuterRef
 from django.http import HttpResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import generics, status
+from rest_framework import generics, status, filters
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -14,11 +14,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from engine.models import Community, CommunityMembers, Items, WechatMessages, InternalExceptions, ListingType, \
     WechatOfficialAccount, VoiceCommands, RoomLoginRequests, GeneralRoomLoginRequests
-from engine.serializers import WeChatListingAPIViewSerializer, WeChatConfigurationAPIViewSerializer
+from engine.serializers import WeChatListingAPIViewSerializer, WeChatConfigurationAPIViewSerializer, \
+    GetItemsViewSerializer
 from homelinked.models import HomePlans, HomepageNewFeature, WeChatAccounts
 from homelinked.serializers import HomePlansAPIViewSerializer, HomepageNewFeatureViewSerializer, \
     CommunitiesViewSerializer, GetCreditsHistorySerializer, CommunitiesJoinViewSerializer, GrowthNetworkSerializer, \
     ItemShortSerializer, WeChatAPIViewSerializer
+from skybrain.models import Room
 from users.admin import ChinaUsersAdmin
 
 
@@ -372,3 +374,24 @@ class TextToCommandAPIView(generics.RetrieveAPIView):
             })
         except Exception as e:
             return Response({"error": str(e)})
+
+
+class RoomItemsV2View(generics.ListAPIView):
+    serializer_class = GetItemsViewSerializer
+    permission_classes = []
+    authentication_classes = []
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'description', 'added_on', 'category', 'is_private']
+
+    def get_object(self):
+        try:
+            return Room.objects.get(room_key=self.kwargs['room_key'])
+        except Exception as e:
+            raise ValidationError("Invalid room_key provided")
+
+    def get_queryset(self):
+        listing = self.request.query_params.get("listing", "GENERAL")
+        return Items.objects.filter(
+            item_id__in=list(self.get_object().whatsapp_items.filter(
+                listing=listing.upper()).values_list("item__item_id", flat=True))
+        )
