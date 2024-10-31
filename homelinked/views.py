@@ -380,8 +380,6 @@ class RoomItemsV2View(generics.ListAPIView):
     serializer_class = GetItemsViewSerializer
     permission_classes = []
     authentication_classes = []
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['name', 'description', 'added_on', 'category', 'is_private']
 
     def get_object(self):
         try:
