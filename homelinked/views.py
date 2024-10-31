@@ -13,7 +13,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from engine.models import Community, CommunityMembers, Items, WechatMessages, InternalExceptions, ListingType, \
-    WechatOfficialAccount, VoiceCommands, RoomLoginRequests, GeneralRoomLoginRequests
+    WechatOfficialAccount, VoiceCommands, RoomLoginRequests, GeneralRoomLoginRequests, CommunityPosts
 from engine.serializers import WeChatListingAPIViewSerializer, WeChatConfigurationAPIViewSerializer, \
     GetItemsViewSerializer
 from homelinked.models import HomePlans, HomepageNewFeature, WeChatAccounts
@@ -393,3 +393,23 @@ class RoomItemsV2View(generics.ListAPIView):
             item_id__in=list(self.get_object().whatsapp_items.filter(
                 listing=listing.upper()).values_list("item__item_id", flat=True))
         )
+
+
+class CommunityItems(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_communtiy(self, community_id):
+        return Community.objects.get(community_id=community_id)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            item = Items.objects.get(id=int(self.request.query_params.get("item_id", 1)))
+            for community_id in self.request.data.get("communities"):
+                try:
+                    community = self.get_communtiy(community_id)
+                    CommunityPosts.objects.create(user=self.request.user, community=community, item=item)
+                except Exception as e:
+                    pass
+            return Response({"msg": "All Items Uploaded"}, status=status.HTTP_201_CREATED)
+        except Items.DoesNotExist:
+            return Response({"error": "Invalid item_id provided"}, status=status.HTTP_404_NOT_FOUND)
