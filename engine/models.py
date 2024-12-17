@@ -69,7 +69,7 @@ class Items(models.Model):
     vendor = models.ForeignKey(User, on_delete=models.PROTECT, related_name="vendor_items", null=True)
     vendor_email = models.EmailField(null=True)
     item_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    item_type = models.CharField(_("Product Type"), choices=ItemType.choices, default="PHYSICAL", max_length=10)
+    item_type = models.CharField(_("Product Type"), choices=ItemType.choices, default="PHYSICAL", max_length=20)
     listing = models.CharField(choices=ListingType.choices, default="GENERAL", max_length=20)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="items")
     title = models.CharField(max_length=200)
