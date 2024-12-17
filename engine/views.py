@@ -1041,12 +1041,13 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         # default_video_path = os.path.join(settings.BASE_DIR, 'item_video.mp4')
         category = Category.objects.create(title=title)
 
-        Items.objects.create(
+        item = Items.objects.create(
             vendor=user, listing=ListingType.WHATSAPP, title=title,
             description=description, price=50, category=category,
             image=image_path,
             # video=default_video_path  # Set default video path
         )
+        return item.item_id
 
     def assign_room(self, user):
         if user.room is None:
@@ -1133,8 +1134,8 @@ class WhatsappWebhook(generics.ListCreateAPIView):
             else:
                 result = generate_item_content(image_url, input_)
 
-                run_in_thread(self.update_whatsapp_listing, (user, input_, result, image_path))
-                return result
+                item_id = self.update_whatsapp_listing(user, input_, result, image_path)
+                return f"{result}\n\n Item Url \n https://homelinked.tech/product/{item_id}"
 
     def get_media_url(self, url, message, wa_id, client_phone_no, name):
         headers = {
