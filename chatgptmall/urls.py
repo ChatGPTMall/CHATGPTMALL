@@ -277,6 +277,7 @@ urlpatterns = [
     path('api/v1/whatsapp/configuration/', WhatsappConfigurationView.as_view(), name="WhatsappConfiguration"),
     path("api/v1/whatsapp/login/", WhatsAppLogin.as_view(), name="WhatsAppLogin"),
 
+
     # wechat APIs
     path("wechat/events/", GetWechatEvents, name="GetWechatEvents"),
     path("wechat/tencent/item_upload/", UploadTencentItems.as_view(), name="UploadTencentItems"),
