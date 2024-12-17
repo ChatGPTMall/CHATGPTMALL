@@ -142,9 +142,7 @@ class WhatsappConfigurationSerializer(serializers.ModelSerializer):
 class WeChatListingAPIViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Items
-        exclude = (
-            "id",
-        )
+        fields = "__all__"
 
 
 class WeChatConfigurationAPIViewSerializer(serializers.ModelSerializer):
