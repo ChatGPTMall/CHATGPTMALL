@@ -735,7 +735,7 @@ class ItemPurchases(generics.ListCreateAPIView, generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return self.request.user.user_purchases.all()
+        return self.request.user.user_purchases.filter(is_paid=True)
 
     def get_object(self):
         try:

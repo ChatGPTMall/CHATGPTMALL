@@ -304,6 +304,14 @@ class Community(models.Model):
     logo = models.ImageField(upload_to="Communities/Logo", null=True, blank=True)
     leader = models.ForeignKey(User, related_name='community_leaders',
                                on_delete=models.CASCADE, null=True, blank=True)
+    slogan = models.CharField(max_length=200, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    latitude = models.CharField(
+        blank=True, null=True, help_text="Latitude for map integration.", max_length=30
+    )
+    longitude = models.CharField(
+        blank=True, null=True, help_text="Longitude for map integration.", max_length=30
+    )
     priority = models.IntegerField(default=0)
     added_on = models.DateTimeField(auto_now_add=True)
 

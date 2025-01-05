@@ -35,7 +35,11 @@ class CommunitiesViewSerializer(serializers.ModelSerializer):
             "community_id",
             "name",
             "logo",
-            "total_members"
+            "total_members",
+            "slogan",
+            "description",
+            "latitude",
+            "longitude"
         )
 
 
@@ -130,6 +134,8 @@ class RedeemCouponViewSerializer(serializers.Serializer):
 
 
 class ItemPurchasesSerializer(serializers.ModelSerializer):
+    item = ItemShortSerializer()
+
     class Meta:
         model = Purchases
         exclude = (
