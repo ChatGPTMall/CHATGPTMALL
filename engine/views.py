@@ -730,6 +730,7 @@ class RedeemCouponView(generics.CreateAPIView):
             return Response({"error": "Invalid coupon_code provided"}, status=status.HTTP_404_NOT_FOUND)
 
 
+
 class ItemPurchases(generics.ListCreateAPIView, generics.UpdateAPIView):
     serializer_class = ItemPurchasesSerializer
     permission_classes = [IsAuthenticated]
