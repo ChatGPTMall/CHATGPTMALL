@@ -763,10 +763,15 @@ class ItemPurchases(generics.ListCreateAPIView, generics.UpdateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(
-            user=self.request.user, buyer_email=self.request.user.email,
-            purchase_date=timezone.now())
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        try:
+            item = Items.objects.get(id=request.data.get("item"))
+            serializer.save(
+                item=item,
+                user=self.request.user, buyer_email=self.request.user.email,
+                purchase_date=timezone.now())
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PostLikeView(generics.CreateAPIView):

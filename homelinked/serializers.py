@@ -134,7 +134,7 @@ class RedeemCouponViewSerializer(serializers.Serializer):
 
 
 class ItemPurchasesSerializer(serializers.ModelSerializer):
-    item = ItemShortSerializer()
+    item = ItemShortSerializer(read_only=True)
 
     class Meta:
         model = Purchases
