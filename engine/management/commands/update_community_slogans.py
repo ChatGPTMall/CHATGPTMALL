@@ -5,6 +5,25 @@ from django.core.management.base import BaseCommand
 from engine.models import Community
 
 
+def batch_qs(qs, batch_size=500):
+    """
+    Returns a (start, end, total, queryset) tuple for each batch in the given
+    queryset.
+
+    Usage:
+        # Make sure to order your queryset
+        article_qs = Article.objects.order_by('id')
+        for start, end, total, qs in batch_qs(article_qs):
+            print "Now processing %s - %s of %s" % (start + 1, end, total)
+            for article in qs:
+                print article.body
+    """
+    total = qs.count()
+    for start in range(0, total, batch_size):
+        end = min(start + batch_size, total)
+        yield start, end, total, qs[start:end]
+
+
 class Command(BaseCommand):
     help = 'Imports data from an Excel file'
 
@@ -55,18 +74,18 @@ class Command(BaseCommand):
         return result
 
     def handle(self, *args, **kwargs):
-        communities = Community.objects.all()
-        result = self.get_openai_response(list(communities.values("name", "community_id")))
-        for community in json.loads(result).get("communities"):
-            try:
-
-                comm = communities.get(community_id=community.get("community_id"))
-                comm.slogan = community.get("slogan")
-                comm.description = community.get("description")
-                comm.latitude = community.get("latitude")
-                comm.longitude = community.get("longitude")
-                comm.save()
-            except Exception as e:
-                print(str(e))
+        all_communities = Community.objects.all()
+        for start, end, total, communities in batch_qs(all_communities, batch_size=5):
+            result = self.get_openai_response(list(communities.values("name", "community_id")))
+            for community in json.loads(result).get("communities"):
+                try:
+                    comm = communities.get(community_id=community.get("community_id"))
+                    comm.slogan = community.get("slogan")
+                    comm.description = community.get("description")
+                    comm.latitude = community.get("latitude")
+                    comm.longitude = community.get("longitude")
+                    comm.save()
+                except Exception as e:
+                    print(str(e))
 
         self.stdout.write(self.style.SUCCESS('Finished updating data.'))

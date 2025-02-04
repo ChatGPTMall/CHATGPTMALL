@@ -25,7 +25,7 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView, ItemCreateCheckoutSessionView, GetTaobaoItems, \
     GetCurrencies, GrowthNetworkFilters, RedeemCouponView, ItemPurchases, PostLikeView, PostCommentView, GetPostsView, \
     PostDetailView, NetworkPostItemSessionCheckout, ChatbotAPIView, SendWhatsappMessage, WhatsappWebhook, \
-    ChatbotDelUpdateAPIView, WhatsappConfigurationView, ItemsBulkCreate, DumpItems
+    ChatbotDelUpdateAPIView, WhatsappConfigurationView, ItemsBulkCreate, DumpItems, CreateCouponAPIView
 from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory, \
     CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost, WeChatAPIView, GetWechatEvents, \
     UploadTencentItems, WeChatListingAPIView, WeChatConfigurationAPIView, TextToCommandAPIView, WechatLogin, \
@@ -132,7 +132,7 @@ urlpatterns = [
     path("payment/success/<int:plan_id>/<int:user_id>/", PaymentSuccess, name="payment-success"),
     path("payment/cancel/", PaymentCancel, name="payment-cancel"),
     path("validate/coupon_code/<str:coupon_code>/", ValidateCouponCode, name="ValidateCouponCode"),
-
+    path("api/v1/coupon/", CreateCouponAPIView.as_view(), name="CreateCouponAPIView"),
     # Shop
     path("api/v1/shop/text/", ShopWithText, name="ShopWithText"),
     path("wechat/listing.", WechatListing, name="wechatlisting"),

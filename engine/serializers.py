@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from engine.models import Category, Items, FeedComments, CommunityPosts, Chatbots, WhatsappConfiguration, \
-    WeChatOfficialConfiguration
+    WeChatOfficialConfiguration, CouponCode
 from homelinked.serializers import ItemShortSerializer
 
 
@@ -150,4 +150,19 @@ class WeChatConfigurationAPIViewSerializer(serializers.ModelSerializer):
         model = WeChatOfficialConfiguration
         exclude = (
             "id",
+        )
+
+
+class CreateCouponAPIViewSeralizer(serializers.ModelSerializer):
+    community_name = serializers.CharField(read_only=True)
+    price = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = CouponCode
+        exclude = (
+            "id",
+        )
+        read_only_fields = (
+            "community_name",
+            "price"
         )

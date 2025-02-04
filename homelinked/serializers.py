@@ -63,7 +63,11 @@ class CommunitiesJoinViewSerializer(serializers.ModelSerializer):
             "name",
             "logo",
             "total_members",
-            "has_joined"
+            "has_joined",
+            "slogan",
+            "description",
+            "latitude",
+            "longitude"
         )
 
 

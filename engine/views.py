@@ -57,7 +57,7 @@ from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerial
     ShopCategoriesViewSerializer, GetItemsViewSerializer, TextToTexTMicrosoftViewSerializer, TranscribeAudioSerializer, \
     TextToTexTViewImageSerializer, VisionViewSerializer, PostLikeViewSerializer, PostCommentViewSerializer, \
     GetPostsViewSerializer, NetworkPostItemSessionCheckoutSerializer, ChatbotAPIViewSerializer, \
-    WhatsappConfigurationSerializer, ItemsBulkCreateSerializer
+    WhatsappConfigurationSerializer, ItemsBulkCreateSerializer, CreateCouponAPIViewSeralizer
 
 from django.http import HttpResponse
 from reportlab.lib import colors
@@ -1352,3 +1352,24 @@ def DumpItems(request):
     response['Content-Disposition'] = 'attachment; filename="items_data.pdf"'
     response.write(pdf_data)
     return response
+
+
+class CreateCouponAPIView(generics.ListCreateAPIView):
+    serializer_class = CreateCouponAPIViewSeralizer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return CouponCode.objects.filter(community__community_id=self.request.query_params.get("community_id"))
+
+    def create(self, request, *args, **kwargs):
+        data = self.request.data
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            community = Community.objects.get(name=data.get("community_name"))
+            serializer.save(community=community)  # Assign the instance, not the ID
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Community.DoesNotExist:
+            return Response({"error": "Invalid Community ID provided"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
