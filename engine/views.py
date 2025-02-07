@@ -57,7 +57,8 @@ from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerial
     ShopCategoriesViewSerializer, GetItemsViewSerializer, TextToTexTMicrosoftViewSerializer, TranscribeAudioSerializer, \
     TextToTexTViewImageSerializer, VisionViewSerializer, PostLikeViewSerializer, PostCommentViewSerializer, \
     GetPostsViewSerializer, NetworkPostItemSessionCheckoutSerializer, ChatbotAPIViewSerializer, \
-    WhatsappConfigurationSerializer, ItemsBulkCreateSerializer, CreateCouponAPIViewSeralizer
+    WhatsappConfigurationSerializer, ItemsBulkCreateSerializer, CreateCouponAPIViewSeralizer, \
+    BulkCreateCouponsSerializer
 
 from django.http import HttpResponse
 from reportlab.lib import colors
@@ -1359,7 +1360,10 @@ class CreateCouponAPIView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return CouponCode.objects.filter(community__community_id=self.request.query_params.get("community_id"))
+        return CouponCode.objects.filter(
+            community__community_id=self.request.query_params.get("community_id"),
+            user=self.request.user
+        )
 
     def create(self, request, *args, **kwargs):
         data = self.request.data
@@ -1367,9 +1371,70 @@ class CreateCouponAPIView(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         try:
             community = Community.objects.get(name=data.get("community_name"))
-            serializer.save(community=community)  # Assign the instance, not the ID
+            serializer.save(community=community, user=self.request.user)  # Assign the instance, not the ID
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Community.DoesNotExist:
             return Response({"error": "Invalid Community ID provided"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+def generate_coupon_code(length=10):
+    """Generate a random coupon code of given length."""
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
+
+
+class BulkCreateCoupons(generics.CreateAPIView):
+    serializer_class = BulkCreateCouponsSerializer
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        # Extract data from the validated payload
+        community_name = data.get("community_name")
+        total_coupons = data.get("total_coupons")
+        price = data.get("price")
+        start_date = data.get("start_date")
+        end_date = data.get("end_date")
+        currency = data.get("currency")
+
+        # Validate that start_date is before end_date.
+        if start_date >= end_date:
+            return Response(
+                {"error": "start_date must be before end_date."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Get the community based on the provided community name
+        try:
+            community = Community.objects.get(name=community_name)
+        except Community.DoesNotExist:
+            return Response(
+                {"error": "Community not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        coupons = []
+        for _ in range(total_coupons):
+            coupon_code = generate_coupon_code()
+            coupon = CouponCode(
+                user=self.request.user,
+                community=community,
+                provider=community_name,
+                currency=currency,
+                code=coupon_code,
+                price=price,
+                start_date=start_date,
+                end_date=end_date
+            )
+            coupons.append(coupon)
+
+        # Use bulk_create for efficiency
+        CouponCode.objects.bulk_create(coupons)
+
+        return Response(
+            {"message": f"{total_coupons} coupons created successfully."},
+            status=status.HTTP_201_CREATED
+        )

@@ -352,6 +352,10 @@ class CommunityPosts(models.Model):
 
 
 class CouponCode(models.Model):
+    user = models.ForeignKey(
+        User, related_name="user_community_coupons",
+        on_delete=models.SET_NULL, null=True, blank=True
+    )
     community = models.ForeignKey(Community, related_name="coupons", on_delete=models.CASCADE, null=True, blank=True)
     provider = models.CharField(_("Coupon Provider"), default="CHATGPTMALL", max_length=200)
     currency = models.CharField(max_length=100, default="USD")

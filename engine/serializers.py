@@ -166,3 +166,12 @@ class CreateCouponAPIViewSeralizer(serializers.ModelSerializer):
             "community_name",
             "price"
         )
+
+
+class BulkCreateCouponsSerializer(serializers.Serializer):
+    community_name = serializers.CharField(required=True)
+    total_coupons = serializers.IntegerField(required=True)
+    price = serializers.IntegerField(required=True)
+    start_date = serializers.DateTimeField(required=True)
+    end_date = serializers.DateTimeField(required=True)
+    currency = serializers.CharField(required=True)

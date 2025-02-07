@@ -89,7 +89,7 @@ class UploadTeamsAdmin(admin.ModelAdmin):
 
 
 class CouponCodeAdmin(admin.ModelAdmin):
-    list_display = ('provider', 'currency', 'code', 'is_expired', 'price', 'start_date', 'end_date', 'added_on')
+    list_display = ('user', 'provider', 'currency', 'code', 'is_expired', 'price', 'start_date', 'end_date', 'added_on')
 
 
 class CommunityPostsAdmin(admin.ModelAdmin):
