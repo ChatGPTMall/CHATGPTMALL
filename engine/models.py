@@ -57,12 +57,15 @@ class ItemType(models.TextChoices):
     DIGITAL = "DIGITAL", _('Digital')
     SERVICE = "SERVICE", _('Service')
     MANUFACTURE = "MANUFACTURE", _('Manufacture')
+    AI_INSIGHTS = "AI_INSIGHTS", _('AI Insights')
+
 
 
 class ListingType(models.TextChoices):
     GENERAL = "GENERAL", _('General')
     WECHAT = "WECHAT", _('Wechat')
     WHATSAPP = "WHATSAPP", _('Whatsapp')
+    AI_INSIGHTS = "AI_INSIGHTS", _('AI Insights')
 
 
 class Items(models.Model):

@@ -117,3 +117,23 @@ class RoomWhatsAppItems(models.Model):
     class Meta:
         verbose_name = _("Room WhatsApp/Wechat Item")
         verbose_name_plural = _("Room WhatsApp/Wechat Items")
+
+
+class VendingMachine(models.Model):
+    machine_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    location = models.CharField(max_length=200)
+
+    # Additional fields as needed, e.g. name, serial number, etc.
+
+    def __str__(self):
+        return f"{self.location} - {self.machine_id}"
+
+
+class VendingMachineItem(models.Model):
+    vending_machine = models.ForeignKey(VendingMachine, on_delete=models.CASCADE)
+    item = models.ForeignKey(Items, on_delete=models.CASCADE)
+    slot_number = models.PositiveIntegerField()  # or some way to track the position in the machine
+    quantity = models.PositiveIntegerField(default=0)  # how many items of this kind are in that slot
+
+    def __str__(self):
+        return f"{self.item.title} in {self.vending_machine} (Slot {self.slot_number})"

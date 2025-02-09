@@ -26,7 +26,7 @@ from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageV
     GetCurrencies, GrowthNetworkFilters, RedeemCouponView, ItemPurchases, PostLikeView, PostCommentView, GetPostsView, \
     PostDetailView, NetworkPostItemSessionCheckout, ChatbotAPIView, SendWhatsappMessage, WhatsappWebhook, \
     ChatbotDelUpdateAPIView, WhatsappConfigurationView, ItemsBulkCreate, DumpItems, CreateCouponAPIView, \
-    BulkCreateCoupons
+    BulkCreateCoupons, OcrItemUploadAPIView
 from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, CommunitiesView, GetCreditsHistory, \
     CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost, WeChatAPIView, GetWechatEvents, \
     UploadTencentItems, WeChatListingAPIView, WeChatConfigurationAPIView, TextToCommandAPIView, WechatLogin, \
@@ -238,6 +238,9 @@ urlpatterns = [
     path("api/v1/room/share/", RoomAccessShare.as_view(), name="RoomAccessShare"),
     path("api/v1/room/image/url/ocr/", URLOCRImageUploadView.as_view(), name="URLOCRImageUploadView"),
     path("api/v1/text_to_command/", TextToCommandAPIView.as_view(), name="TextToCommandAPIView"),
+
+    # ocr item upload
+    path("api/v1/ocr/item/upload/", OcrItemUploadAPIView.as_view(), name="OcrItemUploadAPIView"),
 
     # v2 authentication APIs
     path("api/v2/register/", RegisterViewV2.as_view(), name="RegisterViewV2"),

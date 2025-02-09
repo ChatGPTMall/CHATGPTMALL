@@ -12,6 +12,7 @@ import urllib
 from datetime import timedelta
 from json import JSONDecodeError
 from pathlib import Path
+from unicodedata import category
 
 import openai
 import stripe
@@ -50,7 +51,8 @@ from rest_framework.response import Response
 from django.shortcuts import render, redirect
 from engine.models import ImagesDB, ImageAnalysisDB, Items, Category, KeyManagement, Community, CommunityPosts, \
     BankAccounts, CouponCode, FeedLikes, Purchases, Chatbots, WhatsappConfiguration, PrivateBankAccounts, \
-    WhatsappAccountRequest, ChatBotHistory, ListingType, GeneralRoomLoginRequests, InternalExceptions, CommunityMembers
+    WhatsappAccountRequest, ChatBotHistory, ListingType, GeneralRoomLoginRequests, InternalExceptions, CommunityMembers, \
+    ItemType
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from engine.serializers import TextToTexTViewSerializer, ImageAnalysisViewSerializer, ShopItemsViewSerializer, \
@@ -248,7 +250,7 @@ class RoomTextToTexTView(generics.CreateAPIView):
                 "history": history
             }), status=status.HTTP_201_CREATED)
         except Exception as e:
-            return Response(e)
+            return Response({"error": str(e)})
 
     def create_history(self, room, input_, response, image=None):
         if image:
@@ -261,6 +263,42 @@ class RoomTextToTexTView(generics.CreateAPIView):
                 room=room, user_input=input_, response=response, user=self.request.user
             )
         return history.id, history.image
+
+
+class OcrItemUploadAPIView(generics.CreateAPIView):
+    parser_classes = (MultiPartParser, FormParser)
+    # serializer_class = TextToTexTViewImageSerializer
+    permission_classes = [IsAuthenticated]
+
+    # Function to encode the image
+    def encode_image(self, image_path):
+        # with open(image_path, "rb") as image_file:
+        file_content = image_path.read()
+        return base64.b64encode(file_content).decode('utf-8')
+
+    def post(self, request, *args, **kwargs):
+        # serializer = self.get_serializer(data=request.data)
+        # serializer.is_valid(raise_exception=True)
+
+        title = request.data.get("title")
+        price = request.data.get("price")
+        description = request.data.get("description")
+        bank = BankAccounts.objects.first()
+        try:
+            category, _ = Category.objects.get_or_create(title="AI")
+            input_image = request.data["file"]
+            encode_image = self.encode_image(input_image)
+            item = Items.objects.create(
+                vendor=self.request.user, vendor_email=self.request.user.email,
+                item_type=ItemType.AI_INSIGHTS.value, listing=ListingType.AI_INSIGHTS.value,
+                category=category, image=input_image, price=price,
+                description=description, public_bank=bank, title=title
+            )
+            return Response({
+                "meg": "Item created Successfully"
+            }, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error": str(e)})
 
 
 class TextToTexTOpeniaiView(generics.CreateAPIView):

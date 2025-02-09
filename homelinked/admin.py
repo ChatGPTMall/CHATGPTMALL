@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from homelinked.models import HomePlans, HomePlanPurchases, HomepageNewFeature, CreditsHistory, WeChatAccounts, \
-    RoomWhatsAppItems
+    RoomWhatsAppItems, VendingMachine, VendingMachineItem
 
 
 class HomepageNewFeatureAdmin(admin.ModelAdmin):
@@ -18,6 +18,19 @@ class WeChatAccountsAdmin(admin.ModelAdmin):
 
 class RoomWhatsAppItemsAdmin(admin.ModelAdmin):
     list_display = ("item", "room", "listing", "added_on")
+
+
+@admin.register(VendingMachine)
+class VendingMachineAdmin(admin.ModelAdmin):
+    list_display = ("machine_id", "location")
+    search_fields = ("machine_id", "location")
+    readonly_fields = ("machine_id",)
+
+@admin.register(VendingMachineItem)
+class VendingMachineItemAdmin(admin.ModelAdmin):
+    list_display = ("vending_machine", "item", "slot_number", "quantity")
+    list_filter = ("vending_machine", "item")
+    search_fields = ("vending_machine__location", "item__title")
 
 
 # Register your models here.
