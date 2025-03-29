@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from homelinked.models import HomePlans, HomePlanPurchases, HomepageNewFeature, CreditsHistory, WeChatAccounts, \
-    RoomWhatsAppItems, VendingMachine, VendingMachineItem
+    RoomWhatsAppItems, VendingMachine, VendingMachineItem, Mp3Files
 
 
 class HomepageNewFeatureAdmin(admin.ModelAdmin):
@@ -22,7 +22,7 @@ class RoomWhatsAppItemsAdmin(admin.ModelAdmin):
 
 @admin.register(VendingMachine)
 class VendingMachineAdmin(admin.ModelAdmin):
-    list_display = ("machine_id", "location")
+    list_display = ("machine_id", "location", "latitude", "longitude")
     search_fields = ("machine_id", "location")
     readonly_fields = ("machine_id",)
 
@@ -31,6 +31,11 @@ class VendingMachineItemAdmin(admin.ModelAdmin):
     list_display = ("vending_machine", "item", "slot_number", "quantity")
     list_filter = ("vending_machine", "item")
     search_fields = ("vending_machine__location", "item__title")
+
+
+@admin.register(Mp3Files)
+class Mp3FileAdmin(admin.ModelAdmin):
+    list_display = ('id', 'file', 'language', 'recognized_text', 'created_at')
 
 
 # Register your models here.

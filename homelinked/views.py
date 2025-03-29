@@ -1,6 +1,11 @@
 import hashlib
+import os
+import tempfile
+import uuid
 import xml.etree.ElementTree as ET
 from datetime import timedelta
+
+from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Count, Exists, OuterRef
 from django.http import HttpResponse
@@ -16,12 +21,17 @@ from engine.models import Community, CommunityMembers, Items, WechatMessages, In
     WechatOfficialAccount, VoiceCommands, RoomLoginRequests, GeneralRoomLoginRequests, CommunityPosts
 from engine.serializers import WeChatListingAPIViewSerializer, WeChatConfigurationAPIViewSerializer, \
     GetItemsViewSerializer
-from homelinked.models import HomePlans, HomepageNewFeature, WeChatAccounts
+from homelinked.models import HomePlans, HomepageNewFeature, WeChatAccounts, Mp3Files, VendingMachineItem
 from homelinked.serializers import HomePlansAPIViewSerializer, HomepageNewFeatureViewSerializer, \
     CommunitiesViewSerializer, GetCreditsHistorySerializer, CommunitiesJoinViewSerializer, GrowthNetworkSerializer, \
-    ItemShortSerializer, WeChatAPIViewSerializer
+    ItemShortSerializer, WeChatAPIViewSerializer, Mp3FileSerializer, VendingMachineAPIViewSerializer
 from skybrain.models import Room
 from users.admin import ChinaUsersAdmin
+from pydub import AudioSegment
+import speech_recognition as sr
+from gtts import gTTS
+from django.core.files import File
+from django.core.files.base import ContentFile
 
 
 # Create your views here.
@@ -413,3 +423,112 @@ class CommunityItems(generics.CreateAPIView):
             return Response({"msg": "All Items Uploaded"}, status=status.HTTP_201_CREATED)
         except Items.DoesNotExist:
             return Response({"error": "Invalid item_id provided"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class VoiceToTextView(generics.CreateAPIView):
+    """
+    POST:
+    - file: The MP3 file
+    - language: Language code (e.g. 'en-US', 'es-ES')
+
+    Returns recognized text from the audio.
+    """
+
+    def post(self, request, *args, **kwargs):
+        # 1. Get MP3 file from request
+        file_obj = request.FILES.get('file')
+        if not file_obj:
+            return Response({"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 2. Get language code (e.g., 'en-US')
+        language = request.data.get('language', 'en-US')
+
+        # 3. Create Mp3File entry in DB (this saves the file to S3)
+        mp3_instance = Mp3Files.objects.create(file=file_obj, language=language)
+
+        # 4. Use pydub with a file-like object instead of a path
+        #    This way, pydub reads data directly from storage (S3), no local path needed
+        with mp3_instance.file.open('rb') as audio_file:
+            audio_segment = AudioSegment.from_file(audio_file, format="mp3")
+
+        # 5. Export the audio to WAV in a temporary file on local disk
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_wav:
+            audio_segment.export(temp_wav.name, format="wav")
+            wav_path = temp_wav.name
+
+        # 6. Use speech_recognition to process the WAV file
+        recognizer = sr.Recognizer()
+        with sr.AudioFile(wav_path) as source:
+            audio_data = recognizer.record(source)
+            try:
+                recognized_text = recognizer.recognize_google(audio_data, language=language)
+            except sr.UnknownValueError:
+                recognized_text = ""
+            except sr.RequestError as e:
+                return Response(
+                    {"error": f"Speech Recognition request error: {str(e)}"},
+                    status=status.HTTP_503_SERVICE_UNAVAILABLE
+                )
+
+        # 7. Save recognized text back to the model (optional)
+        mp3_instance.recognized_text = recognized_text
+        mp3_instance.save()
+
+        # 8. Clean up the temporary .wav file
+        if os.path.exists(wav_path):
+            os.remove(wav_path)
+
+        # 9. Return recognized text
+        return Response({"id": mp3_instance.id, "recognized_text": recognized_text})
+
+
+class TextToVoiceView(generics.CreateAPIView):
+    """
+    POST:
+    - text: Text to convert to speech
+    - language: Language code (e.g. 'en', 'es')
+
+    Returns a JSON with the Mp3File record, which contains the URL to the generated MP3.
+    """
+
+    def post(self, request, *args, **kwargs):
+        text = request.data.get('text')
+        language = request.data.get('language', 'en')
+
+        if not text:
+            return Response({"error": "No text provided."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        # Generate speech from text using gTTS
+        tts = gTTS(text=text, lang=language)
+
+        # Create a unique file name
+        file_name = f"{uuid.uuid4()}.mp3"
+        temp_path = os.path.join(settings.MEDIA_ROOT, file_name)
+        # Save the generated mp3 to a temp file path
+        tts.save(temp_path)
+
+        # Create Mp3File instance
+        with open(temp_path, 'rb') as f:
+            django_file = File(f)
+            django_file.name = file_name  # e.g. "ec152b63-83a2-...mp3" (no slashes)
+
+            mp3_instance = Mp3Files.objects.create(
+                file=django_file,
+                language=language
+            )
+
+        # (Optional) delete the temporary file if you don't want to keep it
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+
+        serializer = Mp3FileSerializer(mp3_instance)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+class VendingMachineAPIView(generics.ListAPIView):
+    serializer_class = VendingMachineAPIViewSerializer
+
+    def get_queryset(self):
+        return VendingMachineItem.objects.all()

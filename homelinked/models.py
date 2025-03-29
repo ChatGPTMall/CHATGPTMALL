@@ -122,6 +122,12 @@ class RoomWhatsAppItems(models.Model):
 class VendingMachine(models.Model):
     machine_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     location = models.CharField(max_length=200)
+    latitude = models.CharField(
+        blank=True, null=True, help_text="Latitude for map integration.", max_length=30
+    )
+    longitude = models.CharField(
+        blank=True, null=True, help_text="Longitude for map integration.", max_length=30
+    )
 
     # Additional fields as needed, e.g. name, serial number, etc.
 
@@ -137,3 +143,14 @@ class VendingMachineItem(models.Model):
 
     def __str__(self):
         return f"{self.item.title} in {self.vending_machine} (Slot {self.slot_number})"
+
+
+class Mp3Files(models.Model):
+    file = models.FileField(upload_to='mp3_files/')
+    language = models.CharField(max_length=10, default='en')  # e.g., 'en', 'es', 'fr'
+    recognized_text = models.TextField(blank=True, null=True)  # optional, store recognized speech
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Mp3File(id={self.id}, language={self.language})"

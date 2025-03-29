@@ -79,8 +79,15 @@ class UploadTeamsAdmin(admin.ModelAdmin):
             for coupon in records:
                 try:
                     name = coupon["team_name"]
-                    print(name, coupon)
-                    Community.objects.create(name=name)
+                    slogan = coupon["slogan"]
+                    latitude = coupon["latitude"]
+                    longitude = coupon["longitude"]
+                    description = coupon["description"]
+
+                    Community.objects.create(
+                        name=name, slogan=slogan, latitude=latitude, longitude=longitude,
+                        description=description
+                    )
                 except KeyError:
                     raise ValueError('Invalid file format')
                 except Exception as e:

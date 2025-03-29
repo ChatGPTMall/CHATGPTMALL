@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
 from engine.models import PlanType, Community, CommunityPosts, Items, Purchases, WechatOfficialAccount
-from homelinked.models import HomePlans, HomepageNewFeature, CreditsHistory, WeChatAccounts
+from homelinked.models import HomePlans, HomepageNewFeature, CreditsHistory, WeChatAccounts, Mp3Files, \
+    VendingMachineItem
 
 
 class HomePlansAPIViewSerializer(serializers.ModelSerializer):
@@ -154,5 +155,21 @@ class WeChatAPIViewSerializer(serializers.ModelSerializer):
         model = WechatOfficialAccount
         exclude = (
             "created_by",
+            "id",
+        )
+
+
+class Mp3FileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mp3Files
+        fields = ['id', 'file', 'language', 'recognized_text', 'created_at']
+        read_only_fields = ['recognized_text', 'created_at']
+
+
+class VendingMachineAPIViewSerializer(serializers.ModelSerializer):
+    item = ItemShortSerializer()
+    class Meta:
+        model = VendingMachineItem
+        exclude = (
             "id",
         )
