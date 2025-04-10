@@ -1,4 +1,5 @@
 import hashlib
+import io
 import os
 import tempfile
 import uuid
@@ -11,6 +12,7 @@ from django.db.models import Count, Exists, OuterRef
 from django.http import HttpResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
+from openai import OpenAI
 from rest_framework import generics, status, filters
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ValidationError
@@ -425,13 +427,28 @@ class CommunityItems(generics.CreateAPIView):
             return Response({"error": "Invalid item_id provided"}, status=status.HTTP_404_NOT_FOUND)
 
 
+def translate_text(client, recognized_text, language):
+    completion = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "user",
+                "content": f"convert '{recognized_text}' into {language} language and return only provided text"
+            }
+        ]
+    )
+
+    return  completion.choices[0].message.content
+
+
+
 class VoiceToTextView(generics.CreateAPIView):
     """
     POST:
     - file: The MP3 file
-    - language: Language code (e.g. 'en-US', 'es-ES')
+    - language: (Optional) a language code for more accurate transcription
 
-    Returns recognized text from the audio.
+    Returns recognized text from the audio using OpenAI Whisper API.
     """
 
     def post(self, request, *args, **kwargs):
@@ -440,47 +457,60 @@ class VoiceToTextView(generics.CreateAPIView):
         if not file_obj:
             return Response({"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # 2. Get language code (e.g., 'en-US')
-        language = request.data.get('language', 'en-US')
+        # 2. Get language code (e.g. 'en', 'es')
+        language = request.data.get('language', 'en')
 
-        # 3. Create Mp3File entry in DB (this saves the file to S3)
+        # 3. Create Mp3File entry in DB (this saves the file to S3 or your storage backend)
         mp3_instance = Mp3Files.objects.create(file=file_obj, language=language)
 
-        # 4. Use pydub with a file-like object instead of a path
-        #    This way, pydub reads data directly from storage (S3), no local path needed
-        with mp3_instance.file.open('rb') as audio_file:
-            audio_segment = AudioSegment.from_file(audio_file, format="mp3")
+        # 4. Read the file contents into a BytesIO object
+        try:
+            with mp3_instance.file.open('rb') as f:
+                file_bytes = f.read()
+            audio_in_memory = io.BytesIO(file_bytes)
+        except Exception as e:
+            return Response(
+                {"error": f"Error reading file: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
-        # 5. Export the audio to WAV in a temporary file on local disk
-        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_wav:
-            audio_segment.export(temp_wav.name, format="wav")
-            wav_path = temp_wav.name
+        # 5. Prepare the file payload with a known extension & content-type
+        #    e.g. "audio.mp3" and "audio/mpeg"
+        #    This ensures the OpenAI library can detect the file type properly.
+        file_payload = (
+            "audio.mp3",         # pretend filename
+            audio_in_memory,     # file-like object
+            "audio/mpeg"         # content type
+        )
 
-        # 6. Use speech_recognition to process the WAV file
-        recognizer = sr.Recognizer()
-        with sr.AudioFile(wav_path) as source:
-            audio_data = recognizer.record(source)
-            try:
-                recognized_text = recognizer.recognize_google(audio_data, language=language)
-            except sr.UnknownValueError:
-                recognized_text = ""
-            except sr.RequestError as e:
-                return Response(
-                    {"error": f"Speech Recognition request error: {str(e)}"},
-                    status=status.HTTP_503_SERVICE_UNAVAILABLE
-                )
+        # 6. Instantiate your OpenAI client
+        client = OpenAI()
 
-        # 7. Save recognized text back to the model (optional)
-        mp3_instance.recognized_text = recognized_text
+        # 7. Transcribe using client.audio.transcriptions.create()
+        try:
+            transcription = client.audio.transcriptions.create(
+                model="whisper-1",
+                file=file_payload,
+                # Optional: specify language for better accuracy if known
+                prompt=f"convert it into {language}"
+            )
+        except Exception as e:
+            return Response(
+                {"error": f"OpenAI transcription error: {str(e)}"},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE
+            )
+
+        # 8. Extract recognized text from the transcription response
+        recognized_text = transcription.text
+
+        translated = translate_text(client, recognized_text, language)
+
+        # 9. Store recognized_text in the Mp3Files entry (if desired)
+        mp3_instance.recognized_text = translated
         mp3_instance.save()
 
-        # 8. Clean up the temporary .wav file
-        if os.path.exists(wav_path):
-            os.remove(wav_path)
-
-        # 9. Return recognized text
-        return Response({"id": mp3_instance.id, "recognized_text": recognized_text})
-
+        # 10. Return the recognized text
+        return Response({"id": mp3_instance.id, "recognized_text": translated})
 
 class TextToVoiceView(generics.CreateAPIView):
     """
@@ -495,32 +525,46 @@ class TextToVoiceView(generics.CreateAPIView):
         text = request.data.get('text')
         language = request.data.get('language', 'en')
 
+        # Initialize OpenAI client (adjust import/path as needed)
+        client = OpenAI()
+
+        text = translate_text(client, text, language)
+
         if not text:
             return Response({"error": "No text provided."},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        # Generate speech from text using gTTS
-        tts = gTTS(text=text, lang=language)
-
-        # Create a unique file name
+        # Create a unique file name for the MP3
         file_name = f"{uuid.uuid4()}.mp3"
-        temp_path = os.path.join(settings.MEDIA_ROOT, file_name)
-        # Save the generated mp3 to a temp file path
-        tts.save(temp_path)
+        speech_file_path = os.path.join(settings.MEDIA_ROOT, file_name)
 
-        # Create Mp3File instance
-        with open(temp_path, 'rb') as f:
+        instructions = (
+            f"Speak clearly in {language}  language only. "
+            "Maintain a natural flow appropriate to the language."
+        )
+
+        # Use OpenAI TTS to stream audio to file
+        with client.audio.speech.with_streaming_response.create(
+            model="gpt-4o-mini-tts",
+            voice="alloy",
+            input=text,
+            instructions=instructions,
+        ) as response:
+            response.stream_to_file(speech_file_path)
+
+        # Create Mp3Files instance
+        with open(speech_file_path, 'rb') as f:
             django_file = File(f)
-            django_file.name = file_name  # e.g. "ec152b63-83a2-...mp3" (no slashes)
+            django_file.name = file_name  # e.g. "ec152b63-83a2-...mp3"
 
             mp3_instance = Mp3Files.objects.create(
                 file=django_file,
                 language=language
             )
 
-        # (Optional) delete the temporary file if you don't want to keep it
-        if os.path.exists(temp_path):
-            os.remove(temp_path)
+        # (Optional) delete the file from disk if you wish to keep only DB storage
+        if os.path.exists(speech_file_path):
+            os.remove(speech_file_path)
 
         serializer = Mp3FileSerializer(mp3_instance)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
