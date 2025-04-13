@@ -32,7 +32,7 @@ from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, Communiti
     CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost, WeChatAPIView, GetWechatEvents, \
     UploadTencentItems, WeChatListingAPIView, WeChatConfigurationAPIView, TextToCommandAPIView, WechatLogin, \
     WeChatProductDetail, WhatsAppLogin, WhatsappListingAPIView, RoomItemsV2View, CommunityItems, VoiceToTextView, \
-    TextToVoiceView, VendingMachineAPIView, stream_voice
+    TextToVoiceView, VendingMachineAPIView, VoiceToVoiceView
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
     CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \
@@ -295,10 +295,10 @@ urlpatterns = [
     path("api/chatbots/wechat/configure/", WeChatConfigurationAPIView.as_view(), name="WeChatConfigurationAPIView"),
     path("api/v1/wechat/login/", WechatLogin.as_view(), name="WechatLogin"),
 
-    # V2 APIs voice
+    # V2 Mobile APIs voice
     path('api/v2/voice-to-text/', VoiceToTextView.as_view(), name='voice-to-text'),
     path('api/v2/text-to-voice/', TextToVoiceView.as_view(), name='text-to-voice'),
-    path('api/v2/voice/', stream_voice, name='stream-voice'),
+    path('api/v2/voice-to-voice/', VoiceToVoiceView.as_view(), name='VoiceToVoiceView'),
 
     # vending machine API's
     path("api/v1/vending_machine/items/", VendingMachineAPIView.as_view(), name="VendingMachineAPIView"),

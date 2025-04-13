@@ -571,7 +571,6 @@ class TextToVoiceView(generics.CreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-
 class VendingMachineAPIView(generics.ListAPIView):
     serializer_class = VendingMachineAPIViewSerializer
 
@@ -579,49 +578,26 @@ class VendingMachineAPIView(generics.ListAPIView):
         return VendingMachineItem.objects.all()
 
 
-def text_generate(client, prompt):
-    completion = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ]
-    )
-
-    return completion.choices[0].message.content
-
-
-def tts_stream(text):
-    """
-    Example function that uses an OpenAI TTS
-    model to stream MP3 bytes. You must have
-    openai installed and configured for this to work.
-    """
+def text_generate(prompt: str) -> str:
+    # switch to the “mini” chat model (much faster)
     client = OpenAI()
-    response = client.audio.speech.with_streaming_response.create(
-        model="gpt-4o-mini-tts",
-        voice="alloy",
-        input=text,
+    resp = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
     )
-    # response.iter_bytes() returns a generator
-    # that yields chunks of the MP3 file
-    return response.iter_bytes()
+    return resp.choices[0].message.content
 
-def stream_voice(request):
-    """
-    Endpoint that reads ?text= query param,
-    streams TTS audio back as 'audio/mpeg'.
-    GET /api/v2/voice/?text=Hello%20World
-    """
-    text = request.GET.get("text")
-    if not text:
-        return HttpResponseBadRequest("Missing text parameter")
 
-    audio_generator = tts_stream(text)
+class VoiceToVoiceView(generics.CreateAPIView):
+    serializer_class = []
+    authentication_classes = []
 
-    # Stream the MP3 bytes back
-    response = StreamingHttpResponse(audio_generator, content_type="audio/mpeg")
-    response['Content-Disposition'] = 'inline; filename="speech.mp3"'
-    return response
+    def post(self, request, *args, **kwargs):
+        text = request.data.get('text')
+        response = text_generate(text)
+
+        return Response({
+            "response": response
+        }, status=status.HTTP_200_OK)
+
+
