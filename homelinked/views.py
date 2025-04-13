@@ -2,6 +2,7 @@ import hashlib
 import io
 import os
 import tempfile
+import threading
 import uuid
 import xml.etree.ElementTree as ET
 from datetime import timedelta
@@ -9,7 +10,7 @@ from datetime import timedelta
 from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Count, Exists, OuterRef
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest, StreamingHttpResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from openai import OpenAI
@@ -592,53 +593,35 @@ def text_generate(client, prompt):
     return completion.choices[0].message.content
 
 
-class VoiceAPIView(generics.CreateAPIView):
+def tts_stream(text):
     """
-    POST:
-    - text: Text to convert to speech
-    - language: Language code (e.g. 'en', 'es')
-
-    Returns a JSON with the Mp3File record, which contains the URL to the generated MP3.
+    Example function that uses an OpenAI TTS
+    model to stream MP3 bytes. You must have
+    openai installed and configured for this to work.
     """
+    client = OpenAI()
+    response = client.audio.speech.with_streaming_response.create(
+        model="gpt-4o-mini-tts",
+        voice="alloy",
+        input=text,
+    )
+    # response.iter_bytes() returns a generator
+    # that yields chunks of the MP3 file
+    return response.iter_bytes()
 
-    def post(self, request, *args, **kwargs):
-        text = request.data.get('text')
-        language = request.data.get('language', 'en')
+def stream_voice(request):
+    """
+    Endpoint that reads ?text= query param,
+    streams TTS audio back as 'audio/mpeg'.
+    GET /api/v2/voice/?text=Hello%20World
+    """
+    text = request.GET.get("text")
+    if not text:
+        return HttpResponseBadRequest("Missing text parameter")
 
-        # Initialize OpenAI client (adjust import/path as needed)
-        client = OpenAI()
+    audio_generator = tts_stream(text)
 
-        text = text_generate(client, text)
-
-        if not text:
-            return Response({"error": "No text provided."},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        # Create a unique file name for the MP3
-        file_name = f"{uuid.uuid4()}.mp3"
-        speech_file_path = os.path.join(settings.MEDIA_ROOT, file_name)
-
-        # Use OpenAI TTS to stream audio to file
-        with client.audio.speech.with_streaming_response.create(
-            model="gpt-4o-mini-tts",
-            voice="alloy",
-            input=text,
-        ) as response:
-            response.stream_to_file(speech_file_path)
-
-        # Create Mp3Files instance
-        with open(speech_file_path, 'rb') as f:
-            django_file = File(f)
-            django_file.name = file_name  # e.g. "ec152b63-83a2-...mp3"
-
-            mp3_instance = Mp3Files.objects.create(
-                file=django_file,
-                language=language
-            )
-
-        # (Optional) delete the file from disk if you wish to keep only DB storage
-        if os.path.exists(speech_file_path):
-            os.remove(speech_file_path)
-
-        serializer = Mp3FileSerializer(mp3_instance)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    # Stream the MP3 bytes back
+    response = StreamingHttpResponse(audio_generator, content_type="audio/mpeg")
+    response['Content-Disposition'] = 'inline; filename="speech.mp3"'
+    return response
