@@ -601,3 +601,54 @@ class VoiceToVoiceView(generics.CreateAPIView):
         }, status=status.HTTP_200_OK)
 
 
+class VoiceAPIView(generics.CreateAPIView):
+    """
+    POST:
+    - text: Text to convert to speech
+    - language: Language code (e.g. 'en', 'es')
+
+    Returns a JSON with the Mp3File record, which contains the URL to the generated MP3.
+    """
+
+    def post(self, request, *args, **kwargs):
+        text = request.data.get('text')
+        language = request.data.get('language', 'en')
+
+        # Initialize OpenAI client (adjust import/path as needed)
+        client = OpenAI()
+
+        text = text_generate(text)
+
+        if not text:
+            return Response({"error": "No text provided."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        # Create a unique file name for the MP3
+        file_name = f"{uuid.uuid4()}.mp3"
+        speech_file_path = os.path.join(settings.MEDIA_ROOT, file_name)
+
+        # Use OpenAI TTS to stream audio to file
+        with client.audio.speech.with_streaming_response.create(
+            model="gpt-4o-mini-tts",
+            voice="alloy",
+            input=text,
+        ) as response:
+            response.stream_to_file(speech_file_path)
+
+        # Create Mp3Files instance
+        with open(speech_file_path, 'rb') as f:
+            django_file = File(f)
+            django_file.name = file_name  # e.g. "ec152b63-83a2-...mp3"
+
+            mp3_instance = Mp3Files.objects.create(
+                file=django_file,
+                language=language
+            )
+
+        # (Optional) delete the file from disk if you wish to keep only DB storage
+        if os.path.exists(speech_file_path):
+            os.remove(speech_file_path)
+
+        serializer = Mp3FileSerializer(mp3_instance)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+

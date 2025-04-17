@@ -20,6 +20,8 @@ from django.urls import path, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
+from setuptools.extern import names
+
 from engine.views import TextToTexTView, CreateCheckoutSessionView, TextToImageView, ImageAnalysisView, \
     ObjectsDetectionView, ShopItemsView, ShopCategoriesView, GetItemsView, TextToTexTOpeniaiView, \
     TextToTexTMicrosoftView, TranscribeAudio, RoomTextToTexTView, ItemCreateCheckoutSessionView, GetTaobaoItems, \
@@ -32,7 +34,7 @@ from homelinked.views import HomePlansAPIView, HomepageNewFeatureView, Communiti
     CommunitiesJoinView, CommunitiesJoinedView, GrowthNetwork, UploadCapabilityPost, WeChatAPIView, GetWechatEvents, \
     UploadTencentItems, WeChatListingAPIView, WeChatConfigurationAPIView, TextToCommandAPIView, WechatLogin, \
     WeChatProductDetail, WhatsAppLogin, WhatsappListingAPIView, RoomItemsV2View, CommunityItems, VoiceToTextView, \
-    TextToVoiceView, VendingMachineAPIView, VoiceToVoiceView
+    TextToVoiceView, VendingMachineAPIView, VoiceToVoiceView, VoiceAPIView
 from skybrain.views import LicensesView, CreateLicensesView, OrganizationRooms, SkybrainCustomerRoom, ValidateRoom, \
     HistoryRoom, ItemsRoomView, UploadItemsRoomView, PublicItemsRoomView, Organizationsview, CSQueriesView, \
     CSQueriesUpdateView, FavouritesView, ItemsSendEmailView, UnsubscribeView, CreateRooms, CreateOrganizations, \
@@ -299,6 +301,7 @@ urlpatterns = [
     path('api/v2/voice-to-text/', VoiceToTextView.as_view(), name='voice-to-text'),
     path('api/v2/text-to-voice/', TextToVoiceView.as_view(), name='text-to-voice'),
     path('api/v2/voice-to-voice/', VoiceToVoiceView.as_view(), name='VoiceToVoiceView'),
+    path("api/v3/voice-to-voice/", VoiceAPIView.as_view(), name="VoiceAPIView"),
 
     # vending machine API's
     path("api/v1/vending_machine/items/", VendingMachineAPIView.as_view(), name="VendingMachineAPIView"),
