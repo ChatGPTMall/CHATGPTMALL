@@ -35,6 +35,7 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
+from homelinked.views import text_generate
 from skybrain.models import Room
 from users.models import User
 import speech_recognition as sr
@@ -379,70 +380,9 @@ def GetImages(request):
 
 
 def get_chatgpt_response(request):
-    try:
-        words = request.GET.get('words', None)
-        page = request.GET.get('page', None)
-        if words:
-            plan__access = "TEXT_TO_TEXT"
-        else:
-            plan__access = "VOICE_TO_Voice"
-            words = 2000
-        if page == "voice_to_text":
-            plan__access = "TEXT_TO_VOICE"
-        if request.user.premium == 1:
-            plan = Plans.objects.filter(access=plan__access).last()
-            obj, created = Subscriptions.objects.get_or_create(user=request.user, plan=plan)
-            obj.requests_send += 1
-            obj.save()
-            if obj.requests_send >= obj.plan.requests:
-                obj.is_expired = True
-                obj.save()
-        if request.user.premium == 0:
-            plan = Plans.objects.filter(access=plan__access).last()
-            obj, create = FreeSubscriptions.objects.get_or_create(user=request.user, plan=plan)
-            obj.requests_send += 1
-            obj.save()
-            if obj.requests_send >= obj.plan.free_requests:
-                obj.is_expired = True
-                obj.save()
-    except Exception as e:
-        print(e)
-        words = request.GET.get('words', None)
     prompt = request.GET.get('text', '')
-    response = ResponsesDB.objects.filter(question__icontains=prompt)
-    if not response:
-        key = KeyManagement.objects.all().last()
-        if key:
-            openai.api_key = key.key
-            if key.platform == "MICROSOFT":
-                openai.api_base = "{}".format(key.endpoint)
-                openai.api_type = 'azure'
-                openai.api_version = "2023-03-15-preview"
-                model = "davinci"
-                response = openai.Completion.create(
-                    engine=model,
-                    max_tokens=int(words),
-                    prompt=prompt,
-                )
-                text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
-                ResponsesDB.objects.create(question=prompt, answer=text)
-                return HttpResponse(str(text))
-            else:
-                response = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
-                    max_tokens=3000,
-                    messages=[
-                        {"role": "system", "content": "You are a chatbot"},
-                        {"role": "user", "content": "{}?".format(prompt)},
-                    ]
-                )
-                result = ''
-                for choice in response.choices:
-                    result += choice.message.content
-                ResponsesDB.objects.create(question=prompt, answer=result)
-                return HttpResponse(str(result))
-    else:
-        return HttpResponse(str(response.last().answer))
+    result = text_generate(prompt)
+    return HttpResponse(str(result))
 
 
 def get_text(request):
