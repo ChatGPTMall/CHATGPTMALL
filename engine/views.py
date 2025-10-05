@@ -1199,6 +1199,7 @@ class WhatsappWebhook(generics.ListCreateAPIView):
         image_file = ContentFile(response.content, name=image_file_name)
         img = ImagesDB.objects.create(user=user, question="Test Image", image=image_file)
         res = self.get_openai_response(message, client_phone_no, name, wa_id, img.image.url, image_file)
+        InternalExceptions.objects.create(text="Something happen Check create {}".format(res))
         headers = {
             "Content-type": "application/json",
             "Authorization": "Bearer {}".format(os.getenv("access_token")),
@@ -1215,6 +1216,9 @@ class WhatsappWebhook(generics.ListCreateAPIView):
                     "body": res
                 }
         }
+
+        InternalExceptions.objects.create(text="Something happen Check create {}".format(data))
+        InternalExceptions.objects.create(text="Something happen Check create2 {}".format(headers))
 
         try:
             response = requests.post(
